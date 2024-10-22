@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="hoaDonStore.hoaDonId !=0">
     <!-- Header chứa thông tin sản phẩm -->
     <div class="header mb-4">
       <v-card variant="outlined" class="pa-4" color="#F3E5F5" style="border-radius: 12px;">
@@ -48,7 +48,8 @@ import useEmitter from '@/useEmitter';
 import san_pham from './san_pham.vue';
 import { onMounted, ref, watch } from 'vue';
 import dialog_sanpham from './dialog_sanpham.vue';
-
+import { useInvoiceStore } from "@/store/invoiceStore";
+const hoaDonStore = useInvoiceStore();
 const emitter = useEmitter()
 const tab = ref(0)
 const tabs = ref([])

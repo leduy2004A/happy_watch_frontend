@@ -1,7 +1,7 @@
 import api from "./axios";
 import axios from "axios";
-export const getdiachiTheoKhachHang = async(data)=>{
-    return await api.get(`http://localhost:8080/api/khach-hang/dia-chi/first/${data}`)
+export const getdiachiTheoKhachHang = async(hoaDonId,nguoiDungId)=>{
+    return await api.put(`http://localhost:8080/api/khach-hang/dia-chi/first/${hoaDonId}?idNguoiDung=${nguoiDungId}`)
 }
 export const getTinhThanh = async()=>{
     return await axios.get("https://online-gateway.ghn.vn/shiip/public-api/master-data/province",{

@@ -75,11 +75,11 @@ const products = ref([
 ])
 
 const totalPrice = computed(() => {
-  return sanPham.value.reduce((sum, product) => sum + product.giaSanPham * product.soLuong, 0)
+  return sanPham.value.reduce((sum, product) => sum + product.giaTungSanPham * product.soLuong, 0)
 })
 
 const productTotalPrice = (product) => {
-  return product.giaSanPham * product.soLuong
+  return product.giaTungSanPham * product.soLuong
 }
 
 const parseMoney = (money) => {

@@ -32,5 +32,5 @@ export const huyHoaDon = async(data)=>{
   return await api.put(`api/hoadon/cancel/${data}`)
 }
 export const xacNhanDonHang = async (data)=>{
-  return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}`)
+  return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}`)
 }

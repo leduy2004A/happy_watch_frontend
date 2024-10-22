@@ -14,6 +14,7 @@
           <v-btn color="primary" class="ml-4">+ THÊM KHÁCH HÀNG</v-btn>
         </div>
       </v-card-title>
+      <v-btn class="my-2" variant="outlined" @click="khachLe()">Khách lẻ</v-btn>
       <v-data-table
         :headers="headers"
         :items="lstKhachHang"
@@ -55,10 +56,14 @@
   import { onMounted, ref } from "vue";
   import { getKhachHang } from "@/axios/khachhang";
   import { getdiachiTheoKhachHang } from "@/axios/diachi";
+  import { useInvoiceStore } from "@/store/invoiceStore";
   import useEmitter from "@/useEmitter";
+  import { useToast } from "vue-toastification";
   const emitter = useEmitter()
   const search = ref("");
   const lstKhachHang = ref([])
+  const InvoiceStore = useInvoiceStore()
+  const toast = useToast()
   onMounted(async ()=>{
     const data = await getKhachHang();
     lstKhachHang.value = data.data
@@ -163,9 +168,26 @@
   };
   
   const selectCustomer = async (item) => {
-    const resultData = await getdiachiTheoKhachHang(item.id)
-    emitter.emit("diachivakhachhang",resultData.data)
-    
+    const resultData = await getdiachiTheoKhachHang(InvoiceStore.getHoaDonId,item.id)
+    if(resultData.status === 200)
+    {
+      toast.success("Đã thêm khách hàng")
+      emitter.emit("diachivakhachhang",resultData.data)
+    }
+    else{
+    toast.success("Lỗi chọn khách hàng")
+    }
+  };
+  const khachLe = async () => {
+    const resultData = await getdiachiTheoKhachHang(InvoiceStore.getHoaDonId,1)
+    if(resultData.status === 200)
+    {
+      toast.success("Đã thêm khách hàng")
+      emitter.emit("diachivakhachhang",resultData.data)
+    }
+    else{
+    toast.success("Lỗi chọn khách hàng")
+    }
   };
   </script>
   

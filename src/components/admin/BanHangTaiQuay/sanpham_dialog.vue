@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-text-field
-          v-model="searchQuery"
+          v-model="productStore.searchQuery"
           label="Tìm kiếm sản phẩm"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
@@ -15,7 +15,12 @@
       <v-col cols="12">
         <v-card class="filter-card pa-4 mb-4">
           <v-row dense>
-            <v-col v-for="(filter, index) in filters" :key="index" cols="12" sm="6" md="4" lg="2">
+            <v-col v-for="(filter, index) in productStore.filters" 
+                   :key="index" 
+                   cols="12" 
+                   sm="6" 
+                   md="4" 
+                   lg="2">
               <v-select
                 v-model="filter.value"
                 :items="filter.items"
@@ -34,11 +39,11 @@
                 <div class="d-flex justify-space-between mb-2">
                   <span class="text-subtitle-2">Khoảng giá:</span>
                   <span class="text-subtitle-2 primary--text">
-                    {{ formatCurrency(priceRange[0]) }} - {{ formatCurrency(priceRange[1]) }}
+                    {{ formatCurrency(productStore.priceRange[0]) }} - {{ formatCurrency(productStore.priceRange[1]) }}
                   </span>
                 </div>
                 <v-range-slider
-                  v-model="priceRange"
+                  v-model="productStore.priceRange"
                   :min="100000"
                   :max="3200000"
                   :step="50000"
@@ -62,7 +67,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in sanPham" :key="item.id">
+              <tr v-for="item in productStore.products" :key="item.id">
                 <td class="text-center">
                   <v-img
                     :src="item.hinhAnh[0]"
@@ -79,7 +84,6 @@
                   </v-img>
                 </td>
                 <td>{{ item.tenSanPham + ' - ' + item.maSanPham }}</td>
-      
                 <td>{{ item.tenMauSac }}</td>
                 <td>{{ item.hinhDang }}</td>
                 <td class="text-center">{{ item.kichThuoc }}</td>
@@ -114,13 +118,13 @@
 </template>
 
 <script setup>
-import { laySanPham } from '@/axios/sanpham';
-import { onMounted, ref, computed } from 'vue';
-import useEmitter from '@/useEmitter';
-const searchQuery = ref('');
-const priceRange = ref([100000, 3200000]);
-const sanPham = ref([]);
+import { onMounted } from 'vue'
+import { useProductStore } from '@/store/sanPhamStore'
+import useEmitter from '@/useEmitter'
+
+const productStore = useProductStore()
 const emitter = useEmitter()
+
 const headers = [
   { title: 'Ảnh', key: 'hinhAnh', align: 'center' },
   { title: 'Tên', key: 'tenSanPham', align: 'start' },
@@ -133,56 +137,29 @@ const headers = [
   { title: 'Chất liệu dây', key: 'chatLieuDay', align: 'start' },
   { title: 'Giá', key: 'gia', align: 'end' },
   { title: 'Thao tác', key: 'actions', align: 'center' },
-];
-
-const filters = [
-  { label: 'Danh mục', value: 'Tất cả', items: ['Tất cả', 'Giày cao cổ', 'Giày thể thao'] },
-  { label: 'Màu sắc', value: 'Tất cả', items: ['Tất cả', 'Xanh dương', 'Tím'] },
-  { label: 'Chất liệu', value: 'Tất cả', items: ['Tất cả', 'Đế sắt', 'Đế nhựa'] },
-  { label: 'Kích cỡ', value: 'Tất cả', items: ['Tất cả', '40', '41'] },
-  { label: 'Đế giày', value: 'Tất cả', items: ['Tất cả', 'Đế sắt', 'Đế nhựa'] },
-  { label: 'Thương hiệu', value: 'Tất cả', items: ['Tất cả', 'Converse', 'Nike'] },
-];
-
-// Thêm computed property để lọc sản phẩm
-const filteredProducts = computed(() => {
-  return sanPham.value.filter(item => {
-    // Lọc theo search query
-    const searchLower = searchQuery.value.toLowerCase();
-    const matchesSearch = Object.values(item).some(value => 
-      String(value).toLowerCase().includes(searchLower)
-    );
-
-    // Lọc theo khoảng giá
-    const matchesPrice = item.gia >= priceRange.value[0] && 
-                        item.gia <= priceRange.value[1];
-
-    return matchesSearch && matchesPrice;
-  });
-});
+]
 
 onMounted(async () => {
-  const data = await laySanPham();
-  sanPham.value = data.data;
-  console.log(sanPham.value)
-});
+  await productStore.fetchProducts()
+})
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('vi-VN', { 
     style: 'currency', 
     currency: 'VND' 
-  }).format(value);
-};
+  }).format(value)
+}
 
 const selectProduct = (product) => {
   const data = {
-    giaSauGiam : product.giaSauGiam,
-    chiTietSanPhamId:product.chiTietSanPhamId
+    giaSauGiam: product.giaSauGiam,
+    chiTietSanPhamId: product.chiTietSanPhamId
   }
-  emitter.emit("chiTietSanPhamId",data)
-};
+  emitter.emit("chiTietSanPhamId", data)
+}
 </script>
 
+<!-- Style giữ nguyên không thay đổi -->
 <style scoped>
 .search-field {
   border-radius: 8px;
