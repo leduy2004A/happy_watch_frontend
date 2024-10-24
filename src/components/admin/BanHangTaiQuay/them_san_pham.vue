@@ -49,6 +49,8 @@ import san_pham from './san_pham.vue';
 import { onMounted, ref, watch } from 'vue';
 import dialog_sanpham from './dialog_sanpham.vue';
 import { useInvoiceStore } from "@/store/invoiceStore";
+import { useToast } from 'vue-toastification';
+const toast = useToast()
 const hoaDonStore = useInvoiceStore();
 const emitter = useEmitter()
 const tab = ref(0)
@@ -61,7 +63,8 @@ const reloadKey = ref(0) // Added to force re-render
 const dataAdd = ref({
   hoaDonId: 0,
   chiTietSanPhamId: 0,
-  gia: 0
+  gia: 0,
+  soLuong:0
 })
 
 // Tách logic load sản phẩm thành function riêng
@@ -110,8 +113,14 @@ onMounted(() => {
     dataAdd.value.chiTietSanPhamId = data.chiTietSanPhamId
     dataAdd.value.gia = data.giaSauGiam
     dataAdd.value.hoaDonId = tab.value
+    dataAdd.value.soLuong = data.soLuong
     console.log(dataAdd.value)
     const dataResult = await addSanPhamVaoHoaDon(dataAdd.value)
+    if(dataResult.status === 200)
+    {
+      toast.success("Thêm sản phẩm thành công")
+      emitter.emit("closeChonSanPham",false)
+    }
     // Reload products after adding new product
     await loadProducts(tab.value)
   })

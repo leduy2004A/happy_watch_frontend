@@ -4,6 +4,7 @@ import page_admin from '../components/admin/page_admin.vue';
 import main_content from '@/components/admin/BanHangTaiQuay/main_content.vue';
 import AppFooter from '@/components/AppFooter.vue';
 import user from '../components/user/user.vue'
+import hoa_don_pdf from '@/components/admin/BanHangTaiQuay/hoa_don_pdf.vue';
 const routes = [
   { path: '/admin', component: page_admin,
     children:[
@@ -14,6 +15,10 @@ const routes = [
       {
         path:'thongke',
         component:user
+      },
+      {
+        path:'pdf_check',
+        component:hoa_don_pdf
       }
     ]
    },

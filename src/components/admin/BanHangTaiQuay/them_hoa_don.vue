@@ -61,7 +61,7 @@
 import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '@/store/invoiceStore'
 import useEmitter from '@/useEmitter'
-
+const hoa_don_id = ref(0)
 const emitter = useEmitter()
 const invoiceStore = useInvoiceStore()
 const selectedTab = ref(null)
@@ -72,13 +72,18 @@ onMounted(async () => {
 })
 
 const handleTabClick = (tabId) => {
+  
   invoiceStore.setHoaDonId(tabId)
   emitter.emit("addTab", tabId)
 }
 
 const handleAddInvoice = async () => {
   try {
+    // invoiceStore.setHoaDonId(tabId)
+    
+    console.log(hoa_don_id.value)
     const newInvoice = await invoiceStore.addNewInvoice()
+    invoiceStore.hoaDonId = newInvoice.id
     selectedTab.value = newInvoice
     emitter.emit("getTab", invoiceStore.getAllTabs)
     emitter.emit("addTab", newInvoice.id)

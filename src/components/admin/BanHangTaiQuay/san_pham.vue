@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(product, index) in sanPham" :key="index" class="product">
+  <div v-for="(product, index) in cartStore.products" :key="index" class="product">
     <input type="checkbox" class="product-checkbox" />
 
     <img class="product-image" :src="product.hinhAnh[0]" alt="product" />
@@ -7,22 +7,32 @@
     <div class="product-info">
       <div class="discount-label">{{ product.discount }}%</div>
       <h3 class="product-name">{{ product.tenSanPham }}</h3>
-      <p class="old-price"><s>{{ parseMoney(product.giaSanPham) }}</s></p>
-      <p class="new-price">{{ parseMoney(product.giaTungSanPham) }}</p>
+      <p class="old-price">
+        <s>{{ cartStore.parseMoney(product.giaSanPham) }}</s>
+      </p>
+      <p class="new-price">{{ cartStore.parseMoney(product.giaTungSanPham) }}</p>
       <p class="product-size">Màu sắc sản phẩm: {{ product.mauSacSanPham }}</p>
     </div>
 
     <div class="additional-info">
-      <p class="new-price">{{ parseMoney(productTotalPrice(product)) }}</p>
+      <p class="new-price">
+        {{ cartStore.parseMoney(cartStore.productTotalPrice(product)) }}
+      </p>
     </div>
 
     <div class="product-quantity">
-      <button class="quantity-btn" @click="decreaseQuantity(index,product)">-</button>
+      <button 
+        class="quantity-btn" 
+        @click="cartStore.decreaseQuantity(index, product)"
+      >-</button>
       <span class="quantity">{{ product.soLuong }}</span>
-      <button class="quantity-btn" @click="increaseQuantity(index,product)">+</button>
+      <button 
+        class="quantity-btn" 
+        @click="cartStore.increaseQuantity(index, product)"
+      >+</button>
     </div>
 
-    <v-btn class="delete-btn" @click="removeProduct(index)">
+    <v-btn class="delete-btn" @click="cartStore.removeProduct(index,product)">
       <v-icon>mdi-trash-can</v-icon>
     </v-btn>
   </div>
@@ -30,96 +40,37 @@
   <!-- Total Price Section -->
   <div class="total-price-container">
     <p class="total-label">Tổng tiền</p>
-    <p class="total-price">{{ parseMoney(totalPrice) }}</p>
+    <p class="total-price">{{ cartStore.parseMoney(cartStore.totalPrice) }}</p>
   </div>
 </template>
 
 <script setup>
-import { addSoLuongSanPham } from '@/axios/hoadon';
-import { truSoLuongSanPham } from '@/axios/hoadon';
-import { getSanPhamTheoHoaDon } from '@/axios/hoadon';
-import useEmitter from '@/useEmitter';
-const emitter = useEmitter()
+import { onMounted, watch } from 'vue'
+import { useSanPhamTrongHoaDonStore } from '@/store/sanPhamTrongHoaDonStore'
+import useEmitter from '@/useEmitter'
+
 const props = defineProps({
-  lstSanPham:Array,
-  hoa_don_id:Number
-})
-import { ref, computed, onMounted, watch } from 'vue'
-const sanPham = ref([...props.lstSanPham])
-const tongDataSanPham = ref({...props.tongSanPhamTrongHoaDon})
-onMounted(()=>{
-  emitter.on("resultSanPhamHoaDon",data=>{
-    sanPham.value = data.chiTietHoaDons
-})
-})
-const products = ref([
-  {
-    name: 'Balenc Grey 2023 Bạc Đế nhựa',
-    pricePerUnit: 137500,
-    oldPrice: 250000,
-    quantity: 1,
-    size: 41,
-    discount: 45,
-    image: 'https://donghoolevs.vn/wp-content/uploads/2022/10/hinh-anh-chinh-5-5.jpg',
-  },
-  // Add more products here if needed
-  {
-    name: 'Another Product',
-    pricePerUnit: 100000,
-    oldPrice: 200000,
-    quantity: 2,
-    size: 42,
-    discount: 50,
-    image: 'https://donghoolevs.vn/wp-content/uploads/2022/10/hinh-anh-chinh-5-5.jpg',
-  }
-])
-
-const totalPrice = computed(() => {
-  return sanPham.value.reduce((sum, product) => sum + product.giaTungSanPham * product.soLuong, 0)
+  lstSanPham: Array,
+  hoa_don_id: Number
 })
 
-const productTotalPrice = (product) => {
-  return product.giaTungSanPham * product.soLuong
-}
+const emitter = useEmitter()
+const cartStore = useSanPhamTrongHoaDonStore()
 
-const parseMoney = (money) => {
-  return money.toLocaleString('vi-VN', {
-    style: 'currency',
-    currency: 'VND'
+onMounted(() => {
+  // Khởi tạo giỏ hàng với dữ liệu từ props
+  cartStore.initializeCart(props.lstSanPham, props.hoa_don_id)
+  
+  // Lắng nghe sự kiện cập nhật sản phẩm
+  emitter.on("resultSanPhamHoaDon", data => {
+    cartStore.products = data.chiTietHoaDons
   })
-}
-
-const increaseQuantity = async (index, product) => {
-  try {
-    await addSoLuongSanPham(product.chiTietHoaDonId)
-    // Cập nhật state local thay vì props
-    sanPham.value[index].soLuong++
-  } catch (error) {
-    console.error('Lỗi khi tăng số lượng:', error)
-  }
-}
-
-const decreaseQuantity = async (index, product) => {
-  try {
-    if (sanPham.value[index].soLuong > 1) {
-      await truSoLuongSanPham(product.chiTietHoaDonId)
-      // Cập nhật state local thay vì props 
-      sanPham.value[index].soLuong--
-    }
-  } catch (error) {
-    console.error('Lỗi khi giảm số lượng:', error) 
-  }
-}
-
-const removeProduct = (index) => {
-  products.value.splice(index, 1)
-}
-watch(totalPrice, async (newQuestion, oldQuestion) => {
-  if(newQuestion)
-  {
-    const result = (await getSanPhamTheoHoaDon(props.hoa_don_id)).data;
-    emitter.emit("tongsanpham",result)
-   
+})
+// Watch thay đổi tổng tiền
+watch(() => cartStore.totalPrice, async (newValue) => {
+  if (newValue) {
+    const result = await cartStore.updateCart()
+    emitter.emit("tongsanpham", result)
   }
 })
 </script>

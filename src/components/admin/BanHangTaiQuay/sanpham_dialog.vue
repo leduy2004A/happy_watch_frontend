@@ -115,13 +115,16 @@
       </v-col>
     </v-row>
   </v-container>
+  <dia_log_select_sanpham :dialog="openDialog" :product="productSelect"></dia_log_select_sanpham>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import dia_log_select_sanpham from './dia_log_select_sanpham.vue';
+import { onMounted,ref } from 'vue'
 import { useProductStore } from '@/store/sanPhamStore'
 import useEmitter from '@/useEmitter'
-
+const openDialog = ref(false)
+const productSelect = ref({})
 const productStore = useProductStore()
 const emitter = useEmitter()
 
@@ -141,6 +144,11 @@ const headers = [
 
 onMounted(async () => {
   await productStore.fetchProducts()
+  emitter.on("closeDialog",data =>{
+    console.log(data)
+    openDialog.value = false
+    productSelect.value ={} 
+  })
 })
 
 const formatCurrency = (value) => {
@@ -151,11 +159,9 @@ const formatCurrency = (value) => {
 }
 
 const selectProduct = (product) => {
-  const data = {
-    giaSauGiam: product.giaSauGiam,
-    chiTietSanPhamId: product.chiTietSanPhamId
-  }
-  emitter.emit("chiTietSanPhamId", data)
+  productSelect.value ={...product} 
+  openDialog.value = true
+
 }
 </script>
 
@@ -260,4 +266,28 @@ const selectProduct = (product) => {
     height: 60px;
   }
 }
+table > tbody > tr > td:nth-child(11), 
+  table > thead > tr > th:nth-child(11) {
+    position: sticky !important; 
+    position: -webkit-sticky !important; 
+    right: 0; 
+    z-index: 9998;
+    background: white;
+  }
+
+  table > thead > tr > th:nth-child(11) {
+    z-index: 9999;
+  }
+  table > tbody > tr > td:nth-child(1), 
+  table > thead > tr > th:nth-child(1) {
+    position: sticky !important; 
+    position: -webkit-sticky !important; 
+    left: 0; 
+    z-index: 9998;
+    background: white;
+  }
+
+  table > thead > tr > th:nth-child(1) {
+    z-index: 9999;
+  }
 </style>

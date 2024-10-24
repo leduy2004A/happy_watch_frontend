@@ -19,6 +19,7 @@
   <hr class="mb-10"/>
   
   <div class="hoadon" v-if="hoaDonStore.hoaDonId !=0">
+    
     <div class="diachi">
       <transition name="fade-slide">
         <dia_chi_khach_hang :diachi="store.diachi" v-if="store.isDelivery"></dia_chi_khach_hang>
@@ -112,6 +113,7 @@
 </template>
 
 <script setup>
+import Sweetalert2 from "sweetalert2";
 import { useToast } from 'vue-toastification'
 import { onMounted } from 'vue'
 import { useOrderStore } from '@/store/tienStore'
@@ -122,37 +124,80 @@ import useEmitter from '@/useEmitter'
 import { watch } from 'vue'
 import { useInvoiceStore } from "@/store/invoiceStore";
 import { useAddressStore } from "@/store/diaChiStore";
+import {useLoading} from 'vue-loading-overlay'
+import { useExportPdf } from './exportPdf'
+import { useSanPhamTrongHoaDonStore } from '@/store/sanPhamTrongHoaDonStore'
+const sanPhamHoaDonStore =useSanPhamTrongHoaDonStore()
+const { exportToPdf } = useExportPdf()
+const $loading = useLoading({
+    // options
+    loader:'bars',
+    lockScroll:false,
+    color:'orange'
+});
 const hoaDonStore = useInvoiceStore();
 const emitter = useEmitter()
 const store = useOrderStore()
 const diaChiStore = useAddressStore()
 const toast = useToast()
 const handleConfirmOrder = async () => {
+    if(store.isDelivery == false) {
+      Sweetalert2.fire({
+        title: "Bạn có muốn xoá  không?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Không !`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
 
-  if(store.isDelivery == false)
-  {
-    console.log("Được")
-    try {
-      const result = await diaChiStore.xacNhanDonHang()
-      console.log(result)
-      if(result.status == 200)
-      {
-        toast.success("Đã xác nhận đơn hàng")
-        setTimeout(()=>{
-          window.location.href = window.location.href
-        },2000)
-        
-      }
-      
-    } catch (error) {
-      toast.error("Có lỗi xảy ra")
-      
+            
+        let loader = null;
+        try {
+            loader = $loading.show();
+            const result = await diaChiStore.xacNhanDonHang()
+            
+            if(result.result.status == 200) {
+                toast.success("Đã xác nhận đơn hàng")
+                const dataExportPdf = {
+                  tenKhachHang:store.customerInfo,
+                  diaChiNhanHang:"Tại cửa hàng",
+                  nhanVien:"",
+                  hoaDonId:hoaDonStore.hoaDonId,
+                  maHoaDon:hoaDonStore.maHoaDon,
+                  ngayTao:hoaDonStore.ngayTao,
+                  products: sanPhamHoaDonStore.products,
+                  tienHang:store.orderAmountFormatted,
+                  giamGia:store.discountAmountFormatted,
+                  phiGiaoHang:store.shippingFeeFormatted,
+                  tongTien:store.formatCurrency(store.totalAmountValue)
+                }
+                exportToPdf(dataExportPdf)
+                // Thêm delay trước khi reload
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                window.location.href = window.location.href
+                console.log(result.data)
+            }
+        } catch (error) {
+            toast.error(error.response.data || error.response)
+        } finally {
+            // Kiểm tra nếu loader tồn tại thì mới hide
+            if (loader) {
+                loader.hide()
+            }
+        }
+          
+        } else if (result.isDenied) {
+          Swal.fire("Changes are not saved", "", "info");
+        }
+      });
+
+
+
+
+    } else {
+        emitter.emit("orderClick")
     }
-  }
-  else{
-    emitter.emit("orderClick")
-  }
-  
 }
 onMounted(() => {
   emitter.on("close_dialog", store.closeModal)
@@ -170,7 +215,19 @@ watch(store.products,(newVal,oldVal)=>{
     console.log(newVal)
     store.resetSetForm()
   }
-})
+}),
+watch(
+  () => store.isDelivery,
+  (isDelivery) => {
+    if (isDelivery === false) {
+      store.resetFeeShip()
+      console.log(isDelivery)
+    }
+    else{
+      store.resetFeeShip()
+    }
+  }
+)
 </script>
 
 <style scoped>

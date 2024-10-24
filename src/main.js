@@ -14,6 +14,10 @@ const options = {
 
 // Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import {LoadingPlugin} from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
 // Components
 import App from './App.vue'
 
@@ -29,6 +33,8 @@ const emitter = mitt()
 registerPlugins(app)
 app.config.globalProperties.emitter = emitter;
 app.use(Toast,options)
+app.use(VueSweetalert2)
+app.use(LoadingPlugin)
 app.use(router)
 app.mount('#app')
 ``

@@ -17,7 +17,8 @@ export const useOrderStore = defineStore('order', {
     dataTongTien: {},
     hoaDonId: 0,
     tienKhachTra:0,
-    tienThua:0
+    tienThua:0,
+    tienDaShip:0
   }),
 
   getters: {
@@ -94,6 +95,17 @@ export const useOrderStore = defineStore('order', {
             this.tienKhachTra = 0
         }
       
+    },
+    resetFeeShip(){
+      if(this.isDelivery === false){
+        this.tienDaShip = this.shippingFee
+        this.shippingFee = 0
+        this.totalAmountValue
+      }
+      else{
+        this.shippingFee = this.tienDaShip
+        this.totalAmountValue
+      }
     },
     openModal() {
       this.modal = true

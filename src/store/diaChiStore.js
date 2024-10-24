@@ -126,7 +126,10 @@ export const useAddressStore = defineStore('address', {
   
         try {
           const result = await xacNhanDonHang(data)
-          return result
+          return{
+            result,
+            data
+          } 
         } catch (error) {
           console.error('Error confirming order:', error)
           throw error

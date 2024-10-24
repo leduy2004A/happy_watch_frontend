@@ -9,6 +9,7 @@
           <v-list-item-content>
             <v-list-item-title class="drawer-title">HappyWatch</v-list-item-title>
             <v-list-item-subtitle class="drawer-subtitle">Cửa hàng đồng hồ vui vẻ</v-list-item-subtitle>
+            
           </v-list-item-content>
         </v-list-item>
         
@@ -16,6 +17,12 @@
   
         <!-- Danh sách menu -->
         <v-list>
+          <v-list-item link title="Bán hàng tại quầy" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
+          <v-list-item link title="Thống kê" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
+          <v-list-item link title="Quản lý sản phẩm" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
+          <v-list-item link title="Quản lý khuyến mãi" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
+          <v-list-item link title="Quản lý khách hàng" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
+          <v-list-item link title="Thống kê" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
           <v-list-item link title="Bán hàng tại quầy" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
           <v-list-item link title="Thống kê" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
         </v-list>

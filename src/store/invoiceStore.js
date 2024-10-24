@@ -14,7 +14,9 @@ export const useInvoiceStore = defineStore('invoice', {
     currentTab: null,        // Tab hiện tại đang được chọn
     nextOrderNumber: 1,      // Số thứ tự cho hóa đơn tiếp theo
     isLoading: false,        // Trạng thái loading
-    error: null             // Lưu trữ lỗi nếu có
+    error: null,
+    maHoaDon:'',
+    ngayTao:'',             // Lưu trữ lỗi nếu có
   }),
 
   // Getters
@@ -99,7 +101,8 @@ export const useInvoiceStore = defineStore('invoice', {
           ma: data.ma,
           id: data.id
         }
-        
+        this.maHoaDon = data.ma
+        this.ngayTao = data.ngayTao
         this.tabs.push(newInvoice)
         this.currentTab = newInvoice
         

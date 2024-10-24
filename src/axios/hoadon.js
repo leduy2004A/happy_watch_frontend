@@ -11,7 +11,7 @@ export const addSanPhamVaoHoaDon = async (data) => {
       //gio add nhe
       id: data.chiTietSanPhamId,
     },
-    soLuong: 1,
+    soLuong: data.soLuong,
     giaTungSanPham: data.gia,
   };
   return await api.post("api/chitiethoadon/add",dataAdd);
@@ -33,4 +33,7 @@ export const huyHoaDon = async(data)=>{
 }
 export const xacNhanDonHang = async (data)=>{
   return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}`)
+}
+export const xoaSanPhamTrongHoaDon =async (data)=>{
+  return await api.delete(`api/chitiethoadon/delete?id=${data}`)
 }

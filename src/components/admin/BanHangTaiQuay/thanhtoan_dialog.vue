@@ -25,6 +25,14 @@
         outlined
         dense
       ></v-text-field>
+      <v-text-field
+      v-if="paymentMethod === 'Chuyển khoản'"
+        label="Mã Giao Dịch"
+        ref="inputField"
+        outlined
+        dense
+        v-model="maGiaoDich"
+      ></v-text-field>
       <div class="table-container">
         <table class="payment-table">
           <thead>
@@ -78,7 +86,7 @@ const unseenButon = ref(true)
 const props = defineProps({
   hoaDonId: Number
 });
-
+const maGiaoDich = ref("")
 const totalAmount = ref(2127500);
 const paymentMethod = ref('Tiền mặt');
 const customerPayment = ref(0);
@@ -157,7 +165,8 @@ const confirmPayment = async () => {
     phuongThuc: paymentMethod.value,
     hoaDonId: props.hoaDonId,
     tenKhachHang: diaChiStore.formData.ten,
-    gia: tienStore.totalAmountValue
+    gia: tienStore.totalAmountValue,
+    maGiaoDich:maGiaoDich.value
   };
   console.log(dataPayment);
   try{
@@ -169,7 +178,8 @@ const confirmPayment = async () => {
     }
 
   }catch(error){
-   const errorMessage = error.response?.data?.message || "Có lỗi xảy ra khi thanh toán";
+    console.log(error)
+   const errorMessage = error.response?.data || "Có lỗi xảy ra khi thanh toán";
     toast.error(errorMessage);
   }
  

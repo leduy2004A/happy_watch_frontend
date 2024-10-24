@@ -20,10 +20,11 @@
   </template>
   
   <script setup>
-
+  
   import { ref, watch, defineProps } from 'vue';
   import useEmitter from '@/useEmitter';
   import khachhang_dialog from './khachhang_dialog.vue';
+
   const emitter = useEmitter();
   // Định nghĩa props
   const dataProps = defineProps({

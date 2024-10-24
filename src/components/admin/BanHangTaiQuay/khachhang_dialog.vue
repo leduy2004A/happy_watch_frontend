@@ -58,6 +58,8 @@
   import { getdiachiTheoKhachHang } from "@/axios/diachi";
   import { useInvoiceStore } from "@/store/invoiceStore";
   import useEmitter from "@/useEmitter";
+  import { useKhachHangStore } from '@/store/khachHangStore';
+  const khachHangStore = useKhachHangStore()
   import { useToast } from "vue-toastification";
   const emitter = useEmitter()
   const search = ref("");
@@ -168,11 +170,14 @@
   };
   
   const selectCustomer = async (item) => {
+   
     const resultData = await getdiachiTheoKhachHang(InvoiceStore.getHoaDonId,item.id)
     if(resultData.status === 200)
     {
+      khachHangStore.idNguoiDung = item.id
       toast.success("Đã thêm khách hàng")
       emitter.emit("diachivakhachhang",resultData.data)
+      
     }
     else{
     toast.success("Lỗi chọn khách hàng")
