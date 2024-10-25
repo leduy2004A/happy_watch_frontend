@@ -9,8 +9,9 @@
           </div>
 
           <div class="header-actions">
-            <v-btn color="#8E24AA" class="mr-3 white--text" elevation="2">
+            <v-btn color="#8E24AA" class="mr-3 white--text" elevation="2" @click="openQr()">
               Quét QR sản phẩm
+              
             </v-btn>
             <v-btn color="#AB47BC" class="white--text" elevation="2" @click="openDialog()">
               Thêm sản phẩm
@@ -39,11 +40,13 @@
     </div>
   </div>
   <dialog_sanpham :modal="modal"></dialog_sanpham>
+  <qr_code :dialog="modalQr"></qr_code>
 </template>
 
 <script setup>
 import { getSanPhamTheoHoaDon } from '@/axios/hoadon';
 import { addSanPhamVaoHoaDon } from '@/axios/hoadon';
+import qr_code from './qr_code.vue';
 import useEmitter from '@/useEmitter';
 import san_pham from './san_pham.vue';
 import { onMounted, ref, watch } from 'vue';
@@ -56,6 +59,7 @@ const emitter = useEmitter()
 const tab = ref(0)
 const tabs = ref([])
 const modal = ref(false)
+const modalQr = ref(false)
 const lstSanPham = ref([])
 const tongSanPhamTrongHoaDon = ref([])
 const reloadKey = ref(0) // Added to force re-render
@@ -66,7 +70,9 @@ const dataAdd = ref({
   gia: 0,
   soLuong:0
 })
-
+const openQr = ()=>{
+  modalQr.value = true
+}
 // Tách logic load sản phẩm thành function riêng
 const loadProducts = async (tabId) => {
   try {
@@ -108,7 +114,9 @@ onMounted(() => {
   emitter.on("close_dialog", data => {
     modal.value = data
   })
-
+  emitter.on("closeQr",data =>{
+    modalQr.value = data
+  })
   emitter.on("chiTietSanPhamId", async data => {
     dataAdd.value.chiTietSanPhamId = data.chiTietSanPhamId
     dataAdd.value.gia = data.giaSauGiam

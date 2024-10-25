@@ -149,7 +149,9 @@ export const useOrderStore = defineStore('order', {
           weight: this.dataTongTien.tongCanNang,
           name: 'Đồng hồ',
         }
+        console.log(dataShip)
         const result = await getPhiShip(dataShip)
+        console.log(result)
         this.shippingFee = result.data.data.total
       } catch (error) {
         console.error('Error calculating shipping fee:', error)

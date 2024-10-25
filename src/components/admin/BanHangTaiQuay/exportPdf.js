@@ -41,7 +41,7 @@ export const useExportPdf = () => {
             <div class="left">
               <img src="${logoBase64}" alt="Logo" width="150px">
             </div>
-            <div class="center" style="margin-right:20px">
+            <div class="center" style="margin-left:20px">
               <h1 style="
                 color: #333;
                 margin: 0 0 10px 0;

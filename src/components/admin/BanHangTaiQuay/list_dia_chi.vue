@@ -256,15 +256,41 @@ const openAddDialog = () => {
 };
 
 
-const selectAddress = (address) => {
+const selectAddress = async (address) => {
   console.log(address);
+  // Gán các thông tin cơ bản
   addressStore.formData.ten = address.tenNguoiNhan;
   addressStore.formData.phone = address.dienThoai;
-  addressStore.formData.province = address.tinhThanhPho;
-  addressStore.formData.ward = address.xaPhuongThiTran;
-  addressStore.formData.district = address.quanHuyen;
   addressStore.formData.detailAddress = address.diaChiCuThe;
-  // emit('select-address', address);
+
+  // Tìm và gán mã tỉnh/thành phố
+  const province = addressStore.provinces.find(
+    p => p.text === address.tinhThanhPho
+  );
+  if (province) {
+    addressStore.formData.province = province.value;
+    // Load districts cho tỉnh/thành được chọn
+    await addressStore.handleProvinceChange(province.value);
+  }
+
+  // Tìm và gán mã quận/huyện
+  const district = addressStore.districts.find(
+    d => d.text === address.quanHuyen
+  );
+  if (district) {
+    addressStore.formData.district = district.value;
+    // Load wards cho quận/huyện được chọn
+    await addressStore.handleDistrictChange(district.value);
+  }
+
+  // Tìm và gán mã phường/xã
+  const ward = addressStore.wards.find(
+    w => w.text === address.xaPhuongThiTran
+  );
+  if (ward) {
+    addressStore.formData.ward = ward.value;
+  }
+
   toast.success("Đã chọn địa chỉ thành công");
 };
 
