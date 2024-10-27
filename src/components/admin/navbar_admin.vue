@@ -17,8 +17,10 @@
   
         <!-- Danh sách menu -->
         <v-list>
-          <v-list-item link title="Bán hàng tại quầy" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
-          <v-list-item link title="Thống kê" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
+          <v-list-item link title="Bán hàng tại quầy" prepend-icon="mdi-cash" to="sell" class="nav-item">
+    
+          </v-list-item>
+          <v-list-item link title="Quản lý hoá đơn" prepend-icon="mdi-google-analytics" to="bill" class="nav-item"></v-list-item>
           <v-list-item link title="Quản lý sản phẩm" prepend-icon="mdi-cash" class="nav-item"></v-list-item>
           <v-list-item link title="Quản lý khuyến mãi" prepend-icon="mdi-google-analytics" class="nav-item"></v-list-item>
           <v-list-item link title="Quản lý khách hàng" prepend-icon="mdi-cash" class="nav-item"></v-list-item>

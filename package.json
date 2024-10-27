@@ -10,6 +10,7 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.7.7",
     "html2pdf.js": "^0.10.2",
+    "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
     "pinia": "^2.2.4",
     "roboto-fontface": "*",
