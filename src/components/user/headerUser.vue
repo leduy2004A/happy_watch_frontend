@@ -1,10 +1,12 @@
 <template>
+
   <v-app-bar
     app
-    class="px-3"
+    class="px-8"
     height="80"
     color="white"
     elevation="1"
+    
   >
     <!-- Logo -->
     <v-app-bar-title class="d-flex align-center">
@@ -49,16 +51,20 @@
       </v-btn>
 
       <!-- Shopping Cart -->
-      <v-btn icon class="position-relative">
-        <v-icon>mdi-cart</v-icon>
-        <v-badge
-          content="5"
-          color="red"
-          floating
-          dot
-          offset-x="-5"
-          offset-y="5"
-        ></v-badge>
+      <v-btn icon class="position-relative" @click="openModalCart()">
+  
+          <v-badge
+            :content="cartStore.cartItemCount.toString()"
+            :value="cartStore.cartItemCount"
+            color="red"
+            floating
+            offset-x="-5"
+            offset-y="5"
+            class="mr-5"
+          >
+            <v-icon>mdi-cart</v-icon>
+          </v-badge>
+      
       </v-btn>
     </div>
 
@@ -84,23 +90,33 @@
       </v-list>
     </v-navigation-drawer>
   </v-app-bar>
+  <cart-over-lay :modal="modalCart"></cart-over-lay>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      drawer: false,
-      menuItems: [
-        { title: 'TRANG CHỦ', path: '/' },
-        { title: 'GIỚI THIỆU', path: '/gioi-thieu' },
-        { title: 'CỬA HÀNG', path: '/cua-hang' },
-        { title: 'TIN TỨC', path: '/tin-tuc' },
-        { title: 'LIÊN HỆ', path: '/lien-he' },
-      ]
-    }
-  }
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useCartStore } from '@/store/cartStore'
+import cartOverLay from './cartOverLay.vue';
+import useEmitter from '@/useEmitter';
+const emitter = useEmitter()
+const cartStore = useCartStore()
+const modalCart = ref(false)
+const drawer = ref(false)
+const menuItems = ref([
+  { title: 'TRANG CHỦ', path: '/product/' },
+  { title: 'GIỚI THIỆU', path: '/gioi-thieu' },
+  { title: 'CỬA HÀNG', path: '/product/cua-hang' },
+  { title: 'TIN TỨC', path: '/tin-tuc' },
+  { title: 'LIÊN HỆ', path: '/lien-he' },
+])
+const openModalCart = ()=>{
+  modalCart.value = true
 }
+onMounted(()=>{
+  emitter.on("closeCartModal",val =>{
+    modalCart.value = val
+  })
+})
 </script>
 
 <style scoped>
@@ -109,22 +125,18 @@ export default {
   letter-spacing: 0.5px;
 }
 
-/* Hover effect for navigation buttons */
 .v-btn:hover {
   opacity: 0.8;
 }
 
-/* Custom badge styling */
 .position-relative {
   position: relative;
 }
 
-/* Add transition effects */
 .v-btn {
   transition: all 0.3s ease;
 }
 
-/* Optional: Add active link styling */
 .v-btn.router-link-active {
   color: #000;
   font-weight: bold;

@@ -2,7 +2,7 @@
   <div v-for="(product, index) in cartStore.products" :key="index" class="product">
     <input type="checkbox" class="product-checkbox" />
 
-    <img class="product-image" :src="product.hinhAnh[0]" alt="product" />
+    <img class="product-image" :src="product.hinhAnh" alt="product" />
 
     <div class="product-info">
       <div class="discount-label">{{ product.discount }}%</div>

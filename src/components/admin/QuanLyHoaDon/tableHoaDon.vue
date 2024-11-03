@@ -1,7 +1,25 @@
 <template>
   <div>
+    <!-- Loading overlay -->
+    <v-overlay :model-value="store.isLoading" class="align-center justify-center">
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      ></v-progress-circular>
+    </v-overlay>
+
+    <!-- Error alert -->
+    <v-alert
+      v-if="store.error"
+      type="error"
+      closable
+      class="mb-4"
+    >
+      {{ store.error }}
+    </v-alert>
+
     <!-- Tab navigation -->
-    <v-tabs v-model="activeTab" class="mb-4 invoice-tabs">
+    <v-tabs v-model="store.activeTab" class="mb-4 invoice-tabs">
       <v-tab value="all" class="text-body-2 font-weight-medium px-4">TẤT CẢ</v-tab>
       <v-tab value="cancelled" class="text-body-2 font-weight-medium px-4">ĐÃ HỦY</v-tab>
       <v-tab value="pending" class="text-body-2 font-weight-medium px-4">CHỜ XÁC NHẬN</v-tab>
@@ -12,6 +30,17 @@
       <v-tab value="pending_payment" class="text-body-2 font-weight-medium px-4">CHỜ THANH TOÁN</v-tab>
       <v-tab value="completed" class="text-body-2 font-weight-medium px-4">HOÀN THÀNH</v-tab>
     </v-tabs>
+
+    <!-- Refresh button -->
+    <v-btn
+      icon
+      variant="text"
+      class="mb-4"
+      :disabled="store.isLoading"
+      @click="handleRefresh"
+    >
+      <v-icon>mdi-refresh</v-icon>
+    </v-btn>
 
     <!-- Table -->
     <v-table class="invoice-table">
@@ -29,11 +58,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="invoice in paginatedInvoices" :key="invoice.id">
-          <td>{{ calculateIndex(invoice) }}</td>
-          <td>{{ invoice.code }}</td>
+        <tr v-for="invoice in store.paginatedInvoices" :key="invoice.id">
+          <td>{{ store.calculateIndex(invoice) }}</td>
+          <td>{{ invoice.ma }}</td>
           <td>{{ invoice.quantity }}</td>
-          <td>{{ formatCurrency(invoice.total) }}</td>
+          <td>{{ store.formatCurrency(invoice.gia) }}</td>
           <td>
             <v-chip
               v-if="invoice.customerType === 'guest'"
@@ -42,7 +71,7 @@
               size="small"
               class="mr-2"
             >Khách lẻ</v-chip>
-            <span>{{ invoice.customerName }}</span>
+            <span>{{ invoice.tenNguoiNhan }}</span>
           </td>
           <td>{{ invoice.createdAt }}</td>
           <td>
@@ -56,10 +85,10 @@
           </td>
           <td>
             <v-chip
-              :color="getStatusColor(invoice.status)"
+              :color="store.getStatusColor(invoice.trangThai)"
               variant="outlined"
               size="small"
-            >{{ invoice.status }}</v-chip>
+            >{{ invoice.trangThai }}</v-chip>
           </td>
           <td>
             <v-btn
@@ -67,16 +96,16 @@
               variant="text"
               size="x-small"
               color="grey-darken-1"
-              @click="viewDetail(invoice.id)"
+              @click="store.viewDetail(invoice.id)"
             >
-              <router-link to="bill-detail">
+              <router-link :to="`bill-detail/${invoice.ma}`">
                 <v-icon>mdi-eye</v-icon>
               </router-link>
             </v-btn>
           </td>
         </tr>
         <!-- Show empty state when no data -->
-        <tr v-if="paginatedInvoices.length === 0">
+        <tr v-if="store.paginatedInvoices.length === 0">
           <td colspan="9" class="text-center py-4">Không có dữ liệu</td>
         </tr>
       </tbody>
@@ -87,155 +116,64 @@
       <span class="text-body-2 mr-4">
         Xem
         <v-select
-          v-model="itemsPerPage"
+          v-model="store.itemsPerPage"
           :items="[5, 10, 20, 50]"
           variant="outlined"
           density="compact"
           hide-details
           class="d-inline-block mx-2"
           style="width: 70px"
-          @update:model-value="handleItemsPerPageChange"
+          @update:model-value="store.setItemsPerPage"
         ></v-select>
         Hoá đơn
       </span>
       <v-pagination
-        v-model="page"
-        :length="totalPages"
+        v-model="store.page"
+        :length="store.totalPages"
         :total-visible="5"
         class="ml-auto"
-        @update:model-value="handlePageChange"
+        @update:model-value="store.setPage"
       ></v-pagination>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { quanLyHoaDonStore } from '@/store/quanLyhoaDonStore';
+import { onMounted, watch } from 'vue';
+import { useToast } from 'vue-toastification';
+const toast = useToast()
+const store = quanLyHoaDonStore();
 
-const activeTab = ref("all");
-const page = ref(1);
-const itemsPerPage = ref(5);
-
-// Sample data with unique IDs
-const invoices = ref([
-  {
-    id: 1,
-    code: "HD13",
-    quantity: 1,
-    total: 157750,
-    customerName: "Nguyễn Thị Thùy Dương",
-    customerType: "registered",
-    createdAt: "21/12/2023 13:48",
-    type: "offline",
-    status: "Chờ xác nhận",
-  },
-  {
-    id: 2,
-    code: "HD10",
-    quantity: 6,
-    total: 2127500,
-    customerName: "Khách lẻ",
-    customerType: "guest",
-    createdAt: "21/12/2023 13:48",
-    type: "offline",
-    status: "Hoàn thành",
-  },
-  {
-    id: 3,
-    code: "HD14",
-    quantity: 3,
-    total: 457750,
-    customerName: "Trần Văn An",
-    customerType: "registered",
-    createdAt: "21/12/2023 14:20",
-    type: "offline",
-    status: "Chờ xác nhận",
-  },
-  // Add more invoices with unique IDs...
-]);
-
-// Filter invoices based on active tab
-const filteredInvoices = computed(() => {
-  if (activeTab.value === "all") {
-    return invoices.value;
+onMounted(async () => {
+  try {
+    await store.fetchData();
+  } catch (error) {
+    console.error('Failed to fetch invoices:', error);
   }
-  
-  const statusMap = {
-    cancelled: "Đã hủy",
-    pending: "Chờ xác nhận",
-    waiting: "Chờ giao hàng",
-    shipping: "Đang vận chuyển",
-    delivered: "Đã giao hàng",
-    paid: "Đã thanh toán",
-    pending_payment: "Chờ thanh toán",
-    completed: "Hoàn thành"
-  };
-
-  return invoices.value.filter(invoice => 
-    invoice.status === statusMap[activeTab.value]
-  );
 });
 
-// Calculate total pages
-const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filteredInvoices.value.length / itemsPerPage.value));
+const handleTabChange = async (tab) => {
+  store.setActiveTab(tab);
+  try {
+    await store.fetchData();
+  } catch (error) {
+    console.error('Failed to fetch invoices after tab change:', error);
+  }
+};
+
+const handleRefresh = async () => {
+  try {
+    await store.refreshData();
+    toast.success('Dữ liệu đã được cập nhật');
+  } catch (error) {
+    console.error('Failed to refresh data:', error);
+  }
+};
+
+watch(() => store.activeTab, (newTab) => {
+  store.setActiveTab(newTab);
 });
-
-// Get paginated invoices
-const paginatedInvoices = computed(() => {
-  const startIndex = (page.value - 1) * itemsPerPage.value;
-  const endIndex = startIndex + itemsPerPage.value;
-  return filteredInvoices.value.slice(startIndex, endIndex);
-});
-
-// Calculate index for each row
-const calculateIndex = (invoice) => {
-  const index = filteredInvoices.value.indexOf(invoice);
-  return index + 1 + (page.value - 1) * itemsPerPage.value;
-};
-
-// Format currency
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat("vi-VN").format(value) + " đ";
-};
-
-// Get status color
-const getStatusColor = (status) => {
-  const colorMap = {
-    "Chờ xác nhận": "warning",
-    "Hoàn thành": "pink",
-    "Chờ giao hàng": "warning",
-    "Đã hủy": "error",
-    "Đang vận chuyển": "info",
-    "Đã giao hàng": "success",
-    "Đã thanh toán": "green",
-    "Chờ thanh toán": "orange",
-  };
-  return colorMap[status] || "grey";
-};
-
-// Handle page change
-const handlePageChange = (newPage) => {
-  page.value = newPage;
-};
-
-// Handle items per page change
-const handleItemsPerPageChange = (newItemsPerPage) => {
-  itemsPerPage.value = newItemsPerPage;
-  // Reset to first page when changing items per page
-  page.value = 1;
-};
-
-// Watch for active tab changes
-watch(activeTab, () => {
-  // Reset to first page when changing tabs
-  page.value = 1;
-});
-
-// View detail handler
-const viewDetail = (id) => {
-  console.log("View detail:", id);
-};
 </script>
 
 <style scoped>

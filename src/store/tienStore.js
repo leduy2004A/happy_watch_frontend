@@ -128,6 +128,7 @@ export const useOrderStore = defineStore('order', {
     },
 
     updateTongTien(data) {
+      console.log(data)
       this.dataTongTien = data
       this.discountCode = data.maKhuyenMaiTotNhat
       this.orderAmount = data.tongTienHoaDon
