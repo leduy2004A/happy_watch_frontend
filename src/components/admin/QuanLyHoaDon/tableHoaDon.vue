@@ -60,9 +60,9 @@
       <tbody>
         <tr v-for="invoice in store.paginatedInvoices" :key="invoice.id">
           <td>{{ store.calculateIndex(invoice) }}</td>
-          <td>{{ invoice.ma }}</td>
-          <td>{{ invoice.quantity }}</td>
-          <td>{{ store.formatCurrency(invoice.gia) }}</td>
+          <td>{{ invoice.maHoaDon }}</td>
+          <td>{{ invoice.tongSoSanPham }}</td>
+          <td>{{ store.formatCurrency(invoice.tongTien) }}</td>
           <td>
             <v-chip
               v-if="invoice.customerType === 'guest'"
@@ -71,9 +71,9 @@
               size="small"
               class="mr-2"
             >Khách lẻ</v-chip>
-            <span>{{ invoice.tenNguoiNhan }}</span>
+            <span>{{ invoice.tenKhachHang }}</span>
           </td>
-          <td>{{ invoice.createdAt }}</td>
+          <td>{{ invoice.ngayTao }}</td>
           <td>
             <v-chip
               :color="invoice.type === 'offline' ? 'light-green' : 'primary'"
@@ -98,7 +98,7 @@
               color="grey-darken-1"
               @click="store.viewDetail(invoice.id)"
             >
-              <router-link :to="`bill-detail/${invoice.ma}`">
+              <router-link :to="`bill-detail/${invoice.maHoaDon}`">
                 <v-icon>mdi-eye</v-icon>
               </router-link>
             </v-btn>

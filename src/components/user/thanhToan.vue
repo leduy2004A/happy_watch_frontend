@@ -107,12 +107,16 @@ import { useAddressStore } from "@/store/diaChiStore";
 import { thanhToanMuaNgay } from "@/axios/thanhtoan";
 import { useCheckOutStore } from "@/store/checkOutStore";
 import { useToast } from "vue-toastification";
+import { useSuccesStore } from "@/store/successStore";
+const successStore = useSuccesStore()
 const toast = useToast()
 const checkOutStore = useCheckOutStore()
 import useEmitter from "@/useEmitter";
+import { useRouter } from "vue-router";
 const emitter = useEmitter();
 const deliveryMethod = ref("cod");
 const store = useAddressStore();
+const router = useRouter()
 async function submitForm() {
   // Xử lý logic đặt hàng ở đây
   const selectedProvince = store.provinces.find(
@@ -146,7 +150,17 @@ async function submitForm() {
   const result = await thanhToanMuaNgay(data)
   if(result.status === 200)
   {
-    toast.success("Thanh toán thành công")
+    successStore.customerInfo.phone = store.formData.phone
+    successStore.customerInfo.fullName = store.formData.ten
+    successStore.customerInfo.address.province = selectedProvince.text,
+    successStore.customerInfo.address.district = selectedDistrict.text,
+    successStore.customerInfo.address.ward = selectedWard.text,
+    successStore.customerInfo.address.city = store.formData.detailAddress
+    successStore.products = checkOutStore.products
+    successStore.shipping.fee = checkOutStore.shippingFee
+    console.log(successStore.products)
+    router.push("/product/success")
+    toast.success("Đặt hàng thành công")
   }
 }
 const dialog = ref(false);

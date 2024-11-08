@@ -1,6 +1,6 @@
 import api from "./axios";
 export const getAllHoaDon = async ()=>{
-    return await api.get("api/qlhd/all");
+    return await api.get("api/qlhd/all-hd");
 }
 export const getHoaDonTheoMa = async (maHoaDon)=>{
     return await api.get(`api/qlhd/hoa-don/${maHoaDon}`);

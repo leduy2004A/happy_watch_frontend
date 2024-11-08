@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { layTrangThaiHoadonTheoMa } from '@/axios/quanlihoadon';
-
+import { chuyenTrangThai } from '@/axios/timeline';
 // Mapping trạng thái với style hiển thị
 const STATUS_MAPPING = {
   'Chờ xác nhận': {
@@ -50,6 +50,18 @@ const STATUS_MAPPING = {
     color: 'red-lighten-4', 
     icon: 'mdi-check-circle',
     iconColor: 'red'
+  },
+  'Chờ xác nhận': {
+    title: 'Chờ xác nhận',
+    color: 'red-lighten-4', 
+    icon: 'mdi-check-circle',
+    iconColor: 'red'
+  },
+  'Đang chờ xác nhận': {
+    title: 'Chờ xác nhận',
+    color: 'red-lighten-4', 
+    icon: 'mdi-check-circle',
+    iconColor: 'red'
   }
 };
 
@@ -57,7 +69,8 @@ export const useTimelineStore = defineStore('timeline', {
   state: () => ({
     timelineItems: [],
     loading: false,
-    error: null
+    error: null,
+    nutTrangThai:""
   }),
 
   actions: {
@@ -65,16 +78,18 @@ export const useTimelineStore = defineStore('timeline', {
       try {
         this.loading = true;
         const response = await layTrangThaiHoadonTheoMa(orderId);
-        
+        console.log(response)
         if (response.data) {
+          this.nutTrangThai = response.data.trangThaiTiepTheo
           // Chuyển đổi dữ liệu API thành format timeline
-          this.timelineItems = response.data.map(item => ({
+          this.timelineItems = response.data.lichSuTrangThai.map(item => ({
             id: item.id,
             ma: item.ma,
             ...STATUS_MAPPING[item.trangThaiDaLuu], // Map style dựa trên trạng thái
             timestamp: item.ngayChinhSua,
             note: item.ghiChu
           }));
+          console.log(this.timelineItems)
         }
       } catch (error) {
         console.error('Lỗi khi tải timeline:', error);
@@ -101,6 +116,30 @@ export const useTimelineStore = defineStore('timeline', {
         minute: '2-digit',
         second: '2-digit'
       });
+    },
+    async addTimeLine(data){
+      try {
+        this.loading = true;
+        const response = await chuyenTrangThai(data);
+        console.log(response)
+        if (response.data) {
+          this.nutTrangThai = response.data.trangThaiTiepTheo
+          // Chuyển đổi dữ liệu API thành format timeline
+          this.timelineItems = response.data.lichSuTrangThaiList.map(item => ({
+            id: item.id,
+            ma: item.ma,
+            ...STATUS_MAPPING[item.trangThaiDaLuu], // Map style dựa trên trạng thái
+            timestamp: item.ngayChinhSua,
+            note: item.ghiChu
+          }));
+        
+        }
+      } catch (error) {
+        console.error('Lỗi khi tải timeline:', error);
+        this.error = error;
+      } finally {
+        this.loading = false;
+      }
     }
   }
 });

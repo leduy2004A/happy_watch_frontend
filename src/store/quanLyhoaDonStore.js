@@ -101,6 +101,7 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
       try {
         const response = await getAllHoaDon();
         this.invoices = response.data;
+        console.log(this.invoices)
         return response.data; // Trả về data nếu cần sử dụng
       } catch (error) {
         const errorMessage = error.response?.data?.message || "Có lỗi xảy ra khi tải dữ liệu";

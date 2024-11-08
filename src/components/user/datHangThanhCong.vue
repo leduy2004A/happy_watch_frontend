@@ -9,7 +9,7 @@
           <div>
             <h1 class="text-h5 font-weight-bold mb-1">Đặt hàng thành công</h1>
             <div class="text-subtitle-1 grey--text text--darken-1">
-              Mã đơn hàng: <span class="font-weight-medium">{{ orderNumber }}</span>
+              Mã đơn hàng: <span class="font-weight-medium">{{ orderStore.orderNumber }}</span>
             </div>
           </div>
         </div>
@@ -28,65 +28,61 @@
             <v-card-text class="pt-4">
               <div class="delivery-info">
                 <div class="mb-2">
-                  <div class="font-weight-medium">{{ orderDetails.customerInfo.fullName }}</div>
-                  <div>{{ orderDetails.customerInfo.phone }}</div>
+                  <div class="font-weight-medium">{{ orderStore.customerInfo.fullName }}</div>
+                  <div>{{ orderStore.customerInfo.phone }}</div>
                 </div>
                 <div class="grey--text">
-                  {{ orderDetails.customerInfo.address.ward }},
-                  {{ orderDetails.customerInfo.address.district }},
-                  {{ orderDetails.customerInfo.address.city }},
-                  {{ orderDetails.customerInfo.address.province }}
+                  {{ orderStore.customerInfo.address.ward }},
+                  {{ orderStore.customerInfo.address.district }},
+                  {{ orderStore.customerInfo.address.city }},
+                  {{ orderStore.customerInfo.address.province }}
                 </div>
               </div>
             </v-card-text>
           </v-card>
   
-  
           <!-- Products List -->
           <v-card elevation="0">
-  <v-card-title class="py-2 px-4">
-    <v-icon left color="primary">mdi-package-variant-closed</v-icon>
-    Sản phẩm đã đặt
-  </v-card-title>
-  <v-divider></v-divider>
+            <v-card-title class="py-2 px-4">
+              <v-icon left color="primary">mdi-package-variant-closed</v-icon>
+              Sản phẩm đã đặt
+            </v-card-title>
+            <v-divider></v-divider>
   
-  <v-card-text class="pa-0">
-    <v-list>
-      <template 
-        v-for="(product, index) in orderDetails.products" 
-        :key="product.id"
-      >
-        <v-list-item>
-          <v-list-item-avatar tile size="80" class="rounded-lg">
-            <img :src="product.image" :alt="product.name" width="150"></img>
-          </v-list-item-avatar>
-          
-          <v-list-item-content>
-            <v-list-item-title class="font-weight-medium mb-1">
-              {{ product.name }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="mb-1">
-              {{ product.vendor }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle class="grey--text text--darken-1">
-              Số lượng: {{ product.quantity }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-
-          <v-list-item-action class="text-right">
-            <div class="text-subtitle-1 font-weight-bold primary--text">
-              {{ formatPrice(product.price) }}
-            </div>
-          </v-list-item-action>
-        </v-list-item>
-        
-        <v-divider 
-          v-if="index < orderDetails.products.length - 1"
-        ></v-divider>
-      </template>
-    </v-list>
-  </v-card-text>
-</v-card>
+            <v-card-text class="pa-0">
+              <v-list>
+                <template 
+                  v-for="(product, index) in orderStore.products" 
+                  :key="product.productGoc.id"
+                >
+                  <v-list-item>
+                    <v-list-item-avatar tile size="80" class="rounded-lg">
+                      <img :src="product.productGoc.image" :alt="product.productGoc.name" width="150">
+                    </v-list-item-avatar>
+                    
+                    <v-list-item-content>
+                      <v-list-item-title class="font-weight-medium mb-1">
+                        {{ product.productGoc.name }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="grey--text text--darken-1">
+                        Số lượng: {{ product.productGoc.soLuongChon }}
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+  
+                    <v-list-item-action class="text-right">
+                      <div class="text-subtitle-1 font-weight-bold primary--text">
+                        {{ orderStore.formatPrice(product.productGoc.price) }}
+                      </div>
+                    </v-list-item-action>
+                  </v-list-item>
+                  
+                  <v-divider 
+                    v-if="index < orderStore.products.length - 1"
+                  ></v-divider>
+                </template>
+              </v-list>
+            </v-card-text>
+          </v-card>
         </div>
   
         <!-- Right Column - Order Summary -->
@@ -104,7 +100,7 @@
                   <v-list-item-title class="grey--text">Tạm tính</v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action class="text-right">
-                  {{ formatPrice(subtotal) }}
+                  {{ orderStore.formatPrice(checkOutStore.tinhTongTienHang())  }}
                 </v-list-item-action>
               </v-list-item>
   
@@ -113,7 +109,9 @@
                   <v-list-item-title class="grey--text">Phí vận chuyển</v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action class="text-right">
-                  <span class="success--text">Miễn phí</span>
+                  <span class="success--text">
+                    {{orderStore.formatPrice(orderStore.shipping.fee)  }}
+                  </span>
                 </v-list-item-action>
               </v-list-item>
   
@@ -125,7 +123,7 @@
                 </v-list-item-content>
                 <v-list-item-action class="text-right">
                   <div class="text-h6 primary--text font-weight-bold">
-                    {{ formatPrice(total) }}
+                    {{orderStore.formatPrice(checkOutStore.tinhTongTien()) }}
                   </div>
                 </v-list-item-action>
               </v-list-item>
@@ -143,76 +141,22 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-  
         </div>
       </div>
     </v-container>
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue'
   import { useRouter } from 'vue-router'
-  
+  import { useSuccesStore } from '@/store/successStore'
+  import { useCheckOutStore } from '@/store/checkOutStore';
+  const checkOutStore = useCheckOutStore()
   const router = useRouter()
-  
-  const orderNumber = ref('#100483')
-  const orderDetails = ref({
-    customerInfo: {
-      fullName: 'Hải Hậu',
-      phone: '0355512555',
-      idNumber: '123123123',
-      address: {
-        ward: 'Xã Vân Trình',
-        district: 'Huyện Thạch An',
-        city: 'Cao Bằng',
-        province: 'Vietnam'
-      }
-    },
-    products: [
-      {
-        id: 1,
-        name: 'Longines 42mm Nam L2.822.4.56.2',
-        vendor: 'VNLUX - Đồng Hồ Chính Hãng',
-        price: 38952666,
-        quantity: 1,
-        image: 'https://thoitranghanoi.vn/admin/webroot/uploads/images/rolex-automatic-blue-light.jpg'
-      },
-      {
-        id: 2,
-        name: 'Đồng hồ Rolex Datejust 36',
-        vendor: 'VNLUX - Đồng Hồ Chính Hãng',
-        price: 42500000,
-        quantity: 1,
-        image: 'https://thoitranghanoi.vn/admin/webroot/uploads/images/rolex-automatic-blue-light.jpg'
-      }
-    ],
-    shipping: {
-      method: 'COD',
-      fee: 0
-    }
-  })
-  
-  const subtotal = computed(() => {
-    return orderDetails.value.products.reduce((sum, product) => {
-      return sum + product.price * product.quantity
-    }, 0)
-  })
-  
-  const total = computed(() => {
-    return subtotal.value + orderDetails.value.shipping.fee
-  })
-  
-  function formatPrice(price) {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price)
-  }
+  const orderStore = useSuccesStore()
   
   function continueShopping() {
     router.push('/product/cua-hang')
   }
-  
   </script>
   
   

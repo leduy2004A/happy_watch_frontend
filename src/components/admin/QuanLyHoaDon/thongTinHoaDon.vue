@@ -10,8 +10,8 @@
       <!-- Action Buttons -->
       <v-row>
         <v-col cols="6" class="d-flex justify-start">
-          <v-btn color="orange" class="mr-2" @click="store.confirmDelivery">
-            Xác nhận giao hàng
+          <v-btn color="orange" class="mr-2" @click="chuyenTrangThai()">
+            {{ timelineStore.nutTrangThai }}
           </v-btn>
           <v-btn color="red" @click="store.cancelOrder">
             Hủy đơn
@@ -29,14 +29,18 @@
 
       <!-- Order Information -->
       <v-divider class="my-4"></v-divider>
-      <h5 class="mb-4">Thông tin đơn hàng - Đơn tại quầy</h5>
+      <div class="info">
+              <h5 class="mb-4">Thông tin đơn hàng - Đơn tại quầy</h5>
+      <h5 class="mb-4"><v-btn color="primary" @click="capNhatDiaChi()">Cập nhật</v-btn></h5>
+      </div>
+
       <v-row>
         <v-col cols="4">
           <p><strong>Mã:</strong> {{ store.orderDetail.maHoaDon }}</p>
-          <p><strong>Số điện thoại người nhận:</strong> 0355512589</p>
+          <p><strong>Số điện thoại người nhận:</strong> {{ store.orderDetail.dienThoai }}</p>
         </v-col>
         <v-col cols="4">
-          <p><strong>Tên khách hàng:</strong> {{ store.orderDetail.nguoiDung.ten }}</p>
+          <p><strong>Tên khách hàng:</strong> {{ store.orderDetail.tenKhachHang }}</p>
           <p>
             <strong>Trạng thái:</strong>
             <v-chip color="orange lighten-4" text-color="orange" outlined>
@@ -51,7 +55,7 @@
               Giao hàng
             </v-chip>
           </p>
-          <p><strong>Tên người nhận:</strong> Địa chỉ 12</p>
+          <p><strong>Tên người nhận:</strong> {{ store.orderDetail.tenNguoiNhan }}</p>
         </v-col>
       </v-row>
     </v-card>
@@ -60,30 +64,66 @@
     <v-alert v-else type="warning" class="mt-4">
       Không tìm thấy thông tin đơn hàng
     </v-alert>
+    <dialog_diachi :modal="modalDialog"></dialog_diachi>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import dialog_diachi from './dialog_diachi.vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { quanLyChiTietHoaDon } from '@/store/quanLyChiTietHoaDonStore';
-
+import { useTimelineStore } from '@/store/timelineStore';
+import Sweetalert2 from "sweetalert2";
+import useEmitter from '@/useEmitter';
+const emitter = useEmitter()
+const timelineStore = useTimelineStore()
 const route = useRoute();
 const store = quanLyChiTietHoaDon();
-
+const modalDialog = ref(false)
 onMounted(async () => {
   await store.fetchOrderDetail(route.params.ma);
+  emitter.on("closeModalDiaChi",data=>{
+    modalDialog.value = data
+  })
 });
 
 const viewDetails = () => {
   // Xem chi tiết đơn hàng
   console.log("Xem chi tiết đơn hàng");
 };
+const chuyenTrangThai = async ()=>{
+  const { value: text } = await Sweetalert2.fire({
+  input: "textarea",
+  inputLabel: "Ghi Chú",
+  inputPlaceholder: "Nhập ghi chú...",
+  inputAttributes: {
+    "aria-label": "Type your message here"
+  },
+  showCancelButton: true
+});
+if (text === "" || text) {
+  const data = {
+    maHoaDon:route.params.ma,
+    ghiChu:text
+  }
+  await timelineStore.addTimeLine(data)
+}
+ 
+}
+const capNhatDiaChi = ()=>{
+  modalDialog.value = true
+}
 </script>
 
 <style scoped>
 .v-card {
   max-width: 100%;
   margin: auto;
+}
+.info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

@@ -94,8 +94,8 @@
         <v-list-item>
           <template v-slot:title>
             <div class="d-flex justify-space-between">
-              <span class="text-body-1">Ngày nhận dự kiến:</span>
-              <span class="text-red">{{ product.expectedDeliveryDate }}</span>
+              <span class="text-body-1">Tổng Tiền Hàng:</span>
+              <span class="text-red">{{formatPrice( checkoutStore.tinhTongTienHang()) }} đ</span>
             </div>
           </template>
         </v-list-item>

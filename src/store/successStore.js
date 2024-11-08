@@ -16,22 +16,6 @@ export const useSuccesStore = defineStore('success', {
       }
     },
     products: [
-      {
-        id: 1,
-        name: 'Longines 42mm Nam L2.822.4.56.2',
-        vendor: 'VNLUX - Đồng Hồ Chính Hãng',
-        price: 38952666,
-        quantity: 1,
-        image: 'https://thoitranghanoi.vn/admin/webroot/uploads/images/rolex-automatic-blue-light.jpg'
-      },
-      {
-        id: 2,
-        name: 'Đồng hồ Rolex Datejust 36',
-        vendor: 'VNLUX - Đồng Hồ Chính Hãng',
-        price: 42500000,
-        quantity: 1,
-        image: 'https://thoitranghanoi.vn/admin/webroot/uploads/images/rolex-automatic-blue-light.jpg'
-      }
     ],
     shipping: {
       method: 'COD',

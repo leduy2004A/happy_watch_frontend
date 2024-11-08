@@ -31,6 +31,14 @@ export const useCheckOutStore = defineStore("checkout", {
         
         // Cộng phí ship vào sau khi đã tính tổng tiền hàng
         return tongTienHang + this.shippingFee;
+      },
+      tinhTongTienHang() {
+        const tongTienHang = this.products.reduce((total, item) => {
+          return total + (item.soLuongChon * item.productGoc.price);
+        }, 0);
+        
+        // Cộng phí ship vào sau khi đã tính tổng tiền hàng
+        return tongTienHang;
       }
   },
 });
