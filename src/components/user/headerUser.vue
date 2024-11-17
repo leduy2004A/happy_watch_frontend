@@ -46,9 +46,12 @@
       </v-btn>
 
       <!-- User Account Icon -->
-      <v-btn icon class="mr-2">
+       <router-link to="/profile/hoa-don">
+         <v-btn icon class="mr-2">
         <v-icon>mdi-account</v-icon>
       </v-btn>
+       </router-link>
+     
 
       <!-- Shopping Cart -->
       <v-btn icon class="position-relative" @click="openModalCart()">

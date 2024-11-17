@@ -12,12 +12,26 @@
     </div>
 </template>
 <script setup>
+import { quanLyCacNut } from '@/store/quanLyCacNut';
+const useQuanLyCacNut = quanLyCacNut()
 import timeline from './timeline.vue';
 import thongTinHoaDon from './thongTinHoaDon.vue';
 import lichSuThanhToan from './lichSuThanhToan.vue';
 import danhSachSanPham from './danhSachSanPham.vue';
 import danhSachSanPhamHoanHang from './danhSachSanPhamHoanHang.vue';
 import tongTienHoaDon from './tongTienHoaDon.vue';
+import { onMounted,watch } from 'vue';
+import { useRoute } from 'vue-router';
+const route = useRoute()
+watch(
+    () => route.params.ma,
+    async (newValue) => {
+        if (newValue) {
+            await useQuanLyCacNut.layTrangThai();
+        }
+    },
+    { immediate: true } // Đảm bảo hàm watch chạy ngay lập tức khi component được tạo
+);
 </script>
 <style scoped>
     .main_content {

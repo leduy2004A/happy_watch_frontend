@@ -30,7 +30,10 @@
     <v-divider class="my-4"></v-divider>
 
     <v-row justify="space-between">
-      <v-btn outlined color="black" class="text-uppercase">Xem giỏ hàng</v-btn>
+      <router-link :to="`/product/cart`">
+        <v-btn outlined color="black" class="text-uppercase">Xem giỏ hàng</v-btn>
+      </router-link>
+      
       <v-btn color="red" dark class="text-uppercase">Thanh toán</v-btn>
     </v-row>
   </v-container>

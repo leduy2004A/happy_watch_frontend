@@ -1,213 +1,259 @@
 <template>
-    <v-container class="order-success">
-      <!-- Order Status Header -->
-      <v-card class="mb-6 success-card" elevation="0">
-        <div class="d-flex align-center py-4 px-6">
-          <v-avatar color="success" class="mr-4" size="52">
-            <v-icon dark size="32">mdi-check</v-icon>
-          </v-avatar>
-          <div>
-            <h1 class="text-h5 font-weight-bold mb-1">Đặt hàng thành công</h1>
-            <div class="text-subtitle-1 grey--text text--darken-1">
-              Mã đơn hàng: <span class="font-weight-medium">{{ orderStore.orderNumber }}</span>
-            </div>
-          </div>
-        </div>
-      </v-card>
-  
-      <div class="d-flex flex-wrap">
-        <!-- Left Column -->
-        <div class="order-details flex-grow-1 pr-md-4" style="min-width: 280px; flex-basis: 60%;">
-          <!-- Delivery Info -->
-          <v-card class="mb-6" elevation="0">
-            <v-card-title class="py-2 px-4">
-              <v-icon left color="primary">mdi-truck-delivery-outline</v-icon>
-              Thông tin giao hàng
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-card-text class="pt-4">
-              <div class="delivery-info">
-                <div class="mb-2">
-                  <div class="font-weight-medium">{{ orderStore.customerInfo.fullName }}</div>
-                  <div>{{ orderStore.customerInfo.phone }}</div>
-                </div>
-                <div class="grey--text">
-                  {{ orderStore.customerInfo.address.ward }},
-                  {{ orderStore.customerInfo.address.district }},
-                  {{ orderStore.customerInfo.address.city }},
-                  {{ orderStore.customerInfo.address.province }}
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-  
-          <!-- Products List -->
-          <v-card elevation="0">
-            <v-card-title class="py-2 px-4">
-              <v-icon left color="primary">mdi-package-variant-closed</v-icon>
-              Sản phẩm đã đặt
-            </v-card-title>
-            <v-divider></v-divider>
-  
-            <v-card-text class="pa-0">
-              <v-list>
-                <template 
-                  v-for="(product, index) in orderStore.products" 
-                  :key="product.productGoc.id"
-                >
-                  <v-list-item>
-                    <v-list-item-avatar tile size="80" class="rounded-lg">
-                      <img :src="product.productGoc.image" :alt="product.productGoc.name" width="150">
-                    </v-list-item-avatar>
-                    
-                    <v-list-item-content>
-                      <v-list-item-title class="font-weight-medium mb-1">
-                        {{ product.productGoc.name }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle class="grey--text text--darken-1">
-                        Số lượng: {{ product.productGoc.soLuongChon }}
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-  
-                    <v-list-item-action class="text-right">
-                      <div class="text-subtitle-1 font-weight-bold primary--text">
-                        {{ orderStore.formatPrice(product.productGoc.price) }}
-                      </div>
-                    </v-list-item-action>
-                  </v-list-item>
-                  
-                  <v-divider 
-                    v-if="index < orderStore.products.length - 1"
-                  ></v-divider>
-                </template>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </div>
-  
-        <!-- Right Column - Order Summary -->
-        <div class="order-summary mt-6 mt-md-0" style="min-width: 280px; flex-basis: 40%;">
-          <v-card elevation="0" class="">
-            <v-card-title class="py-2 px-4">
-              <v-icon left color="primary">mdi-receipt</v-icon>
-              Tổng quan đơn hàng
-            </v-card-title>
-            <v-divider></v-divider>
-            
-            <v-list class="py-0">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="grey--text">Tạm tính</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action class="text-right">
-                  {{ orderStore.formatPrice(checkOutStore.tinhTongTienHang())  }}
-                </v-list-item-action>
-              </v-list-item>
-  
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="grey--text">Phí vận chuyển</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action class="text-right">
-                  <span class="success--text">
-                    {{orderStore.formatPrice(orderStore.shipping.fee)  }}
-                  </span>
-                </v-list-item-action>
-              </v-list-item>
-  
-              <v-divider class="mx-4"></v-divider>
-  
-              <v-list-item class="total-amount">
-                <v-list-item-content>
-                  <v-list-item-title class="font-weight-bold">Tổng cộng</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action class="text-right">
-                  <div class="text-h6 primary--text font-weight-bold">
-                    {{orderStore.formatPrice(checkOutStore.tinhTongTien()) }}
-                  </div>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-  
-            <v-card-actions class="px-4 pb-4">
-              <v-btn
-                block
-                x-large
-                color="primary"
-                elevation="2"
-                @click="continueShopping"
-              >
-                Tiếp tục mua hàng
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+  <v-container>
+      <div class="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 flex items-center justify-center p-4 px-10">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all" 
+         :class="{ 'translate-y-0 opacity-100': show, 'translate-y-4 opacity-0': !show }">
+      <!-- Animated Success Icon -->
+      <div class="success-animation-container mb-6">
+        <!-- Animated Background Circles -->
+        <div class="success-ring"></div>
+        <div class="success-ring ring2"></div>
+        <div class="success-ring ring3"></div>
+        
+        <!-- Bouncing Check Icon -->
+        <div class="check-container">
+          <v-icon color="white" size="40" class="bouncing-check">mdi-check</v-icon>
         </div>
       </div>
-    </v-container>
-  </template>
-  
-  <script setup>
-  import { useRouter } from 'vue-router'
-  import { useSuccesStore } from '@/store/successStore'
-  import { useCheckOutStore } from '@/store/checkOutStore';
-  const checkOutStore = useCheckOutStore()
-  const router = useRouter()
-  const orderStore = useSuccesStore()
-  
-  function continueShopping() {
-    router.push('/product/cua-hang')
-  }
-  </script>
-  
-  
-  <style scoped>
-  .order-success {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .success-card {
-    background: linear-gradient(to right, #4CAF50, #45a049);
-    color: white;
-  }
-  
-  .success-card .grey--text {
-    color: rgba(255, 255, 255, 0.9) !important;
-  }
-  
-  .sticky-summary {
-    position: sticky;
-    top: 20px;
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 959px) {
-    .order-details {
-      margin-right: 0 !important;
+
+      <!-- Content -->
+      <h1 class="text-2xl font-weight-bold text-gray-800 text-center mb-4 sliding-text">
+        Đặt hàng thành công!
+      </h1>
+      
+      <p class="text-gray-600 text-center mb-6 fade-in-text">
+        Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.
+      </p>
+
+      <!-- Order Number -->
+      <div class="bg-gray-50 rounded-lg p-4 mb-6 pulse-animation">
+        <p class="text-center text-gray-700">
+          Mã đơn hàng: <span class="font-weight-medium">#{{ route.params.ma }}</span>
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col gap-3 slide-up">
+        <v-btn
+          block
+          x-large
+          color="success"
+          elevation="2"
+          @click="continueShopping"
+          class="text-white hover-scale"
+        >
+          Tiếp tục mua sắm
+        </v-btn>
+      </div>
+    </div>
+  </div>
+  </v-container>
+
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import { thanhToanHoaDon } from '@/axios/hoadon';
+import { thanhToanMuaNgayV2 } from '@/axios/thanhtoan';
+const show = ref(false);
+const toast = useToast();
+const router = useRouter();
+const route = useRoute();
+
+onMounted(async () => {
+  setTimeout(() => {
+    show.value = true;
+  }, 100);
+
+  console.log(route.query);
+  if (route.query.code === "00" && route.query.status === "PAID") {
+    const dataPayment = {
+      maHoaDon: route.params.ma,
+      soTien: route.query.soTien,
+      phuongThuc: 'Chuyển khoản'
+    };
+    console.log(dataPayment);
+    try {
+      const resultPayment = await thanhToanMuaNgayV2(dataPayment);
+      if (resultPayment.status == 200) {
+        toast.success("Thanh toán thành công");
+      }
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.response?.data || "Có lỗi xảy ra khi thanh toán";
+      toast.error(errorMessage);
     }
-    
-    .sticky-summary {
-      position: static;
-    }
   }
-  
-  .v-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+});
+
+function continueShopping() {
+  router.push('/product/cua-hang');
+}
+</script>
+
+<style scoped>
+/* Success Animation Container */
+.success-animation-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+/* Animated Rings */
+.success-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #4CAF50;
+  animation: ring-pulse 2s ease-out infinite;
+}
+
+.ring2 {
+  animation-delay: 0.3s;
+}
+
+.ring3 {
+  animation-delay: 0.6s;
+}
+
+/* Check Icon Container */
+.check-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.bouncing-check {
+  animation: pop 0.5s ease-out 0.4s both;
+}
+
+/* Text Animations */
+.sliding-text {
+  animation: slideDown 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.fade-in-text {
+  animation: fadeIn 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+/* Pulse Animation for Order Number */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* Hover Effect for Button */
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Keyframes */
+@keyframes ring-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
   }
-  
-  .total-amount {
-    background-color: #f5f5f5;
-    border-radius: 0 0 8px 8px;
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
   }
-  
-  .delivery-info {
-    line-height: 1.5;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
   }
-  
-  /* Hover effects */
-  .v-list-item:hover {
-    background-color: #f5f5f5;
-    transition: background-color 0.2s ease;
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
   }
-  </style>
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+  }
+  90% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Customize Vuetify button */
+:deep(.v-btn) {
+  text-transform: none;
+  font-weight: 500;
+  height: 48px !important;
+  border-radius: 8px;
+}
+</style>

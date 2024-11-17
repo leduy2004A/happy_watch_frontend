@@ -1,21 +1,16 @@
 <template>
   <div class="container">
     <div class="header">
-      <div class="breadcrumb">
-        <a href="#">HOME</a>
-        <span>&gt;</span>
-        <span>CỬA HÀNG</span>
-      </div>
       <h1 class="title">CỬA HÀNG</h1>
     </div>
 
     <div class="filters">
       <div class="filter-group">
         <span class="filter-label">Hiển thị</span>
-        <select 
-          class="filter-select" 
-          :value="store.itemsPerPage" 
-          @change="e => store.setItemsPerPage(Number(e.target.value))"
+        <select
+          class="filter-select"
+          :value="store.itemsPerPage"
+          @change="(e) => store.setItemsPerPage(Number(e.target.value))"
         >
           <option :value="12">12</option>
           <option :value="15">15</option>
@@ -35,18 +30,22 @@
           :color="store.layoutType === 'grid' ? '#FF5722' : '#666'"
           @click="store.toggleLayout"
         >
-          <v-icon>{{ store.layoutType === 'grid' ? 'mdi-grid' : 'mdi-format-list-bulleted' }}</v-icon>
+          <v-icon>{{
+            store.layoutType === "grid"
+              ? "mdi-grid"
+              : "mdi-format-list-bulleted"
+          }}</v-icon>
         </v-btn>
       </div>
     </div>
 
-    <div 
-      ref="scrollContainer"
-      class="scroll-container"
-      @scroll="handleScroll"
-    >
+    <div ref="scrollContainer" class="scroll-container" @scroll="handleScroll">
       <div class="product-list" :class="store.gridClasses">
-        <v-hover v-for="product in store.products" v-slot="{ isHovering, props }" :key="product.id">
+        <v-hover
+          v-for="product in store.products"
+          v-slot="{ isHovering, props }"
+          :key="product.id"
+        >
           <v-card
             v-bind="props"
             :elevation="isHovering ? 4 : 0"
@@ -67,28 +66,28 @@
               ></v-img>
               <v-img
                 v-else
-                :src="product.secondImage || product.image" 
+                :src="product.secondImage || product.image"
                 height="250"
                 cover
                 class="product-image cursor-pointer"
                 @click="navigateToProduct(product.id)"
               >
                 <div class="action-buttons show-actions" @click.stop>
-                  <v-btn 
-                    icon="mdi-lightning-bolt" 
-                    variant="text" 
+                  <v-btn
+                    icon="mdi-lightning-bolt"
+                    variant="text"
                     class="action-btn"
                     @click="muaNgay(product)"
                   ></v-btn>
-                  <v-btn 
-                    icon="mdi-cart" 
-                    variant="text" 
+                  <v-btn
+                    icon="mdi-cart"
+                    variant="text"
                     class="action-btn"
                     @click="addToCart(product)"
                   ></v-btn>
-                  <v-btn 
-                    icon="mdi-eye" 
-                    variant="text" 
+                  <v-btn
+                    icon="mdi-eye"
+                    variant="text"
                     class="action-btn"
                     @click="openQuickView(product)"
                   ></v-btn>
@@ -96,7 +95,7 @@
               </v-img>
             </div>
 
-            <v-card-text 
+            <v-card-text
               class="text-center cursor-pointer"
               @click="navigateToProduct(product.id)"
             >
@@ -104,7 +103,10 @@
                 {{ product.name }}
               </div>
               <div class="d-flex justify-center align-center">
-                <span class="text-grey-darken-1 text-decoration-line-through me-2" v-if="product.oldPrice">
+                <span
+                  class="text-grey-darken-1 text-decoration-line-through me-2"
+                  v-if="product.oldPrice"
+                >
                   {{ store.formatPrice(product.oldPrice) }}
                 </span>
                 <span class="text-primary font-weight-bold">
@@ -123,7 +125,10 @@
         ></v-progress-circular>
       </div>
 
-      <div v-if="store.noMoreContent && store.products.length > 0" class="text-center py-4 text-grey">
+      <div
+        v-if="store.noMoreContent && store.products.length > 0"
+        class="text-center py-4 text-grey"
+      >
         Không còn sản phẩm nào để hiển thị
       </div>
     </div>
@@ -133,7 +138,12 @@
       <v-card v-if="selectedProduct">
         <v-card-title class="text-h5 pa-4">
           {{ selectedProduct.name }}
-          <v-btn icon="mdi-close" variant="text" @click="showQuickView = false" class="float-right"></v-btn>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="showQuickView = false"
+            class="float-right"
+          ></v-btn>
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -144,7 +154,10 @@
               <div class="text-h6 mb-2">Thông tin sản phẩm</div>
               <div class="mb-4">
                 <div class="d-flex align-center mb-2">
-                  <span class="text-grey-darken-1 text-decoration-line-through me-2" v-if="selectedProduct.oldPrice">
+                  <span
+                    class="text-grey-darken-1 text-decoration-line-through me-2"
+                    v-if="selectedProduct.oldPrice"
+                  >
                     {{ store.formatPrice(selectedProduct.oldPrice) }}
                   </span>
                   <span class="text-primary font-weight-bold text-h6">
@@ -152,11 +165,7 @@
                   </span>
                 </div>
               </div>
-              <v-btn
-                color="primary"
-                block
-                @click="addToCart(selectedProduct)"
-              >
+              <v-btn color="primary" block @click="addToCart(selectedProduct)">
                 Thêm vào giỏ hàng
               </v-btn>
             </v-col>
@@ -168,85 +177,91 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { sanPhamCuaHangStore } from '@/store/sanPhamCuaHangStore'
-import { useCartStore } from '@/store/cartStore';
-import useEmitter from '@/useEmitter';
-import { useCheckOutStore } from '@/store/checkOutStore';
-const checkOutStore = useCheckOutStore()
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
+import { useCartStore } from "@/store/cartStore";
+import useEmitter from "@/useEmitter";
+import { useCheckOutStore } from "@/store/checkOutStore";
+const checkOutStore = useCheckOutStore();
 // const router = useRouter()
-const emitter = useEmitter()
-const cart = useCartStore()
-const router = useRouter()
-const store = sanPhamCuaHangStore()
-const scrollContainer = ref(null)
-const showQuickView = ref(false)
-const selectedProduct = ref(null)
-const productSelect = ref([])
+const emitter = useEmitter();
+const cart = useCartStore();
+const router = useRouter();
+const store = sanPhamCuaHangStore();
+const scrollContainer = ref(null);
+const showQuickView = ref(false);
+const selectedProduct = ref(null);
+const productSelect = ref([]);
 const handleScroll = () => {
-  if (!scrollContainer.value) return
+  if (!scrollContainer.value) return;
 
-  const {
-    scrollTop,
-    scrollHeight,
-    clientHeight
-  } = scrollContainer.value
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
 
   if (scrollHeight - scrollTop - clientHeight < 50) {
-    store.loadMoreProducts()
+    store.loadMoreProducts();
   }
-}
+};
 
 const navigateToProduct = (productId) => {
-  router.push(`/product/detail/${productId}`)
-}
+  router.push(`/product/detail/${productId}`);
+};
 
 const openQuickView = (product) => {
-  selectedProduct.value = product
-  showQuickView.value = true
-}
+  selectedProduct.value = product;
+  showQuickView.value = true;
+};
 
 const addToWishlist = (product) => {
-  console.log('Add to wishlist:', product)
-}
+  console.log("Add to wishlist:", product);
+};
 
 const addToCart = (product) => {
-  emitter.emit("openModalCart",true)
-  cart.addToCart(product)
-}
+  emitter.emit("openModalCart", true);
+  cart.addToCart(product);
+};
 const muaNgay = (product) => {
-  const dataPick = {
-    productGoc: product,
-    soLuongChon: 1,
-    tongCanNang: 1 * product.canNang  // Thêm tongCanNang vào đây
-  }
-  
-  // Thêm sản phẩm mới vào trước
-  productSelect.value.push(dataPick)
+  const data = [{
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image,
+    canNang: product.canNang,
+    code: product.code,
+    quantity: 1,
+  }];
+  // const dataPick = {
+  //   productGoc: product,
+  //   soLuongChon: 1,
+  //   tongCanNang: 1 * product.canNang  // Thêm tongCanNang vào đây
+  // }
 
-  // Sau đó mới tính tổng cân nặng
-  const tongCanNangList = productSelect.value.reduce((total, item) => {
-    return total + item.tongCanNang
-  }, 0)
-  
-  console.log(tongCanNangList)
-  checkOutStore.tongCanNang = tongCanNangList
-  
-  // Thêm vào store
-  checkOutStore.addProduct(productSelect.value)
-  
-  console.log(checkOutStore.products)
-  router.push("/product/checkout")
-}
+  // // Thêm sản phẩm mới vào trước
+  // productSelect.value.push(dataPick)
+
+  // // Sau đó mới tính tổng cân nặng
+  // const tongCanNangList = productSelect.value.reduce((total, item) => {
+  //   return total + item.tongCanNang
+  // }, 0)
+
+  // console.log(tongCanNangList)
+  // checkOutStore.tongCanNang = tongCanNangList
+
+  // // Thêm vào store
+  // checkOutStore.addProduct(productSelect.value)
+
+  // console.log(checkOutStore.products)
+  localStorage.setItem("check-out",JSON.stringify(data))
+  router.push("/product/checkout");
+};
 onMounted(() => {
-  store.loadMoreProducts()
-})
+  store.loadMoreProducts();
+});
 </script>
 <style scoped>
 /* Giữ nguyên các styles hiện có và thêm styles mới */
 .scroll-container {
-  height: 100%; 
+  height: 100%;
   overflow-y: auto;
   padding: 0 1rem;
 }
@@ -362,7 +377,7 @@ onMounted(() => {
 }
 
 .breadcrumb a:hover {
-  color: #FF5722;
+  color: #ff5722;
 }
 
 .breadcrumb span {
@@ -396,17 +411,17 @@ onMounted(() => {
 
 .filter-select:focus {
   outline: none;
-  border-color: #FF5722;
+  border-color: #ff5722;
 }
 
 .layout-btn {
   margin-left: 1rem;
-  color: #FF5722;
+  color: #ff5722;
   transition: color 0.3s;
 }
 
 .layout-btn:hover {
-  color: #D84315;
+  color: #d84315;
 }
 
 .product-list {
@@ -472,12 +487,12 @@ onMounted(() => {
 }
 
 .badge-new {
-  background-color: #FF5722;
+  background-color: #ff5722;
   color: #fff;
 }
 
 .badge-discount {
-  background-color: #FFC107;
+  background-color: #ffc107;
   color: #333;
 }
 
@@ -507,7 +522,7 @@ onMounted(() => {
 .new-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #FF5722;
+  color: #ff5722;
 }
 
 .product-actions {
@@ -517,12 +532,12 @@ onMounted(() => {
 }
 
 .action-btn {
-  color: #FF5722;
+  color: #ff5722;
   transition: color 0.3s;
 }
 
 .action-btn:hover {
-  color: #D84315;
+  color: #d84315;
 }
 .watch-card {
   position: relative;
@@ -642,7 +657,7 @@ onMounted(() => {
 }
 
 .breadcrumb a:hover {
-  color: #FF5722;
+  color: #ff5722;
 }
 
 .breadcrumb span {
@@ -676,17 +691,17 @@ onMounted(() => {
 
 .filter-select:focus {
   outline: none;
-  border-color: #FF5722;
+  border-color: #ff5722;
 }
 
 .layout-btn {
   margin-left: 1rem;
-  color: #FF5722;
+  color: #ff5722;
   transition: color 0.3s;
 }
 
 .layout-btn:hover {
-  color: #D84315;
+  color: #d84315;
 }
 
 .product-list {
@@ -752,12 +767,12 @@ onMounted(() => {
 }
 
 .badge-new {
-  background-color: #FF5722;
+  background-color: #ff5722;
   color: #fff;
 }
 
 .badge-discount {
-  background-color: #FFC107;
+  background-color: #ffc107;
   color: #333;
 }
 
@@ -787,7 +802,7 @@ onMounted(() => {
 .new-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #FF5722;
+  color: #ff5722;
 }
 
 .product-actions {
@@ -797,12 +812,12 @@ onMounted(() => {
 }
 
 .action-btn {
-  color: #FF5722;
+  color: #ff5722;
   transition: color 0.3s;
 }
 
 .action-btn:hover {
-  color: #D84315;
+  color: #d84315;
 }
 .watch-card {
   position: relative;
@@ -865,5 +880,4 @@ onMounted(() => {
 .watch-card:hover {
   border-color: #1976d2;
 }
-
 </style>

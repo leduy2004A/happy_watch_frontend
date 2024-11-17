@@ -16,15 +16,36 @@
 
       <!-- Danh sách menu -->
       <v-list>
-        <v-list-item 
-          v-for="(item, index) in menuItems" 
-          :key="index"
-          :to="item.path"
-          :prepend-icon="item.icon"
-          :title="item.title"
-          class="nav-item"
-        >
-        </v-list-item>
+        <template v-for="(item, index) in menuItems" :key="index">
+          <!-- Nếu item có children thì render như group -->
+          <v-list-group v-if="item.children" :value="false">
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :prepend-icon="item.icon"
+                :title="item.title"
+              ></v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(child, childIndex) in item.children"
+              :key="childIndex"
+              :title="child.title"
+              :to="child.path"
+              :prepend-icon="child.icon"
+              class="nav-child-item"
+            ></v-list-item>
+          </v-list-group>
+
+          <!-- Nếu item không có children thì render bình thường -->
+          <v-list-item
+            v-else
+            :to="item.path"
+            :prepend-icon="item.icon"
+            :title="item.title"
+            class="nav-item"
+          ></v-list-item>
+        </template>
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -35,7 +56,7 @@ import { ref } from 'vue';
 
 const avatar = "https://png.pngtree.com/png-vector/20240328/ourlarge/pngtree-mechanical-pocket-watch-pattern-cartoon-style-png-image_12237907.png";
 
-// Định nghĩa menu items
+// Định nghĩa menu items với sub-items
 const menuItems = ref([
   {
     title: 'Bán hàng tại quầy',
@@ -49,29 +70,55 @@ const menuItems = ref([
   },
   {
     title: 'Quản lý sản phẩm',
-    path: '/admin/products',
-    icon: 'mdi-cash'
+    icon: 'mdi-package-variant-closed',
+    children: [
+      {
+        title: 'Danh sách sản phẩm',
+        path: '/admin/products/list',
+        icon: 'mdi-format-list-bulleted'
+      },
+      {
+        title: 'Quản lý danh mục',
+        path: '/admin/products/categories',
+        icon: 'mdi-shape'
+      },
+      {
+        title: 'Quản lý thương hiệu',
+        path: '/admin/products/brands',
+        icon: 'mdi-tag'
+      },
+      {
+        title: 'Nhập hàng',
+        path: '/admin/products/import',
+        icon: 'mdi-import'
+      },
+      {
+        title: 'Kiểm kho',
+        path: '/admin/products/inventory',
+        icon: 'mdi-clipboard-check'
+      }
+    ]
   },
   {
     title: 'Quản lý khuyến mãi',
     path: '/admin/promotions',
-    icon: 'mdi-google-analytics'
+    icon: 'mdi-ticket-percent'
   },
   {
     title: 'Quản lý khách hàng',
     path: '/admin/customers',
-    icon: 'mdi-cash'
+    icon: 'mdi-account-group'
   },
   {
     title: 'Thống kê',
     path: '/admin/statistics',
-    icon: 'mdi-google-analytics'
+    icon: 'mdi-chart-bar'
   }
 ]);
 </script>
-
 <style scoped>
 /* Tổng quan */
+
 .nav-admin {
   height: 100%;
 }
@@ -95,13 +142,13 @@ const menuItems = ref([
 }
 
 .drawer-subtitle {
-  font-size: 14px;
+  font-size: 12px;
   color: #7b7b7b;
 }
 
 /* Danh sách menu */
 .nav-item {
-  font-size: 14px;
+  font-size: 12px;
   color: #4a4a4a;
   padding: 12px 16px;
   transition: background-color 0.3s ease;

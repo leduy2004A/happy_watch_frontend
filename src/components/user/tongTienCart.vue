@@ -21,7 +21,7 @@
       
       <v-row class="mt-4">
         <v-col>
-          <v-btn color="red" class="white--text" block @click="proceedToCheckout">
+          <v-btn color="red" class="white--text" block @click="checkOutCart()">
             TIẾN HÀNH THANH TOÁN
           </v-btn>
         </v-col>
@@ -31,8 +31,12 @@
   
   <script setup>
 import { ref } from 'vue';
+import { useCheckOutStore } from '@/store/checkOutStore';
 import { useCartStore } from '@/store/cartStore';
 const cart = useCartStore()
+const checkOutStore = useCheckOutStore()
+import { useRouter } from 'vue-router';
+const router = useRouter()
 // Khai báo props
 const props = defineProps({
   subtotal: {
@@ -49,11 +53,34 @@ const props = defineProps({
 const formatPrice = (value) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 };
+const checkOutCart = ()=>{
+  const data =JSON.parse(localStorage.getItem("cart-items")) 
+  localStorage.setItem("check-out",localStorage.getItem("cart-items"))
+  
+//   const dataPickList = data.map(product => ({
+//   productGoc: product,
+//   soLuongChon: product.quantity,
+//   tongCanNang: product.quantity * product.canNang  // Tính toán tongCanNang
+// }));
 
+//   // // Thêm sản phẩm mới vào trước
+//   // productSelect.value.push(dataPick)
+
+//   // Sau đó mới tính tổng cân nặng
+//   const tongCanNangList = dataPickList.reduce((total, item) => {
+//     return total + item.tongCanNang
+//   }, 0)
+  
+//   console.log(tongCanNangList)
+//   checkOutStore.tongCanNang = tongCanNangList
+  
+//   // Thêm vào store
+//   checkOutStore.addProduct(dataPickList)
+  
+//   console.log(checkOutStore.products)
+  router.push("/product/checkout")
+}
 // Định nghĩa hàm proceedToCheckout
-const proceedToCheckout = () => {
-  alert("Đang chuyển đến trang thanh toán...");
-};
 </script>
 
   

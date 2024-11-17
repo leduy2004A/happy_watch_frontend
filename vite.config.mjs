@@ -3,7 +3,7 @@ import Components from 'unplugin-vue-components/vite'
 import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
-
+import {PrimeVueResolver} from '@primevue/auto-import-resolver';
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
@@ -16,7 +16,13 @@ export default defineConfig({
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
     Vuetify(),
-    Components(),
+    Components(
+      {
+        resolvers: [
+          PrimeVueResolver()
+        ]
+      }
+    ),
     ViteFonts({
       google: {
         families: [{

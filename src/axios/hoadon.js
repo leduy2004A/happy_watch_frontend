@@ -32,8 +32,17 @@ export const huyHoaDon = async(data)=>{
   return await api.put(`api/hoadon/cancel/${data}`)
 }
 export const xacNhanDonHang = async (data)=>{
-  return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}`)
+  return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}&tongTienHoaDon=${data.tongTienHoaDon}&phiShip=${data.phiShip}&maKhuyenMaiHoaDon=${data.maKhuyenMaiHoaDon}`)
 }
 export const xoaSanPhamTrongHoaDon =async (data)=>{
   return await api.delete(`api/chitiethoadon/delete?id=${data}`)
+}
+export const thanhToanHoaDon = async (data) =>{
+  return await api.post(
+    `/api/hoadon/xac-nhan-thanh-toan?maHoaDon=${data.maHoaDon}`,{soTien: data.soTien,phuongThuc:data.phuongThuc}
+  );
+}
+export const lichSuThanhToan = async (data) =>{
+  return await api.get(
+    `/api/hoadon/lich-su-thanh-toan?maHoaDon=${data}`)
 }

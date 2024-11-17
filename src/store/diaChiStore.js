@@ -121,9 +121,12 @@ export const useAddressStore = defineStore('address', {
           ward: selectedWard?.text || this.formData.ward,
           diaChiCuThe: `${this.formData.detailAddress}, ${selectedWard?.text || ''}, ${selectedDistrict?.text || ''}, ${selectedProvince?.text || ''}`,
           dienThoai: this.formData.phone,
-          ten: this.formData.ten
+          ten: this.formData.ten,
+          tongTienHoaDon:tienStore.totalAmountValue,
+          phiShip:tienStore.shippingFee,
+          maKhuyenMaiHoaDon:tienStore.discountCode
         }
-  
+        console.log(data)
         try {
           const result = await xacNhanDonHang(data)
           return{

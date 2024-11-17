@@ -127,7 +127,8 @@ const openDialog = ref(false)
 const productSelect = ref({})
 const productStore = useProductStore()
 const emitter = useEmitter()
-
+import { useRoute } from 'vue-router';
+const route = useRoute()
 const headers = [
   { title: 'Ảnh', key: 'hinhAnh', align: 'center' },
   { title: 'Tên', key: 'tenSanPham', align: 'start' },
@@ -161,7 +162,6 @@ const formatCurrency = (value) => {
 const selectProduct = (product) => {
   productSelect.value ={...product} 
   openDialog.value = true
-
 }
 </script>
 

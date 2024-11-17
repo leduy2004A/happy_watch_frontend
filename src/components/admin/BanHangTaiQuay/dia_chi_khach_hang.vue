@@ -94,7 +94,7 @@ import { useAddressStore } from "@/store/diaChiStore";
 import { useOrderStore } from "@/store/tienStore";
 import giao_hang_nhanh from "./giao_hang_nhanh.vue";
 import useEmitter from "@/useEmitter";
-import { useLoading } from "vue-loading-overlay";
+
 import { useInvoiceStore } from "@/store/invoiceStore";
 import { useSanPhamTrongHoaDonStore } from "@/store/sanPhamTrongHoaDonStore";
 import { useExportPdf } from "./exportPdf";
@@ -106,12 +106,7 @@ const store = useAddressStore();
 const formRef = ref(null);
 const tienStore = useOrderStore();
 const toast = useToast();
-const props = defineProps({
-  diachi: {
-    type: Object,
-    default: () => ({}),
-  },
-});
+import { useLoading } from "vue-loading-overlay";
 const $loading = useLoading({
   loader: "bars",
   lockScroll: false,
@@ -119,6 +114,13 @@ const $loading = useLoading({
   isFullPage: true,
   container: null,
 });
+const props = defineProps({
+  diachi: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+
 
 const dialog = ref(false);
 // Watch for changes in address data to emit shipping info

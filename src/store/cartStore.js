@@ -20,6 +20,7 @@ export const useCartStore = defineStore('cart', {
   
   actions: {
     addToCart(product) {
+      console.log(product)
       const existingItem = this.items.find(item => item.id === product.id)
       if (existingItem) {
         existingItem.quantity++
@@ -32,6 +33,7 @@ export const useCartStore = defineStore('cart', {
           price: product.price,
           image: product.image,
           canNang:product.canNang,
+          code:product.code,
           quantity: 1
         })
         

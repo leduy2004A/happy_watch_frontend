@@ -145,11 +145,31 @@ const formatPrice = (price) => {
 const calculateTotal = () => {
   return product.price + product.shippingFee - product.discount;
 };
+const checkOutCart = ()=>{
+  const data =JSON.parse(localStorage.getItem("check-out")) 
 
+  
+  const dataPickList = data.map(product => ({
+  productGoc: product,
+  soLuongChon: product.quantity,
+  tongCanNang: product.quantity * product.canNang  // Tính toán tongCanNang
+}));
+
+  const tongCanNangList = dataPickList.reduce((total, item) => {
+    return total + item.tongCanNang
+  }, 0)
+  
+  console.log(tongCanNangList)
+  checkoutStore.tongCanNang = tongCanNangList
+
+  checkoutStore.addProduct(dataPickList)
+  
+}
 onMounted(()=>{
   emitter.on("dataShip", async (data) => {
     await checkoutStore.calculateShippingFee(data.district, data.ward,checkoutStore.tongCanNang)
   })
+  checkOutCart()
 })
 
 </script>

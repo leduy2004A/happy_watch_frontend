@@ -3,33 +3,42 @@
     <!-- Header Section -->
     <div class="header-section d-flex justify-space-between align-center">
       <h5 class="text-h6 font-weight-bold">Lịch sử thanh toán</h5>
+      <v-btn 
+        color="warning" 
+        @click="store.setModalThanhToan(true)" 
+        v-if="useQuanLyCacNut.nutThanhToan"
+      >
+        Thanh toán
+      </v-btn>
     </div>
-    
+
     <v-divider class="my-4"></v-divider>
 
     <!-- Search and Table Section -->
     <div class="table-section">
       <v-data-table
-        :headers="header"
-        :items="paymentData"
-        :search="search"
+        :headers="store.headers"
+        :items="store.paymentData"
+        :search="store.search"
         :items-per-page="5"
         class="payment-table elevation-0"
         :footer-props="{
           'items-per-page-options': [5, 10, 15],
-          'items-per-page-text': 'Số dòng mỗi trang'
+          'items-per-page-text': 'Số dòng mỗi trang',
         }"
       >
         <!-- Amount Column -->
-        <template v-slot:item.amount="{ item }">
-          <span class="font-weight-medium">{{ formatCurrency(item.amount) }}</span>
+        <template v-slot:item.soTien="{ item }">
+          <span class="font-weight-medium">
+            {{ store.formatCurrency(item.soTien) }}
+          </span>
         </template>
 
         <!-- Time Column -->
-        <template v-slot:item.time="{ item }">
+        <template v-slot:item.ngayThanhToan="{ item }">
           <div class="time-cell">
-            <span class="date">{{ formatDate(item.time) }}</span>
-            <span class="time">{{ formatTime(item.time) }}</span>
+            <span class="date">{{ store.formatDate(item.ngayThanhToan) }}</span>
+            <span class="time">{{ store.formattedTime(item.ngayThanhToan) }}</span>
           </div>
         </template>
 
@@ -37,7 +46,7 @@
         <template v-slot:item.transactionType="{ item }">
           <v-chip
             small
-            :color="getTransactionTypeColor(item.transactionType)"
+            :color="store.getTransactionTypeColor(item.transactionType)"
             class="transaction-chip"
             outlined
           >
@@ -46,14 +55,14 @@
         </template>
 
         <!-- Payment Method Column -->
-        <template v-slot:item.paymentMethod="{ item }">
+        <template v-slot:item.phuongThuc="{ item }">
           <v-chip
             small
-            :color="getPaymentMethodColor(item.paymentMethod)"
+            :color="store.getPaymentMethodColor(item.phuongThuc)"
             class="payment-method-chip"
             outlined
           >
-            {{ item.paymentMethod }}
+            {{ item.phuongThuc }}
           </v-chip>
         </template>
 
@@ -61,7 +70,7 @@
         <template v-slot:item.status="{ item }">
           <v-chip
             small
-            :color="getStatusColor(item.status)"
+            :color="store.getStatusColor(item.status)"
             class="status-chip"
             outlined
           >
@@ -71,85 +80,32 @@
       </v-data-table>
     </div>
   </v-card>
+  <dialog-thanh-toan-hoa-don
+    :modal="store.modalThanhToan"
+  ></dialog-thanh-toan-hoa-don>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted } from "vue";
+import { usePaymentHistoryStore } from '@/store/paymentHistoryStore';
+import { quanLyCacNut } from '@/store/quanLyCacNut';
+import DialogThanhToanHoaDon from "./DialogThanhToanHoaDon.vue";
+import useEmitter from "@/useEmitter";
+import { useRoute } from "vue-router";
 
-// Define reactive variables
-const search = ref('');
-const header = ref([
-  { title: 'Số tiền', align: 'start', key: 'amount' },    // text -> title, value -> key
-  { title: 'Thời gian', align: 'start', key: 'time' },
-  { title: 'Loại giao dịch', align: 'center', key: 'transactionType' },
-  { title: 'PTTT', align: 'center', key: 'paymentMethod' },
-  { title: 'Trạng thái', align: 'center', key: 'status' },
-  { title: 'Ghi chú', align: 'start', key: 'note' },
-  { title: 'Nhân viên xác nhận', align: 'start', key: 'staff' },
-]);
+const store = usePaymentHistoryStore();
+const useQuanLyCacNut = quanLyCacNut();
+const emitter = useEmitter();
+const route = useRoute();
 
-const paymentData = ref([
-  {
-    amount: 835253,
-    time: '2023-12-21 14:34:16',
-    transactionType: 'Thanh toán',
-    paymentMethod: 'Tiền mặt',
-    status: 'Thành công',
-    note: '-',
-    staff: 'Nguyễn Văn Nhật'
-  },
-  // Thêm dữ liệu mẫu khác nếu cần
-]);
-
-// Define methods
-function formatCurrency(value) {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND'
-  }).format(value);
-}
-
-function formatDate(dateTime) {
-  const date = new Date(dateTime);
-  return date.toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
+onMounted(async () => {
+  emitter.on("close_dialogthanhtoan", (data) => {
+    store.setModalThanhToan(data);
   });
-}
-
-function formatTime(dateTime) {
-  const date = new Date(dateTime);
-  return date.toLocaleTimeString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-}
-
-function getTransactionTypeColor(type) {
-  return {
-    'Thanh toán': 'indigo lighten-4 indigo--text',
-    'Hoàn tiền': 'purple lighten-4 purple--text'
-  }[type] || 'grey lighten-4 grey--text';
-}
-
-function getPaymentMethodColor(method) {
-  return {
-    'Tiền mặt': 'orange lighten-4 orange--text',
-    'Chuyển khoản': 'blue lighten-4 blue--text'
-  }[method] || 'grey lighten-4 grey--text';
-}
-
-function getStatusColor(status) {
-  return {
-    'Thành công': 'green lighten-4 green--text',
-    'Thất bại': 'red lighten-4 red--text',
-    'Đang xử lý': 'amber lighten-4 amber--text'
-  }[status] || 'grey lighten-4 grey--text';
-}
+  
+  await store.fetchPaymentHistory(route.params.ma);
+});
 </script>
-
 
 <style scoped>
 .payment-history-card {
@@ -252,11 +208,9 @@ function getStatusColor(status) {
   font-weight: 500 !important;
 }
 
-
 .payment-table :v-deep .v-data-table__wrapper tr:hover {
   background-color: #f8fafc !important;
 }
-
 
 .payment-table :v-deep .v-data-footer {
   border-top: 1px solid #e2e8f0;
@@ -264,5 +218,4 @@ function getStatusColor(status) {
 }
 
 /* Responsive adjustments */
-
 </style>

@@ -8,6 +8,7 @@ export const useCheckOutStore = defineStore("checkout", {
   }),
   actions: {
     addProduct(product) {
+      console.log(product)
       this.products = product;
     },
     async calculateShippingFee(districtId, wardCode, weight) {

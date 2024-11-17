@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="dialogVisible" max-width="1300" persistent :scrollable="true">
+  <teleport to='body'>
+     <v-dialog v-model="dialogVisible" max-width="1300" persistent :scrollable="true">
     <template v-slot:default>
       <v-card title="Dialog" min-height="500" >
         <v-card-text>
@@ -17,6 +18,8 @@
       </v-card>
     </template>
   </v-dialog>
+  </teleport>
+ 
 </template>
 
 <script setup>
@@ -41,6 +44,7 @@ onMounted(()=>{
   emitter.on("addTab",async data=>{
     idTab.value = data
 })
+
 })
 // Hàm để đóng dialog và cập nhật lại giá trị prop
 const closeDialog = async () => {

@@ -20,15 +20,15 @@
 
     <!-- Tab navigation -->
     <v-tabs v-model="store.activeTab" class="mb-4 invoice-tabs">
-      <v-tab value="all" class="text-body-2 font-weight-medium px-4">TẤT CẢ</v-tab>
-      <v-tab value="cancelled" class="text-body-2 font-weight-medium px-4">ĐÃ HỦY</v-tab>
-      <v-tab value="pending" class="text-body-2 font-weight-medium px-4">CHỜ XÁC NHẬN</v-tab>
-      <v-tab value="waiting" class="text-body-2 font-weight-medium px-4">CHỜ GIAO HÀNG</v-tab>
-      <v-tab value="shipping" class="text-body-2 font-weight-medium px-4">ĐANG VẬN CHUYỂN</v-tab>
-      <v-tab value="delivered" class="text-body-2 font-weight-medium px-4">ĐÃ GIAO HÀNG</v-tab>
-      <v-tab value="paid" class="text-body-2 font-weight-medium px-4">ĐÃ THANH TOÁN</v-tab>
-      <v-tab value="pending_payment" class="text-body-2 font-weight-medium px-4">CHỜ THANH TOÁN</v-tab>
-      <v-tab value="completed" class="text-body-2 font-weight-medium px-4">HOÀN THÀNH</v-tab>
+      <v-tab value="all" class="text-body-2 font-weight-medium px-6">TẤT CẢ</v-tab>
+      <v-tab value="cancelled" class="text-body-2 font-weight-medium px-6">ĐÃ HỦY</v-tab>
+      <v-tab value="pending" class="text-body-2 font-weight-medium px-6">CHỜ XÁC NHẬN</v-tab>
+      <v-tab value="confirmed" class="text-body-2 font-weight-medium px-6">ĐÃ XÁC NHẬN</v-tab>
+      <v-tab value="waiting" class="text-body-2 font-weight-medium px-6">CHỜ GIAO HÀNG</v-tab>
+      <v-tab value="shipping" class="text-body-2 font-weight-medium px-6">ĐANG VẬN CHUYỂN</v-tab>
+      <v-tab value="delivered" class="text-body-2 font-weight-medium px-6">ĐÃ GIAO HÀNG</v-tab>
+      <v-tab value="paid" class="text-body-2 font-weight-medium px-6">ĐÃ THANH TOÁN</v-tab>
+      <v-tab value="completed" class="text-body-2 font-weight-medium px-6">HOÀN THÀNH</v-tab>
     </v-tabs>
 
     <!-- Refresh button -->
@@ -73,14 +73,14 @@
             >Khách lẻ</v-chip>
             <span>{{ invoice.tenKhachHang }}</span>
           </td>
-          <td>{{ invoice.ngayTao }}</td>
+          <td>{{formatDate(invoice.ngayTao) }}</td>
           <td>
             <v-chip
-              :color="invoice.type === 'offline' ? 'light-green' : 'primary'"
+              :color="invoice.loaiHoaDon === 'Tại quầy' ? 'light-green' : 'primary'"
               variant="outlined"
               size="small"
             >
-              {{ invoice.type === "offline" ? "Tại quầy" : "Trực tuyến" }}
+              {{ invoice.loaiHoaDon === "Tại quầy" ? "Tại quầy" : "Trực tuyến" }}
             </v-chip>
           </td>
           <td>
@@ -98,7 +98,7 @@
               color="grey-darken-1"
               @click="store.viewDetail(invoice.id)"
             >
-              <router-link :to="`bill-detail/${invoice.maHoaDon}`">
+              <router-link :to="`bill-detail/${invoice.maHoaDon}?id=${invoice.id}`">
                 <v-icon>mdi-eye</v-icon>
               </router-link>
             </v-btn>
@@ -174,6 +174,27 @@ const handleRefresh = async () => {
 watch(() => store.activeTab, (newTab) => {
   store.setActiveTab(newTab);
 });
+function formattedTime(dateTime) {
+  const date = new Date(dateTime);
+  const formattedTime = date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // Sử dụng định dạng 24 giờ
+  });
+  return formattedTime
+}
+function formatDate(dateTime) {
+  console.log(dateTime);
+  const date = new Date(dateTime);
+  const formattedDate = date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  const time = formattedTime(dateTime)
+  return `${formattedDate} ${time}`;
+}
 </script>
 
 <style scoped>

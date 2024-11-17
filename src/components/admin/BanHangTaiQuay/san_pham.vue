@@ -1,11 +1,8 @@
 <template>
   <div v-for="(product, index) in cartStore.products" :key="index" class="product">
-    <input type="checkbox" class="product-checkbox" />
-
     <img class="product-image" :src="product.hinhAnh" alt="product" />
 
     <div class="product-info">
-      <div class="discount-label">{{ product.discount }}%</div>
       <h3 class="product-name">{{ product.tenSanPham }}</h3>
       <p class="old-price">
         <s>{{ cartStore.parseMoney(product.giaSanPham) }}</s>

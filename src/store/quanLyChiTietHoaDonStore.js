@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 import { getHoaDonTheoMa } from '@/axios/quanlihoadon';
-
+import { huyHoaDon } from '@/axios/hoadon';
+import router from '@/router/router';
+import { useToast } from 'vue-toastification';
+const toast = useToast()
 export const quanLyChiTietHoaDon = defineStore('ChiTietHoaDon ', {
   state: () => ({
     orderDetail: {},
@@ -30,7 +33,11 @@ export const quanLyChiTietHoaDon = defineStore('ChiTietHoaDon ', {
     },
 
     async cancelOrder() {
-      // Xử lý hủy đơn hàng
+     const result = await huyHoaDon(router.currentRoute.value.query.id)
+     if(result.status === 200)
+      {
+        toast.success("Huỷ hoá đơn thành công")
+      }
       console.log("Hủy đơn hàng"); 
     },
 

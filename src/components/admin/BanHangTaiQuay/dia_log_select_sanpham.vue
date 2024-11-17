@@ -119,10 +119,24 @@
 <script setup>
 import useEmitter from '@/useEmitter';
 import { onMounted, ref, watch } from 'vue';
-
+import { useRoute } from 'vue-router';
+import { useToast } from 'vue-toastification';
+const toast = useToast()
+import { addSanPhamVaoHoaDon } from '@/axios/hoadon';
+const route = useRoute()
+import { danhSachSanPhamHoaDonStore } from '@/store/danhSachSanPhamHoaDonStore';
+const danhSachSanPhamStore = danhSachSanPhamHoaDonStore()
+ import { useOrderSummaryStore } from '@/store/orderSumaryStore'
+const summaryStore = useOrderSummaryStore()
 const props = defineProps({
   dialog: Boolean,
   product: Object
+})
+const dataAdd = ref({
+  hoaDonId: 0,
+  chiTietSanPhamId: 0,
+  gia: 0,
+  soLuong:0
 })
 const emitter = useEmitter()
 const dialog = ref(false)
@@ -180,15 +194,35 @@ const formatCurrency = (value) => {
 }
 
 // Hàm xác nhận chọn sản phẩm
-const confirmSelection = () => {
+const confirmSelection =async () => {
+ 
   // Xử lý logic khi xác nhận chọn sản phẩm với số lượng
   console.log('Số lượng đã chọn:', quantity.value)
-  const data = {
+  if(route.query.id)
+  {
+    dataAdd.value.hoaDonId = route.query.id
+    dataAdd.value.chiTietSanPhamId = product.value.chiTietSanPhamId
+    dataAdd.value.gia = product.value.giaSauGiam
+    dataAdd.value.soLuong = quantity.value
+    const dataResult = await addSanPhamVaoHoaDon(dataAdd.value)
+    if(dataResult.status === 200)
+    {
+      toast.success("Thêm sản phẩm thành công")
+      danhSachSanPhamStore.fetchProducts(route.params.ma)
+      summaryStore.fetchOrderData(route.params.ma)
+      emitter.emit("closeChonSanPham",false)
+    }
+  }
+  else{
+   
+    const data = {
     giaSauGiam: product.value.giaSauGiam,
     chiTietSanPhamId: product.value.chiTietSanPhamId,
     soLuong:quantity.value
   }
   emitter.emit("chiTietSanPhamId", data)
+  }
+
   // Thêm emit event hoặc xử lý khác ở đây
 }
 const closeDialog = ()=>{

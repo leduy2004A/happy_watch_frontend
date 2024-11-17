@@ -1,13 +1,13 @@
 <template>
-    <v-card class="product-list pa-4" variant="outlined" v-if="false">
-      <h5 class="text-h6 font-weight-bold">Danh sách sản phẩm hoàn hàng</h5>
+    <v-card class="product-list pa-4" flat>
+        <h5 class="text-h6 font-weight-bold">Danh sách sản phẩm</h5>
       <v-divider class="mb-4"></v-divider>
       
       <div v-for="product in products" :key="product.id" class="product-item mb-4">
         <v-row align="center">
           <v-col cols="12" sm="2">
             <v-img
-              :src="product.image"
+              :src="product.hinhAnh"
               :alt="product.name"
               height="100"
               contain
@@ -17,10 +17,10 @@
           
           <v-col cols="12" sm="4">
             <div class="product-info">
-              <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.name }}</h3>
-              <div class="text-red-500 mb-1">{{ formatPrice(product.price) }}</div>
-              <div class="text-body-2 text-grey">Size: {{ product.size }}</div>
-              <div class="text-body-2 text-grey">x{{ product.quantity }}</div>
+              <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.tenSanPham }}</h3>
+              <div class="text-red-500 mb-1">{{ formatPrice(product.giaTungSanPham) }}</div>
+              <div class="text-body-2 text-grey">Dòng sản phẩm: {{ product.maSanPham }}</div>
+              <div class="text-body-2 text-grey">Phân loại: {{ product.maSanPhamChiTiet }}</div>
             </div>
           </v-col>
           
@@ -34,7 +34,7 @@
                 :disabled="product.selectedQuantity <= 1"
               ></v-btn>
               
-              <div class="mx-4 text-body-1">{{ product.selectedQuantity }}</div>
+              <div class="mx-4 text-body-1">{{ product.soLuong }}</div>
               
               <v-btn
                 density="comfortable"
@@ -48,7 +48,7 @@
           
           <v-col cols="12" sm="3" class="text-right">
             <div class="text-red-500 text-h6 font-weight-bold">
-              {{ formatPrice(product.price * product.selectedQuantity) }}
+              {{ formatPrice(product.giaTungSanPham * product.soLuong) }}
             </div>
           </v-col>
         </v-row>
@@ -58,8 +58,10 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
-  
+  import { onMounted, ref } from 'vue';
+  import { layDanhSachSanPhamTheoMaHoaDon } from '@/axios/quanlihoadon';
+  import { useRoute } from 'vue-router';
+  const route = useRoute()
   const products = ref([
     {
       id: 1,
@@ -89,16 +91,23 @@
   };
   
   const increaseQuantity = (product) => {
-    if (product.selectedQuantity < product.quantity) {
-      product.selectedQuantity++;
-    }
+    
+      product.soLuong++;
+    
   };
   
   const decreaseQuantity = (product) => {
-    if (product.selectedQuantity > 1) {
-      product.selectedQuantity--;
+    if (product.soLuong > 1) {
+      product.soLuong --;
     }
   };
+  onMounted(async ()=>{
+    const data = await layDanhSachSanPhamTheoMaHoaDon(route.params.ma)
+    if(data.status === 200)
+    {
+      products.value = data.data.chiTietHoaDons
+    }
+  })
   </script>
   
   <style scoped>

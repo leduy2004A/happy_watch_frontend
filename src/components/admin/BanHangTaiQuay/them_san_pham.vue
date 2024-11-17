@@ -53,6 +53,8 @@ import { onMounted, ref, watch } from 'vue';
 import dialog_sanpham from './dialog_sanpham.vue';
 import { useInvoiceStore } from "@/store/invoiceStore";
 import { useToast } from 'vue-toastification';
+import { useRoute } from 'vue-router';
+const route = useRoute()
 const toast = useToast()
 const hoaDonStore = useInvoiceStore();
 const emitter = useEmitter()
@@ -80,6 +82,7 @@ const loadProducts = async (tabId) => {
     
     if (result.status === 200) {
       lstSanPham.value = result.data.chiTietHoaDons;
+      console.log(lstSanPham.value)
       tongSanPhamTrongHoaDon.value = result.data
       emitter.emit("tongsanpham", result.data)
       // Force re-render
@@ -118,9 +121,10 @@ onMounted(() => {
     modalQr.value = data
   })
   emitter.on("chiTietSanPhamId", async data => {
-    dataAdd.value.chiTietSanPhamId = data.chiTietSanPhamId
+    console.log("hiiii")
+    dataAdd.value.chiTietSanPhamId = data.chiTietSanPhamId 
     dataAdd.value.gia = data.giaSauGiam
-    dataAdd.value.hoaDonId = tab.value
+    dataAdd.value.hoaDonId = tab.value|| route.query.id
     dataAdd.value.soLuong = data.soLuong
     console.log(dataAdd.value)
     const dataResult = await addSanPhamVaoHoaDon(dataAdd.value)

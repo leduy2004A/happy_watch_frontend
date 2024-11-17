@@ -14,6 +14,9 @@ import mainSanPhamDetail from '@/components/user/mainSanPhamDetail.vue';
 import mainCart from '@/components/user/mainCart.vue';
 import mainThanhToan from '@/components/user/mainThanhToan.vue';
 import datHangThanhCong from '@/components/user/datHangThanhCong.vue';
+import mainProfile from '@/components/user/profile/mainProfile.vue';
+import mainDonHangKhachHang from '@/components/user/profile/mainDonHangKhachHang.vue';
+import hoaDonKhachHang from '@/components/user/profile/hoaDonKhachHang.vue';
 const routes = [
   { 
     path: '/admin', 
@@ -69,11 +72,28 @@ const routes = [
         component:mainCart
       },
       {
-        path:'success',
+        path:'success/:ma',
         component:datHangThanhCong
       }
     ]
    },
+   {
+    path: '/profile', component: mainProfile,
+    children:[
+      {
+        path:'don-hang/:ma',
+        component:mainDonHangKhachHang
+      },
+      {
+        
+          path:'hoa-don',
+          component:hoaDonKhachHang
+      
+      }
+    ]
+
+    
+   }
 ]
 
 const router = createRouter({

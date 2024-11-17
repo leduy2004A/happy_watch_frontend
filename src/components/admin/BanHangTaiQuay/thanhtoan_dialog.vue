@@ -166,9 +166,10 @@ const confirmPayment = async () => {
     hoaDonId: props.hoaDonId,
     tenKhachHang: diaChiStore.formData.ten,
     gia: tienStore.totalAmountValue,
-    maGiaoDich:maGiaoDich.value
+    maGiaoDich:maGiaoDich.value,
+    maKhuyenMaiHoaDon:tienStore.discountCode
   };
-  console.log(dataPayment);
+  console.log(dataPayment.gia);
   try{
     const resultPayment =  await thanhtoan(dataPayment);
     if(resultPayment.status == 200)

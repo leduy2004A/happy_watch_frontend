@@ -47,17 +47,6 @@
 
     <v-divider class="my-4"></v-divider>
 
-    <v-row class="cart-actions align-center">
-      <v-col cols="5">
-        <v-text-field label="Mã ưu đãi" v-model="discountCode" dense class="discount-input"></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-btn @click="applyDiscount" outlined color="primary" class="apply-btn">Áp dụng</v-btn>
-      </v-col>
-      <v-col cols="5" class="text-right">
-        <v-btn @click="updateCart" outlined color="primary" class="update-btn">Cập nhật giỏ hàng</v-btn>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 

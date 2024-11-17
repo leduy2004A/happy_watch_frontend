@@ -143,7 +143,7 @@ const toast = useToast()
 const handleConfirmOrder = async () => {
     if(store.isDelivery == false) {
       Sweetalert2.fire({
-        title: "Bạn có muốn xoá  không?",
+        title: "Bạn có muốn xác nhận không?",
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: "Xác nhận",
@@ -156,7 +156,7 @@ const handleConfirmOrder = async () => {
         try {
             loader = $loading.show();
             const result = await diaChiStore.xacNhanDonHang()
-            
+            console.log(result)
             if(result.result.status == 200) {
                 toast.success("Đã xác nhận đơn hàng")
                 const dataExportPdf = {

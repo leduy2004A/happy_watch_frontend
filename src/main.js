@@ -8,6 +8,7 @@
 import { registerPlugins } from '@/plugins'
 import mitt from 'mitt'
 import Toast from "vue-toastification";
+import PrimeVue from 'primevue/config';
 const options = {
     // You can set your default options here
 };
@@ -36,5 +37,5 @@ app.use(Toast,options)
 app.use(VueSweetalert2)
 app.use(LoadingPlugin)
 app.use(router)
+app.use(PrimeVue)
 app.mount('#app')
-``

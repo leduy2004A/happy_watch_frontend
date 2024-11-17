@@ -11,7 +11,7 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
     page: 1,
     itemsPerPage: 5,
     statusMap: {
-      cancelled: "Đã hủy",
+      cancelled: "Đã Hủy",
       pending: "Chờ xác nhận",
       waiting: "Chờ giao hàng",
       shipping: "Đang vận chuyển",
@@ -25,10 +25,11 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
       "Hoàn thành": "pink",
       "Chờ giao hàng": "warning",
       "Đã hủy": "error",
-      "Đang vận chuyển": "info",
-      "Đã giao hàng": "success",
+      "Đang giao hàng": "info",
+      "Đã giao": "success",
       "Đã thanh toán": "green",
       "Chờ thanh toán": "orange",
+      "Đã xác nhận": "orange",
     }
   }),
 
@@ -36,6 +37,54 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
     filteredInvoices: (state) => {
       if (state.activeTab === 'all') {
         return state.invoices;
+      }
+      else if(state.activeTab === 'cancelled') {
+        console.log(state.statusMap['cancelled']);  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          return invoice.trangThai === state.statusMap['cancelled']; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'pending') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Đang chờ xác nhận'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'waiting') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Chờ giao hàng'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'shipping') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Đang giao hàng'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'delivered') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Đã giao'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'paid') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Đã thanh toán'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'completed') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Hoàn thành'; // So sánh với giá trị trong statusMap
+        });
+      }
+      else if(state.activeTab === 'confirmed') {  // Kiểm tra giá trị trong statusMap
+        return state.invoices.filter(invoice => {
+          console.log(invoice)
+          return invoice.trangThai === 'Đã xác nhận'; // So sánh với giá trị trong statusMap
+        });
       }
       return state.invoices.filter(invoice => 
         invoice.status === state.statusMap[state.activeTab]

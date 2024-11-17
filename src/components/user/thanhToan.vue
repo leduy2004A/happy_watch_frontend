@@ -97,72 +97,151 @@
       <v-btn color="primary" @click="submitForm">Đặt hàng</v-btn>
     </v-card-actions>
   </v-card>
-  <dia_log_dia_chi :dialog="dialog"></dia_log_dia_chi>
+  <diaLogDiaChiKhachHang :dialog="dialog"></diaLogDiaChiKhachHang>
 </template>
 
 <script setup>
 import dia_log_dia_chi from "../admin/BanHangTaiQuay/dia_log_dia_chi.vue";
+import diaLogDiaChiKhachHang from "./diaLogDiaChiKhachHang.vue";
+import { taoLinkThanhToan } from "@/axios/payment";
 import { onMounted, ref, watch } from "vue";
 import { useAddressStore } from "@/store/diaChiStore";
 import { thanhToanMuaNgay } from "@/axios/thanhtoan";
+import { thanhToanNgay } from "@/axios/thanhtoan";
 import { useCheckOutStore } from "@/store/checkOutStore";
 import { useToast } from "vue-toastification";
-import { useSuccesStore } from "@/store/successStore";
-const successStore = useSuccesStore()
-const toast = useToast()
-const checkOutStore = useCheckOutStore()
+import Sweetalert2 from "sweetalert2";
+import { layDiaChiDauTienCuaKhachHangToken } from "@/axios/khachhang";
+const toast = useToast();
+const checkOutStore = useCheckOutStore();
 import useEmitter from "@/useEmitter";
 import { useRouter } from "vue-router";
 const emitter = useEmitter();
 const deliveryMethod = ref("cod");
 const store = useAddressStore();
-const router = useRouter()
+const router = useRouter();
 async function submitForm() {
-  // Xử lý logic đặt hàng ở đây
-  const selectedProvince = store.provinces.find(
-    (p) => p.value === store.formData.province
-  );
-  const selectedDistrict = store.districts.find(
-    (d) => d.value === store.formData.district
-  );
-  const selectedWard = store.wards.find((w) => w.value === store.formData.ward);
-    const chiTietHoaDon = checkOutStore.products.map(product => ({
-    chiTietSanPham: {
-      ma: product.productGoc.code // Giả sử product có trường ma
-    },
-    soLuong: product.soLuongChon, // Giả sử product có trường soLuong
-    giaTungSanPham: product.productGoc.price // Giả sử product có trường gia
-  }));
-  const data = {
-    hoaDon: {
-      tenNguoiNhan: store.formData.ten,
-      gia: checkOutStore.tinhTongTien(),
-      tinhThanhPho: selectedProvince.text,
-      quanHuyen: selectedDistrict.text,
-      xaPhuongThiTran: selectedWard.text,
-      diaChiCuThe: store.formData.detailAddress,
-      dienThoai: store.formData.phone,
-      loaiHoaDon: "Trực tuyến",
-    },
-    chiTietHoaDon
-  };
-  console.log(data)
-  const result = await thanhToanMuaNgay(data)
-  if(result.status === 200)
-  {
-    successStore.customerInfo.phone = store.formData.phone
-    successStore.customerInfo.fullName = store.formData.ten
-    successStore.customerInfo.address.province = selectedProvince.text,
-    successStore.customerInfo.address.district = selectedDistrict.text,
-    successStore.customerInfo.address.ward = selectedWard.text,
-    successStore.customerInfo.address.city = store.formData.detailAddress
-    successStore.products = checkOutStore.products
-    successStore.shipping.fee = checkOutStore.shippingFee
-    console.log(successStore.products)
-    router.push("/product/success")
-    toast.success("Đặt hàng thành công")
+  Sweetalert2.fire({
+  title: "Hãy kiểm tra lại kĩ thông tin giao hàng nhé !",
+  showCancelButton: true,
+  confirmButtonText: "Đặt hàng",
+  cancelButtonText: `Huỷ`
+}).then(async (result) => {
+  /* Read more about isConfirmed, isDenied below */
+  if (result.isConfirmed) {
+
+   
+           if (deliveryMethod.value === "cod") {
+    const selectedProvince = store.provinces.find(
+      (p) => p.value === store.formData.province
+    );
+    const selectedDistrict = store.districts.find(
+      (d) => d.value === store.formData.district
+    );
+    const selectedWard = store.wards.find(
+      (w) => w.value === store.formData.ward
+    );
+    const chiTietHoaDon = checkOutStore.products.map((product) => ({
+      chiTietSanPham: {
+        ma: product.productGoc.code, // Giả sử product có trường ma
+      },
+      soLuong: product.soLuongChon, // Giả sử product có trường soLuong
+      giaTungSanPham: product.productGoc.price, // Giả sử product có trường gia
+    }));
+    const data = {
+      hoaDon: {
+        tenNguoiNhan: store.formData.ten,
+        gia: checkOutStore.tinhTongTien(),
+        tinhThanhPho: selectedProvince.text,
+        quanHuyen: selectedDistrict.text,
+        xaPhuongThiTran: selectedWard.text,
+        diaChiCuThe: store.formData.detailAddress,
+        dienThoai: store.formData.phone,
+        loaiHoaDon: "Trực tuyến",
+        phiShip: checkOutStore.shippingFee,
+      },
+      chiTietHoaDon,
+    };
+    try{
+       const result = await thanhToanMuaNgay(data);
+    if (result.status === 200) {
+      router.push(`/product/success/${result.data.maHoaDon}?soTien=${checkOutStore.tinhTongTien()}`)
+      toast.success("Đặt hàng thành công");
+    }
+    }catch(e){
+      toast.error("Kiểm tra lại các trường !")
+    }
+   
+   
+  } else {
+    const selectedProvince = store.provinces.find(
+      (p) => p.value === store.formData.province
+    );
+    const selectedDistrict = store.districts.find(
+      (d) => d.value === store.formData.district
+    );
+    const selectedWard = store.wards.find(
+      (w) => w.value === store.formData.ward
+    );
+    const chiTietHoaDon = checkOutStore.products.map((product) => ({
+      chiTietSanPham: {
+        ma: product.productGoc.code, // Giả sử product có trường ma
+      },
+      soLuong: product.soLuongChon, // Giả sử product có trường soLuong
+      giaTungSanPham: product.productGoc.price, // Giả sử product có trường gia
+    }));
+    const dataHoaDon = {
+      hoaDon: {
+        tenNguoiNhan: store.formData.ten,
+        gia: checkOutStore.tinhTongTien(),
+        tinhThanhPho: selectedProvince.text,
+        quanHuyen: selectedDistrict.text,
+        xaPhuongThiTran: selectedWard.text,
+        diaChiCuThe: store.formData.detailAddress,
+        dienThoai: store.formData.phone,
+        loaiHoaDon: "Trực tuyến",
+        phiShip: checkOutStore.shippingFee,
+      },
+      chiTietHoaDon,
+    };
+    try{
+         const result = await thanhToanNgay(dataHoaDon);
+    if (result.status === 200) {
+      const dataThanhToan = {
+        amount: checkOutStore.tinhTongTien(),
+        ma: result.data.maHoaDon,
+      };
+      console.log(result)
+      console.log(dataThanhToan)
+      const data = await taoLinkThanhToan(dataThanhToan);
+      if (data.data.code === "00") {
+        window.open(data.data.data.checkoutUrl, "_blank");
+      } else {
+        toast.error("Có lỗi xảy ra");
+      }
+    } else {
+      toast.error("Có lỗi xảy ra");
+    }
+    }catch(e)
+    {
+      toast.error("Kiểm tra lại các trường !")
+    }
+ 
   }
+    
+
+
+  } 
+
+
+
+
+
+
+});
+ 
 }
+
 const dialog = ref(false);
 const openDiaChi = () => {
   dialog.value = true;
@@ -172,6 +251,41 @@ onMounted(async () => {
   emitter.on("closeDialogDiaChi", (data) => {
     dialog.value = data;
   });
+  const dataDiaChi =await layDiaChiDauTienCuaKhachHangToken()
+  if(dataDiaChi.status === 200){
+    store.formData.ten = dataDiaChi.data.tenNguoiNhan;
+  store.formData.phone = dataDiaChi.data.dienThoai;
+  store.formData.detailAddress = dataDiaChi.data.diaChiCuThe;
+
+  // Tìm và gán mã tỉnh/thành phố
+  const province = store.provinces.find(
+    p => p.text === dataDiaChi.data.tinhThanhPho
+  );
+  if (province) {
+    store.formData.province = province.value;
+    // Load districts cho tỉnh/thành được chọn
+    await store.handleProvinceChange(province.value);
+  }
+
+  // Tìm và gán mã quận/huyện
+  const district = store.districts.find(
+    d => d.text === dataDiaChi.data.quanHuyen
+  );
+  if (district) {
+    store.formData.district = district.value;
+    // Load wards cho quận/huyện được chọn
+    await store.handleDistrictChange(district.value);
+  }
+
+  // Tìm và gán mã phường/xã
+  const ward = store.wards.find(
+    w => w.text === dataDiaChi.data.xaPhuongThiTran
+  );
+  if (ward) {
+    store.formData.ward = ward.value;
+  }
+  }
+  
 });
 watch(
   () => store.getFormData,
