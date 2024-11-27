@@ -6,7 +6,7 @@
       <v-card-text>
         <div class="d-flex justify-space-between mb-4">
           <span>Tổng tiền hàng</span>
-          <span class="red--text">{{ formatCurrency(totalAmount) }}</span>
+          <span class="red--text">{{ formatCurrency(orderSumaryStore.total) }}</span>
         </div>
         <v-btn-toggle v-model="paymentMethod" mandatory class="d-flex mb-4">
           <v-btn value="Chuyển khoản" class="flex-grow-1" color="pink lighten-4">
@@ -46,7 +46,7 @@
             <tbody>
               <tr v-for="(transaction, index) in transactions" :key="index">
                 <td>{{ index + 1 }}</td>
-                <td>{{ transaction.maGiaoDich }}</td>
+                <td>{{ transaction.maGiaoDich||'' }}</td>
                 <td>{{ transaction.phuongThuc }}</td>
                 <td>{{ formatCurrency(transaction.soTien) }}</td>
               </tr>
@@ -81,6 +81,8 @@
   import { useRoute } from 'vue-router';
   import { usePaymentHistoryStore } from '@/store/paymentHistoryStore';
   import { useTimelineStore } from '@/store/timelineStore';
+  import { useOrderSummaryStore } from '@/store/orderSumaryStore';
+  const orderSumaryStore = useOrderSummaryStore()
   const timeLineStore = useTimelineStore()
   const paymentStore = usePaymentHistoryStore()
   const route = useRoute()
@@ -100,7 +102,7 @@
   const transactions = ref([]);
   totalAmount.value = tienStore.totalAmountValue
   const remainingAmount = computed(() => {
-    return Math.max(totalAmount.value - customerPayment.value, 0);
+    return Math.max(orderSumaryStore.total - customerPayment.value, 0);
   });
   watch(rawValue,(newVal,oldVal)=>{
     if(newVal)

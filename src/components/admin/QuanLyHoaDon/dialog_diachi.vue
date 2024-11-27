@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" max-width="600px">
     <v-card>
       <v-card-title class="text-h6 pa-4">
-        {{ editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới" }}
+      Cập nhật địa chỉ
       </v-card-title>
       <v-card-text>
         <v-form ref="formRef" v-model="valid">
@@ -64,7 +64,7 @@
               ></v-select>
             </v-col>
 
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="12">
               <v-text-field
                 v-model="formData.detailAddress"
                 label="Địa chỉ cụ thể"
@@ -72,6 +72,14 @@
                 dense
                 placeholder="aaaaa"
               ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="12">
+              <div class="d-flex justify-space-between align-center">
+          <div class="text-subtitle-1 font-weight-bold">Phí Ship:</div>
+          <div class="text-h6 font-weight-bold text-red-500">
+            {{store.formatPrice(store.shippingFee ) }}
+          </div>
+        </div>
             </v-col>
           </v-row>
         </v-form>
@@ -96,7 +104,12 @@
 import { ref, onMounted, watch } from "vue";
 import { useDiaChiTrongHoaDonStore } from "@/store/diaChiTrongHoaDonStore";
 import useEmitter from "@/useEmitter";
-
+import { updateDiaChiNhanHangTheoMaHoaDon } from "@/axios/quanlihoadon";
+import { useToast } from "vue-toastification";
+import { capNhatPhiShipTheoMaHoaDon } from "@/axios/quanlihoadon";
+import { useOrderSummaryStore } from "@/store/orderSumaryStore";
+const orderSumaryStore = useOrderSummaryStore()
+const toast = useToast()
 const emitter = useEmitter();
 const store = useDiaChiTrongHoaDonStore();
 const dialog = ref(false);
@@ -185,7 +198,15 @@ const close = () => {
   // store.districts = [];
   // store.wards = [];
 };
-
+watch(
+  () => [store.selectedProvinceId, store.selectedDistrictId, store.selectedWardId],
+  async ([provinceId, districtId, wardId]) => {
+    if (provinceId && districtId && wardId) {
+     store.calculateShippingFee(districtId,wardId)
+    }
+  },
+  { deep: true }
+);
 const saveAddress = async () => {
   // Lấy text của các địa chỉ đã chọn
   const selectedProvince = store.provinces.find(
@@ -206,11 +227,31 @@ const saveAddress = async () => {
     xaPhuongThiTran: selectedWard,
     diaChiCuThe: formData.value.detailAddress,
   };
-
-  // Xử lý lưu địa chỉ ở đây
-  console.log("Address data to save:", addressData);
-
+  if( addressData.quanHuyen !== undefined &&
+  addressData.tinhThanhPho !== undefined &&
+  addressData.xaPhuongThiTran !== undefined)
+  {
+      try{
+    const result =await updateDiaChiNhanHangTheoMaHoaDon(route.params.ma,addressData)
+    if(result.status === 200)
+    {
+      const updateShip =await capNhatPhiShipTheoMaHoaDon(route.params.ma,store.shippingFee)
+      if(updateShip.status === 200)
+      {
+       toast.success("Cập nhật địa chỉ thành công") 
+       orderSumaryStore.fetchOrderData(route.params.ma)
+      }
+      
+    }
+  }
+ catch(e){
+    toast.error("Có lỗi xảy ra")
+ }
   close();
+  }
+else{
+  toast.error("Kiểm tra lại các trường địa chỉ")
+}
 };
 </script>
 

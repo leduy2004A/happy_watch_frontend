@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted,watch } from "vue";
 import { usePaymentHistoryStore } from '@/store/paymentHistoryStore';
 import { quanLyCacNut } from '@/store/quanLyCacNut';
 import DialogThanhToanHoaDon from "./DialogThanhToanHoaDon.vue";
@@ -104,6 +104,17 @@ onMounted(async () => {
   });
   
   await store.fetchPaymentHistory(route.params.ma);
+});
+watch(() => route.params.ma, async (newVal) => {
+  if (newVal) {
+    try {
+      await store.fetchPaymentHistory(newVal);
+    } catch (error) {
+      // Xử lý lỗi
+    }
+  }
+}, {
+  immediate: true // Gọi ngay lập tức khi component mounted
 });
 </script>
 

@@ -32,6 +32,7 @@
                 variant="outlined"
                 @click="decreaseQuantity(product)"
                 :disabled="product.selectedQuantity <= 1"
+                v-if="false"
               ></v-btn>
               
               <div class="mx-4 text-body-1">{{ product.soLuong }}</div>
@@ -42,6 +43,7 @@
                 variant="outlined"
                 @click="increaseQuantity(product)"
                 :disabled="product.selectedQuantity >= product.quantity"
+                v-if="false"
               ></v-btn>
             </div>
           </v-col>

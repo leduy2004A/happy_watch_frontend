@@ -24,3 +24,17 @@ export const layHoaDonTheoNguoiDung = async()=>{
 export const thongTinGiaoHang = async(maHoaDon)=>{
     return await api.get(`api/khach-hang/diachinhanhang/${maHoaDon}`)
 }
+export const updateDiaChiNhanHangTheoMaHoaDon = async(maHoaDon,data)=>{
+    return await api.put(`api/qlhd/update-dia-chi-nhan-hang/${maHoaDon}`,data)
+}
+export const capNhatPhiShipTheoMaHoaDon = async(maHoaDon,phiShip)=>{
+    return await api.put(`api/hoadon/phi-ship/${maHoaDon}`,{phiShip:phiShip})
+}
+
+export const traHang = async(data)=>{
+    return await api.post(`api/tra-hang/yeu-cau-tra-hang`,data)
+}
+
+export const layTraHang = async(data)=>{
+    return await api.get(`api/tra-hang/by-ma-hoa-don/${data}`)
+}

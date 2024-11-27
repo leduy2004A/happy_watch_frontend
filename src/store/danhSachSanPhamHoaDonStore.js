@@ -19,6 +19,7 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
   // State
   state: () => ({
     products: [],
+    tongCanNang:0,
     showDialog: false
   }),
 
@@ -47,8 +48,10 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
     async fetchProducts(maHoaDon) {
       try {
         const data = await layDanhSachSanPhamTheoMaHoaDon(maHoaDon)
+        console.log(data)
         if(data.status === 200) {
           this.products = data.data.chiTietHoaDons
+          this.tongCanNang = data.data.tongCanNang
         }
       } catch (error) {
         console.error('Error fetching products:', error)

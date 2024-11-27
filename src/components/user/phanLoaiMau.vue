@@ -7,10 +7,9 @@
         cols="6"
         md="3"
       >
-   
-          <v-card
-          :elevation="selectedIndex === index ? 5 : 1"
-          :class="{'selected-item': selectedIndex === index}"
+        <v-card
+          :elevation="isSelected(item.id) ? 5 : 1"
+          :class="{'selected-item': isSelected(item.id)}"
           @click="selectItem(index, item.id)"
         >
           <v-img
@@ -20,7 +19,7 @@
             cover
           ></v-img>
           <v-card-text class="text-center pa-2">
-            <div :class="{'text-primary': selectedIndex === index, 'text--secondary': selectedIndex !== index}">
+            <div :class="{'text-primary': isSelected(item.id), 'text--secondary': !isSelected(item.id)}">
               {{ formatPrice(item.giaSauGiam) }}
             </div>
             <div class="text-caption text--secondary">
@@ -28,31 +27,49 @@
             </div>
           </v-card-text>
         </v-card>
-    
-      
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useChiTietSanPhamStore } from '@/store/chiTietSanPhamStore'
 import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
+
 const router = useRouter()
-const chiTietSanPhamStore = useChiTietSanPhamStore()
 const route = useRoute()
-const selectedIndex = ref(0)
+const chiTietSanPhamStore = useChiTietSanPhamStore()
 
-// Lấy danh sách chi tiết sản phẩm từ store
-const chiTietSanPhamList = computed(() => {
-  return chiTietSanPhamStore.lstSanPhamCungLoai
-})
+// Kiểm tra sản phẩm có được chọn không
+const isSelected = (id) => {
+  return id === parseInt(route.params.id)
+}
 
-onMounted(() => {
-  chiTietSanPhamStore.fetchChiTietSanPhamCungLoai(route.params.id)
-  console.log(chiTietSanPhamStore.lstSanPhamCungLoai)
+const loadData = async (id) => {
+  // Reset data trước khi load mới
+  chiTietSanPhamStore.resetState()
+  await Promise.all([
+    chiTietSanPhamStore.fetchChiTietSanPham(id),
+    chiTietSanPhamStore.fetchChiTietSanPhamCungLoai(id)
+  ])
+}
+
+// Theo dõi thay đổi route
+watch(
+  () => route.params.id,
+  async (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      await loadData(newId)
+    }
+  }
+)
+
+onMounted(async () => {
+  if (route.params.id) {
+    await loadData(route.params.id)
+  }
 })
 
 // Format giá tiền
@@ -65,10 +82,8 @@ const formatPrice = (price) => {
 
 // Xử lý khi chọn sản phẩm
 const selectItem = async (index, id) => {
-  console.log('selectItem called with id:', id)
   try {
     await router.push(`/product/detail/${id}`)
-    selectedIndex.value = index
   } catch (error) {
     console.error('Navigation error:', error)
   }
@@ -77,7 +92,7 @@ const selectItem = async (index, id) => {
 
 <style scoped>
 .selected-item {
-  border: 2px solid #1867C0; /* Màu primary của Vuetify */
+  border: 2px solid #1867C0;
 }
 
 .text-primary {

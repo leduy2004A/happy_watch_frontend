@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { thongTinGiaoHang,} from "@/axios/quanlihoadon";
 import { getTinhThanh, getQuanHuyen, getPhuongXa } from "@/axios/diachi"
+import { danhSachSanPhamHoaDonStore } from "./danhSachSanPhamHoaDonStore";
+import { getPhiShip } from "@/axios/giaohangnhanh";
 export const useDiaChiTrongHoaDonStore = defineStore("DiaChiTrongHoaDonStore", {
   state: () => ({
     diaChi: {},
@@ -9,7 +11,8 @@ export const useDiaChiTrongHoaDonStore = defineStore("DiaChiTrongHoaDonStore", {
     wards: [],
     selectedProvinceId: null,
     selectedDistrictId: null,
-    selectedWardId: null
+    selectedWardId: null,
+    shippingFee:0
   }),
   
   actions: {
@@ -52,7 +55,29 @@ export const useDiaChiTrongHoaDonStore = defineStore("DiaChiTrongHoaDonStore", {
         console.error('Error fetching order data:', error)
       }
     },
-
+    formatPrice(price) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+      }).format(price)
+    },
+    async calculateShippingFee(districtId, wardCode) {
+      const useDSSP = danhSachSanPhamHoaDonStore()
+      try {
+        const dataShip = {
+          district: districtId,
+          ward: wardCode,
+          weight: useDSSP.tongCanNang,
+          name: 'Đồng hồ',
+        }
+        console.log(dataShip)
+        const result = await getPhiShip(dataShip)
+        console.log(result)
+        this.shippingFee = result.data.data.total
+      } catch (error) {
+        console.error('Error calculating shipping fee:', error)
+      }
+    },
     async fetchProvinces() {
       try {
         const response = await getTinhThanh()

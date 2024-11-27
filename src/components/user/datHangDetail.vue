@@ -5,11 +5,11 @@
           <!-- Tiêu đề và thông tin sản phẩm -->
           <v-row class="">
             <v-col>
-              <h1 class="brand">DOXA</h1>
+              <h1 class="brand">{{ useChiTietStore.chiTietSanPham.thuongHieu }}</h1>
               <h2 class="product-title">{{ useChiTietStore.chiTietSanPham.tenSanPham }} – {{ useChiTietStore.chiTietSanPham.gioiTinh }} – {{ useChiTietStore.chiTietSanPham.loaiKinh }} – {{ useChiTietStore.chiTietSanPham.chatLieuVo }} – {{ useChiTietStore.chiTietSanPham.loaiMay }} – {{ useChiTietStore.chiTietSanPham.chatLieuDay }}</h2>
               <p class="product-code">Mã Số Sản Phẩm: {{ useChiTietStore.chiTietSanPham.ma }}</p>
               <p class="price">{{formatPrice(useChiTietStore.chiTietSanPham.giaSauGiam) }}</p>
-              <p class="description">Mẫu Doxa D173TCM khoác lên phong cách đẳng cấp khi mặt số với thiết kế tinh xảo đính kèm các viên kim cương nổi bật trên nền kính Sapphire thời trang sang trọng phối cùng mẫu dây đeo demi.</p>
+              <p class="description">{{ useChiTietStore.chiTietSanPham.moTaChiTiet }}</p>
             </v-col>
           </v-row>
           <phan-loai-mau></phan-loai-mau>

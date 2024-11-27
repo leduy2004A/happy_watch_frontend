@@ -1,85 +1,52 @@
 <template>
-    <v-card class="product-list pa-4" variant="outlined" v-if="false">
-      <h5 class="text-h6 font-weight-bold">Danh sách sản phẩm hoàn hàng</h5>
-      <v-divider class="mb-4"></v-divider>
-      
-      <div v-for="product in products" :key="product.id" class="product-item mb-4">
-        <v-row align="center">
-          <v-col cols="12" sm="2">
-            <v-img
-              :src="product.image"
-              :alt="product.name"
-              height="100"
-              contain
-              class="bg-grey-lighten-2 rounded"
-            ></v-img>
-          </v-col>
-          
-          <v-col cols="12" sm="4">
-            <div class="product-info">
-              <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.name }}</h3>
-              <div class="text-red-500 mb-1">{{ formatPrice(product.price) }}</div>
-              <div class="text-body-2 text-grey">Size: {{ product.size }}</div>
-              <div class="text-body-2 text-grey">x{{ product.quantity }}</div>
-            </div>
-          </v-col>
-          
-          <v-col cols="12" sm="3">
-            <div class="d-flex align-center justify-center">
-              <v-btn
-                density="comfortable"
-                icon="mdi-minus"
-                variant="outlined"
-                @click="decreaseQuantity(product)"
-                :disabled="product.selectedQuantity <= 1"
-              ></v-btn>
-              
-              <div class="mx-4 text-body-1">{{ product.selectedQuantity }}</div>
-              
-              <v-btn
-                density="comfortable"
-                icon="mdi-plus"
-                variant="outlined"
-                @click="increaseQuantity(product)"
-                :disabled="product.selectedQuantity >= product.quantity"
-              ></v-btn>
-            </div>
-          </v-col>
-          
-          <v-col cols="12" sm="3" class="text-right">
-            <div class="text-red-500 text-h6 font-weight-bold">
-              {{ formatPrice(product.price * product.selectedQuantity) }}
-            </div>
-          </v-col>
-        </v-row>
-        <v-divider class="mt-4"></v-divider>
-      </div>
-    </v-card>
-  </template>
-  
+  <v-card class="product-list pa-4" variant="outlined" v-if="products?.chiTietTraHangList">
+    <h5 class="text-h6 font-weight-bold">Danh sách sản phẩm trả hàng</h5>
+    <v-divider class="mb-4"></v-divider>
+    
+    <div v-for="product in products.chiTietTraHangList" :key="product.idChiTietSanPham" class="product-item mb-4">
+      <v-row align="center">
+        <v-col cols="12" sm="2">
+          <v-img
+            :src="product.hinhAnh"
+            height="100"
+            contain
+            class="bg-grey-lighten-2 rounded"
+          ></v-img>
+        </v-col>
+        
+        <v-col cols="12" sm="4">
+          <div class="product-info">
+            <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.chiTietSanPhamDayDuDTO.tenSanPham }}</h3>
+            <div class="text-body-2 text-grey">Phân Loại: {{ product.chiTietSanPhamDayDuDTO.ma }}</div>
+            <div class="text-body-2 text-grey">x{{ product.soLuongTra }}</div>
+          </div>
+        </v-col>
+        
+        <v-col cols="12" sm="3">
+          <p>{{ product.ghiChu }}</p>
+        </v-col>
+        
+        <v-col cols="12" sm="3" class="text-right">
+          <div class="text-red-500 text-h6 font-weight-bold">
+            {{ formatPrice(product.giaTriHoan) }}
+          </div>
+        </v-col>
+      </v-row>
+      <v-divider class="mt-4"></v-divider>
+    </div>
+    <div class="tongtien">
+      <b>Tổng Tiền</b>
+      <b>{{ formatPrice(products.tongGiaTriHoan) }}</b>
+    </div>
+    
+  </v-card>
+</template>
   <script setup>
-  import { ref } from 'vue';
-  
-  const products = ref([
-    {
-      id: 1,
-      name: 'Balen Grey 2023 Tím',
-      price: 137500,
-      size: 41,
-      quantity: 4,
-      selectedQuantity: 4,
-      image: 'https://file.hstatic.net/1000284478/file/uu-diem-cua-dong-ho-co-nam_271adf593134445cb89d6f04c6df07a2.jpg' // Placeholder for demo
-    },
-    {
-      id: 2,
-      name: 'Kkkk Xanh dương',
-      price: 80000,
-      size: 40,
-      quantity: 3,
-      selectedQuantity: 3,
-      image: 'https://donghott.com/upload/images/dong-ho-co-paul-buhre-suu-tam.jpg' // Placeholder for demo
-    }
-  ]);
+  import { onMounted, ref } from 'vue';
+  import { layTraHang } from '@/axios/quanlihoadon';
+  import { useRoute } from 'vue-router';
+  const route = useRoute()
+  const products = ref({});
   
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -99,6 +66,15 @@
       product.selectedQuantity--;
     }
   };
+  onMounted(async ()=>{
+    const result = await layTraHang(route.params.ma)
+    if(result.status === 200)
+    {
+      products.value = result.data
+      console.log(products.value)
+    }
+    console.log(products.value)
+  })
   </script>
   
   <style scoped>
@@ -117,5 +93,11 @@
   
   .product-info {
     line-height: 1.5;
+  }
+  .tongtien{
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    color: orange;
   }
   </style>
