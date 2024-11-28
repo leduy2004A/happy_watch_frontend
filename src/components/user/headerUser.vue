@@ -1,13 +1,5 @@
 <template>
-
-  <v-app-bar
-    app
-    class="px-8"
-    height="80"
-    color="white"
-    elevation="1"
-    
-  >
+  <v-app-bar app class="px-8" height="80" color="white" elevation="1">
     <!-- Logo -->
     <v-app-bar-title class="d-flex align-center">
       <router-link to="/" class="d-flex align-center text-decoration-none">
@@ -45,44 +37,63 @@
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
 
-      <!-- User Account Icon -->
-       <router-link to="/profile/hoa-don">
-         <v-btn icon class="mr-2">
-        <v-icon>mdi-account</v-icon>
-      </v-btn>
-       </router-link>
-     
+      <!-- User Account Menu -->
+      <v-menu v-model="accountMenu" :close-on-content-click="false" location="bottom end" offset="10">
+        <template v-slot:activator="{ props }">
+          <v-btn icon class="mr-2" v-bind="props">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card min-width="200" class="account-menu">
+          <v-list>
+            <v-list-item to="/profile/hoa-don" class="account-menu-item">
+              <template v-slot:prepend>
+                <v-icon>mdi-receipt</v-icon>
+              </template>
+              <v-list-item-title>Hóa đơn</v-list-item-title>
+            </v-list-item>
+            
+            <v-list-item to="/profile" class="account-menu-item">
+              <template v-slot:prepend>
+                <v-icon>mdi-account-details</v-icon>
+              </template>
+              <v-list-item-title>Thông tin tài khoản</v-list-item-title>
+            </v-list-item>
+            
+            <v-divider></v-divider>
+            
+            <v-list-item @click="handleLogout" class="account-menu-item">
+              <template v-slot:prepend>
+                <v-icon>mdi-logout</v-icon>
+              </template>
+              <v-list-item-title>Đăng xuất</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
 
       <!-- Shopping Cart -->
       <v-btn icon class="position-relative" @click="openModalCart()">
-  
-          <v-badge
-            :content="cartStore.cartItemCount.toString()"
-            :value="cartStore.cartItemCount"
-            color="red"
-            floating
-            offset-x="-5"
-            offset-y="5"
-            class="mr-5"
-          >
-            <v-icon>mdi-cart</v-icon>
-          </v-badge>
-      
+        <v-badge
+          :content="cartStore.cartItemCount.toString()"
+          :value="cartStore.cartItemCount"
+          color="red"
+          floating
+          offset-x="-5"
+          offset-y="5"
+          class="mr-5"
+        >
+          <v-icon>mdi-cart</v-icon>
+        </v-badge>
       </v-btn>
     </div>
 
     <!-- Mobile Menu Button -->
-    <v-app-bar-nav-icon
-      class="d-md-none"
-      @click="drawer = !drawer"
-    ></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
     <!-- Mobile Navigation Drawer -->
-    <v-navigation-drawer
-      v-model="drawer"
-      location="right"
-      temporary
-    >
+    <v-navigation-drawer v-model="drawer" location="right" temporary>
       <v-list>
         <v-list-item
           v-for="(item, index) in menuItems"
@@ -99,12 +110,15 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useCartStore } from '@/store/cartStore'
-import cartOverLay from './cartOverLay.vue';
-import useEmitter from '@/useEmitter';
+import cartOverLay from './cartOverLay.vue'
+import useEmitter from '@/useEmitter'
+
 const emitter = useEmitter()
 const cartStore = useCartStore()
 const modalCart = ref(false)
 const drawer = ref(false)
+const accountMenu = ref(false)
+
 const menuItems = ref([
   { title: 'TRANG CHỦ', path: '/product/' },
   { title: 'GIỚI THIỆU', path: '/gioi-thieu' },
@@ -112,11 +126,18 @@ const menuItems = ref([
   { title: 'TIN TỨC', path: '/tin-tuc' },
   { title: 'LIÊN HỆ', path: '/lien-he' },
 ])
-const openModalCart = ()=>{
+
+const openModalCart = () => {
   modalCart.value = true
 }
-onMounted(()=>{
-  emitter.on("closeCartModal",val =>{
+
+const handleLogout = () => {
+  accountMenu.value = false
+  // Xử lý logout ở đây
+}
+
+onMounted(() => {
+  emitter.on("closeCartModal", val => {
     modalCart.value = val
   })
 })
@@ -126,22 +147,36 @@ onMounted(()=>{
 .v-btn {
   text-transform: none;
   letter-spacing: 0.5px;
+  transition: all 0.3s ease;
 }
 
 .v-btn:hover {
   opacity: 0.8;
 }
 
+.v-btn.router-link-active {
+  color: #000;
+  font-weight: bold;
+}
+
 .position-relative {
   position: relative;
 }
 
-.v-btn {
-  transition: all 0.3s ease;
+.account-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-.v-btn.router-link-active {
-  color: #000;
-  font-weight: bold;
+.account-menu-item {
+  transition: background-color 0.2s ease;
+}
+
+.account-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.v-list-item {
+  min-height: 44px;
 }
 </style>

@@ -32,6 +32,7 @@ import khachHang from '@/components/admin/QuanLySanPham/khachHang.vue';
 import phieuGiamGia from '@/components/admin/QuanLySanPham/phieuGiamGia.vue';
 import giamGiaSanPham from '@/components/admin/QuanLySanPham/giamGiaSanPham.vue';
 import nhanVien from '@/components/admin/QuanLySanPham/nhanVien.vue';
+import address from '@/components/user/profile/address.vue';
 const routes = [
   { 
     path: '/admin', 
@@ -178,8 +179,11 @@ const routes = [
         
           path:'hoa-don',
           component:hoaDonKhachHang
-      
-      }
+      },
+      {
+        path:'address',
+        component:address
+      },
     ]
 
     

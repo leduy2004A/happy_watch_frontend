@@ -111,7 +111,7 @@ const menuItems = ref([
 
         path: "/admin/mau-sac",
 
-        icon: "mdi-tag",
+        icon: "mdi-palette",
       },
 
       {
@@ -119,7 +119,7 @@ const menuItems = ref([
 
         path: "/admin/hinh-dang",
 
-        icon: "mdi-import",
+        icon: "mdi-shape-plus-outline",
       },
 
       {
@@ -127,7 +127,7 @@ const menuItems = ref([
 
         path: "/admin/loai-may",
 
-        icon: "mdi-clipboard-check",
+        icon: "mdi-dharmachakra",
       },
 
       {
@@ -135,7 +135,7 @@ const menuItems = ref([
 
         path: "/admin/chat-lieu-vo",
 
-        icon: "mdi-import",
+        icon: "mdi-material-ui",
       },
 
       {
@@ -143,7 +143,7 @@ const menuItems = ref([
 
         path: "/admin/chat-lieu-day",
 
-        icon: "mdi-clipboard-check",
+        icon: "mdi-graph-outline",
       },
 
       {

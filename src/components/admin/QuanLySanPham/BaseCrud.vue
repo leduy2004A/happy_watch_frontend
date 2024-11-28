@@ -1,172 +1,164 @@
 <!-- components/BaseCrudManagement.vue -->
 <template>
-  <v-container>
-    <v-card flat>
-      <v-card-title class="d-flex align-center justify-space-between pa-4">
-        <div>{{ title }}</div>
-      </v-card-title>
+  <div class="card">
+    <div class="flex align-items-center justify-content-between p-4">
+      <h2>{{ title }}</h2>
+    </div>
 
-      <v-card-text>
-        <!-- Search and Action Buttons -->
-        <div class="d-flex align-center gap-4 mb-4">
-          <v-text-field
+    <div class="p-4">
+      <!-- Search and Action Buttons -->
+      <div class="flex align-items-center gap-4 mb-4">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search" />
+          <InputText
             v-model="search"
-            prepend-inner-icon="mdi-magnify"
-            :label="searchPlaceholder"
-            single-line
-            hide-details
-            variant="outlined"
-            density="compact"
-          ></v-text-field>
+            :placeholder="searchPlaceholder"
+            class="p-inputtext-sm"
+          />
+        </span>
 
-          <v-btn
-            v-if="showExport"
-            color="primary"
-            prepend-icon="mdi-microsoft-excel"
-            variant="outlined"
-            @click="handleExport"
-          >
-            Export Excel
-          </v-btn>
-
-          <v-btn
-            v-if="showAdd"
-            color="primary"
-            prepend-icon="mdi-plus"
-            @click="openDialog()"
-          >
-            {{ addButtonText }}
-          </v-btn>
-        </div>
-
-        <!-- Data Table -->
-        <v-data-table
-          :headers="tableHeaders"
-          :items="items"
-          :search="search"
-          :items-per-page="itemsPerPage"
-          :loading="loading"
-          class="elevation-1"
-        
+        <Button
+          v-if="showExport"
+          class="p-button-outlined"
+          @click="handleExport"
         >
-          <!-- Custom column for STT -->
-          <template v-slot:item.stt="{ index }">
+          <i class="pi pi-file-excel mr-2"></i>
+          Export Excel
+        </Button>
+
+        <Button
+          v-if="showAdd"
+          @click="openDialog()"
+        >
+          <i class="pi pi-plus mr-2"></i>
+          {{ addButtonText }}
+        </Button>
+      </div>
+
+      <!-- Data Table -->
+      <DataTable
+        :value="items"
+        :loading="loading"
+        :rows="itemsPerPage"
+        :filters="filters"
+        stripedRows
+        paginator
+        table-style="min-width: 30rem"
+        class="p-datatable-sm text-center"
+      >
+        <!-- STT Column -->
+        <Column
+          field="stt"
+          header="STT"
+          style="width: 80px"
+                    alignHeader="center"
+          class="text-center"
+        >
+          <template #body="{ index }">
             {{ index + 1 }}
           </template>
+        </Column>
 
-          <!-- Custom columns -->
-          <template
-            v-for="slotName in Object.keys($slots)"
-            :key="slotName"
-            v-slot:[slotName]="slotData"
+        <!-- Dynamic Columns -->
+        <template v-for="header in tableHeaders" :key="header.key">
+          <Column
+            :field="header.key"
+            :header="header.title || header.header"
+            :sortable="header.sortable"
           >
-            <slot :name="slotName" v-bind="slotData"></slot>
-          </template>
+            <template #body="slotProps" v-if="$slots[header.key]">
+              <slot :name="header.key" v-bind="slotProps" />
+            </template>
+          </Column>
+        </template>
 
-          <!-- Default actions column -->
-          <template v-slot:item.actions="{ item }">
-  <div class="d-flex gap-2 justify-center">
-    <v-icon
-      v-if="showView"
-      color="primary"
-      size="small"
-      class="mr-3"
-      @click="handleView(item)"
-    >
-      mdi-eye
-    </v-icon>
-    <v-icon
-      v-if="showEdit"
-      color="warning"
-      size="small"
-      @click="handleEdit(item)"
-    >
-      mdi-pencil
-    </v-icon>
-    <!-- <v-icon
-      v-if="showDelete"
-      color="error"
-      size="small"
-      @click="confirmDelete(item)"
-    >
-      mdi-delete
-    </v-icon> -->
-  </div>
-</template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
+        <!-- Actions Column -->
+        <Column header="Actions" style="width: 80px">
+          <template #body="{ data }">
+            <div class="flex gap-2 justify-content-center">
+              <Button
+                v-if="showView"
+                icon="pi pi-eye"
+                class="p-button-text p-button-rounded"
+                @click="handleView(data)"
+              />
+              <Button
+                v-if="showEdit"
+                icon="pi pi-pencil"
+                class="p-button-text p-button-rounded p-button-warning"
+                @click="handleEdit(data)"
+              />
+            </div>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <!-- CRUD Dialog -->
-    <v-dialog v-model="dialog" :max-width="dialogWidth" persistent>
-      <v-card>
-        <v-card-title>
-          <span>{{ dialogTitle }}</span>
-        </v-card-title>
+    <Dialog
+      v-model:visible="dialog"
+      :style="{ width: dialogWidth }"
+      :modal="true"
+      :closable="false"
+    >
+      <template #header>
+        <h3>{{ dialogTitle }}</h3>
+      </template>
 
-        <v-card-text>
-          <v-container>
-            <slot
-              name="dialog-content"
-              :edited-item="editedItem"
-              :is-editing="isEditing"
-              :show-adress="isEditing"
-              @update:edited-item="handleUpdateEditedItem"
-            ></slot>
-          </v-container>
-        </v-card-text>
+      <div class="p-fluid">
+        <slot
+          name="dialog-content"
+          :edited-item="editedItem"
+          :is-editing="isEditing"
+          :show-adress="isEditing"
+          @update:edited-item="handleUpdateEditedItem"
+        ></slot>
+      </div>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="handleSave"
-            :loading="saving"
-          >
-            {{ saveButtonText }}
-          </v-btn>
-          <v-btn
-            color="error"
-            variant="text"
-            @click="closeDialog"
-            :disabled="saving"
-          >
-            {{ cancelButtonText }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <template #footer>
+        <Button
+          :label="saveButtonText"
+          @click="handleSave"
+          :loading="saving"
+          class="mr-2"
+        />
+        <Button
+          :label="cancelButtonText"
+          @click="closeDialog"
+          :disabled="saving"
+          class="p-button-text"
+        />
+      </template>
+    </Dialog>
 
     <!-- Delete Confirmation Dialog -->
-    <v-dialog v-model="deleteDialog" max-width="400px">
-      <v-card>
-        <v-card-title>Xác nhận xóa</v-card-title>
-        <v-card-text>
-          {{ deleteConfirmText }}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="error"
-            variant="text"
-            @click="handleDelete"
-            :loading="deleting"
-          >
-            Xóa
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="deleteDialog = false"
-            :disabled="deleting"
-          >
-            Hủy
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+    <Dialog
+      v-model:visible="deleteDialog"
+      :style="{ width: '400px' }"
+      :modal="true"
+    >
+      <template #header>
+        <h3>Xác nhận xóa</h3>
+      </template>
+
+      <div>{{ deleteConfirmText }}</div>
+
+      <template #footer>
+        <Button
+          label="Xóa"
+          @click="handleDelete"
+          :loading="deleting"
+          class="p-button-danger mr-2"
+        />
+        <Button
+          label="Hủy"
+          @click="deleteDialog = false"
+          :disabled="deleting"
+          class="p-button-text"
+        />
+      </template>
+    </Dialog>
+  </div>
 </template>
 
 <script setup>
@@ -368,3 +360,24 @@ function handleExport() {
 }
 
 </script>
+<style scoped>
+.table-container {
+  padding: 1rem !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+:deep(.p-datatable) {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.p-datatable-wrapper) {
+  text-align: center;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+</style>

@@ -206,13 +206,13 @@ import { getAllDiaChiKhachHang, themDiaChiKhachHang } from "@/axios/khachhang";
 const emitter = useEmitter();
 // Table headers
 const headers = [
-  { title: "STT", key: "stt", align: "center" },
+  // { title: "STT", key: "stt", align: "center" },
   { title: "Họ Tên", key: "ten", align: "center" },
   { title: "Email", key: "email", align: "center" },
   { title: "Số Điện Thoại", key: "dienThoai", align: "center" },
   { title: "Giới Tính", key: "gioiTinh", align: "center" },
   { title: "Trạng thái", key: "trangThai", align: "center" },
-  { title: "Thao tác", key: "actions", align: "center" },
+  // { title: "Thao tác", key: "actions", align: "center" },
 ];
 const form = reactive({
   avatar: null,

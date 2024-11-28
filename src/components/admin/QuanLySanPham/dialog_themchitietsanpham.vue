@@ -302,7 +302,7 @@
               <v-sheet
                 width="100"
                 height="100"
-                class="d-flex align-center justify-center border rounded mr-5"
+                class="d-flex align-center justify-center border rounded mr-2"
               >
                 <v-img
                   :src="n.url"

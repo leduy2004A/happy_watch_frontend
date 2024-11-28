@@ -39,12 +39,12 @@
   const emitter = useEmitter();
   // Table headers
   const headers = [
-    { title: "STT", key: "stt", align: "center" },
+    // { title: "STT", key: "stt", align: "center" },
     { title: "Tên Loại Kính", key: "ten", align: "center" },
     // { title: 'Ngày Thêm', key: 'ngaythem', align: 'center' },
     // { title: 'Số điện thoại', key: 'phone', align: 'start' },
     // { title: 'Trạng thái', key: 'status', align: 'center' },
-    { title: "Thao tác", key: "actions", align: "center" },
+    // { title: "Thao tác", key: "actions", align: "center" },
   ];
   
   // Default item structure

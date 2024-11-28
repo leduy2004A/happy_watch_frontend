@@ -25,7 +25,7 @@ export const updateThuongHieu =async (data)=>{
 }
 
 export const addSanPham =async (data)=>{
-   return await api.post("api/san-pham/create",data)
+   return await api.post("api/sanpham/create",data)
 }
 export const layTatCaChiTietTheoSP =async (idSanPham)=>{
    return await api.get(`/api/chi-tiet-san-pham/chi-tiet-sp-id?idSanPham=${idSanPham}`)
@@ -111,4 +111,10 @@ export const updateKhachHang =async (data)=>{
 }
 export const getNhanVien = async () =>{
    return await api.get(`/api/admin`)
+}
+export const addNhanVien = async (data) =>{
+   return await api.post(`/api/admin`,data)
+}
+export const updateNhanVien = async (data) =>{
+   return await api.put(`/api/admin/${data.id}`,data)
 }

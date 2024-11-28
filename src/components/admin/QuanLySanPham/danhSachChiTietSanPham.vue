@@ -1,127 +1,134 @@
 <template>
-  <v-container>
-    <h3 class="my-10">Chi tiết sản phẩm</h3>
-    <!-- Search Bar -->
-    <v-row>
-      <v-col cols="12">
-        <v-text-field
-          v-model="store.search"
-          prepend-inner-icon="mdi-magnify"
-          label="Nhập mã sản phẩm để tìm..."
-          variant="outlined"
-          density="comfortable"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-
-    <!-- Filters -->
-    <v-row>
-      <v-col cols="12" sm="6" md="3" v-for="(filter, key) in store.filterOptions" :key="key">
-        <v-select
-          v-model="store.filters[key]"
-          :items="filter.options"
-          :label="filter.label"
-          variant="outlined"
-          density="comfortable"
-        ></v-select>
-      </v-col>
-    </v-row>
-
-    <!-- Price Range -->
-    <v-row>
-      <v-col cols="12">
-        <div class="text-subtitle-1 mb-2">
-          Khoảng giá: {{ store.formatPrice(store.priceRange[0]) }} - {{ store.formatPrice(store.priceRange[1]) }}
+  <div class="surface-section p-5 container">
+    <div class="mx-auto" style="max-width: 1200px">
+      <h3 class="text-3xl font-medium mb-5">Chi tiết sản phẩm</h3>
+      
+      <!-- Search Bar -->
+      <div class="grid mb-4">
+        <div class="col-12">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search" />
+            <InputText 
+              v-model="store.search" 
+              class="w-full"
+              placeholder="Nhập mã sản phẩm để tìm..."
+            />
+          </span>
         </div>
-        <v-slider
-          v-model="store.priceRange[0]"
-          :min="0"
-          :max="2000000"
-          :step="100000"
-          label="Giá thấp nhất"
-          hide-details
-          class="mb-2"
-        ></v-slider>
-        <v-slider
-          v-model="store.priceRange[1]"
-          :min="0"
-          :max="2000000"
-          :step="100000"
-          label="Giá cao nhất"
-          hide-details
-        ></v-slider>
-      </v-col>
-    </v-row>
+      </div>
 
-    <v-btn flat color="primary" class="my-10" @click="open">Thêm</v-btn>
-    
-    <!-- Products Table -->
-    <v-data-table
-      :headers="headers"
-      :items="store.filteredProducts"
-      :search="store.search"
-      :items-per-page="10"
-    >
-      <template v-slot:item.hinhAnhChiTiet="{ item }">
-        <v-img
-          :src="item.hinhAnhChiTiet"
-          width="70"
-          height="70"
-          cover
-        ></v-img>
-      </template>
+      <!-- Filters -->
+      <div class="grid mb-4">
+        <div class="col-12 sm:col-6 md:col-3" v-for="(filter, key) in store.filterOptions" :key="key">
+          <Dropdown
+            v-model="store.filters[key]"
+            :options="filter.options"
+            :placeholder="filter.label"
+            class="w-full"
+          />
+        </div>
+      </div>
 
-      <template v-slot:item.actions="{ item }">
-        <v-icon
-          size="small"
-          class="me-2"
-          @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-      </template>
+      <!-- Price Range -->
+      <div class="grid mb-4">
+        <div class="col-12">
+          <div class="text-lg mb-2">
+            Khoảng giá: {{ store.formatPrice(store.priceRange[0]) }} - {{ store.formatPrice(store.priceRange[1]) }}
+          </div>
+          <Slider 
+            v-model="store.priceRange" 
+            :min="0" 
+            :max="2000000" 
+            :step="100000" 
+            range 
+            class="mb-4"
+          />
+        </div>
+      </div>
 
-      <template v-slot:item.gia="{ item }">
-        {{ store.formatPrice(item.gia) }}
-      </template>
-      <template v-slot:item.giaSauGiam="{ item }">
-        <v-chip
-          :color="item.giaSauGiam !== null ? 'success' : 'error'"
-          size="small"
-        >
-          {{ item.giaSauGiam !== null ? store.formatPrice(item.giaSauGiam) : 'Không có khuyến mãi' }}
-        </v-chip>
-      </template>
-    </v-data-table>
-  </v-container>
+      <Button 
+        label="Thêm" 
+        class="mb-4" 
+        @click="open"
+      />
+      
+      <!-- Products Table -->
+      <DataTable
+        :value="store.filteredProducts"
+        :paginator="true"
+        :rows="10"
+        :filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="['ma']"
+        dataKey="id"
+        class="p-datatable-sm"
+        responsiveLayout="scroll"
+      >
+        <Column field="hinhAnhChiTiet" header="Ảnh" :sortable="false">
+          <template #body="slotProps">
+            <img 
+              :src="slotProps.data.hinhAnhChiTiet" 
+              :alt="slotProps.data.ma"
+              width="70" 
+              height="70" 
+              style="object-fit: cover"
+            />
+          </template>
+        </Column>
+        <Column field="ma" header="Mã" sortable></Column>
+        <Column field="mauSac" header="Màu sắc" sortable></Column>
+        <Column field="loaiMay" header="Loại máy" sortable></Column>
+        <Column field="chatLieuVo" header="Chất liệu vỏ" sortable></Column>
+        <Column field="chatLieuDay" header="Chất liệu dây" sortable></Column>
+        <Column field="xuatXu" header="Xuất xứ" sortable></Column>
+        <Column field="soLuong" header="Số lượng" sortable></Column>
+        <Column field="gia" header="Giá" sortable>
+          <template #body="slotProps">
+            {{ store.formatPrice(slotProps.data.gia) }}
+          </template>
+        </Column>
+        <Column field="giaSauGiam" header="Giá khuyến mãi">
+          <template #body="slotProps">
+            <Tag 
+              :severity="slotProps.data.giaSauGiam !== null ? 'success' : 'danger'"
+              class="text-sm"
+            >
+              {{ slotProps.data.giaSauGiam !== null ? store.formatPrice(slotProps.data.giaSauGiam) : 'Không có khuyến mãi' }}
+            </Tag>
+          </template>
+        </Column>
+        <Column header="Thao tác" :sortable="false" style="min-width: 100px">
+          <template #body="slotProps">
+            <Button 
+              icon="pi pi-pencil" 
+              severity="secondary" 
+              text 
+              rounded
+              @click="editItem(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+    </div>
+  </div>
   <dialog_themchitietsanpham :modal="store.openModalCTSP"></dialog_themchitietsanpham>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import dialog_themchitietsanpham from './dialog_themchitietsanpham.vue'
 import useEmitter from '@/useEmitter'
 import { useRoute } from 'vue-router'
 import { quanLyCTSPMAIN } from '@/store/quanLyCTSPMain'
 import { useCTSPStore } from '@/store/quanLyChiTietSanPhamStore'
+
 const ctspStore = useCTSPStore()
 const route = useRoute()
 const emitter = useEmitter()
 const store = quanLyCTSPMAIN()
-
-const headers = [
-  { title: 'Ảnh', key: 'hinhAnhChiTiet', sortable: false },
-  { title: 'Mã', key: 'ma', align: 'start' },
-  { title: 'Màu sắc', key: 'mauSac' },
-  { title: 'Loại máy', key: 'loaiMay' },
-  { title: 'Chất liệu vỏ', key: 'chatLieuVo' },
-  { title: 'Chất liệu dây', key: 'chatLieuDay' },
-  { title: 'Xuất xứ', key: 'xuatXu' },
-  { title: 'Số lượng', key: 'soLuong' },
-  { title: 'Giá', key: 'gia' },
-  { title: 'Giá khuyến mãi', key: 'giaSauGiam' },
-  { title: 'Thao tác', key: 'actions', sortable: false },
-]
+const filters = ref({
+  global: { value: null, matchMode: 'contains' }
+})
 
 onMounted(async () => {
   await store.fetchProducts(route.params.id)
@@ -143,3 +150,43 @@ const open = () => {
   })
 }
 </script>
+
+<style scoped>
+.container {
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+:deep(.p-datatable) {
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 
+              0 1px 1px 0 rgba(0,0,0,0.14), 
+              0 1px 3px 0 rgba(0,0,0,0.12);
+  border-radius: 6px;
+}
+
+:deep(.p-datatable .p-datatable-header) {
+  background: #f8f9fa;
+  padding: 1rem;
+}
+
+:deep(.p-datatable .p-datatable-thead > tr > th) {
+  background: #f8f9fa;
+  padding: 1rem;
+}
+
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  padding: 1rem;
+}
+
+:deep(.p-button) {
+  margin-right: 0.5rem;
+}
+
+:deep(.p-dropdown) {
+  width: 100%;
+}
+
+:deep(.p-inputtext) {
+  padding: 0.75rem;
+}
+</style>

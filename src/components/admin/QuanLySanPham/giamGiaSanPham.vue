@@ -190,6 +190,7 @@
   }
   
   const viewVoucher = (voucher) => {
+    console.log(voucher)
     modalSuaPGG.value = true
   }
   

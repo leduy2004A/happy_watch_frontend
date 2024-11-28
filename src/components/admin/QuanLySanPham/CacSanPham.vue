@@ -1,89 +1,118 @@
 <template>
-  <v-card class="pa-4 py-10" flat>
-    <h3 class="my-10">Sản Phẩm</h3>
-    <div class="d-flex flex-wrap justify-space-between align-center mb-4">
+  <div class="card">
+    <h3 class="my-5">Sản Phẩm</h3>
+    <div class="flex flex-wrap justify-content-between align-items-center mb-4">
       <!-- Search bar -->
-      <v-text-field
-        v-model="productStore.search"
-        prepend-inner-icon="mdi-magnify"
-        label="Nhập tên sản phẩm để tìm..."
-        single-line
-        hide-details
-        density="comfortable"
-        variant="outlined"
-        class="search-field"
-      ></v-text-field>
+      <span class="p-input-icon-left">
+        <i class="pi pi-search" />
+        <InputText
+          v-model="productStore.search"
+          placeholder="Nhập tên sản phẩm để tìm..."
+          class="p-inputtext-sm"
+        />
+      </span>
 
-      <div class="d-flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2">
         <!-- Status filter -->
-        <v-btn-toggle
+        <SelectButton
           v-model="productStore.statusFilter"
-          mandatory
+          :options="statusOptions"
+          optionLabel="label"
+          optionValue="value"
           class="mr-2"
-        >
-          <v-btn value="all" size="small">Tất cả</v-btn>
-          <v-btn value="selling" size="small">Đang bán</v-btn>
-          <v-btn value="stopped" size="small">Ngừng bán</v-btn>
-        </v-btn-toggle>
+        />
 
         <!-- Action buttons -->
-        <v-btn
-          prepend-icon="mdi-microsoft-excel"
-          color="success"
-          variant="outlined"
-          size="small"
+        <Button
+          icon="pi pi-file-excel"
+          class="p-button-outlined p-button-success"
           @click="exportExcel"
+          size="small"
         >
           Export Excel
-        </v-btn>
+        </Button>
 
-        <v-btn
-          prepend-icon="mdi-plus"
-          color="primary"
-          size="small"
+        <Button
+          icon="pi pi-plus"
           @click="addNew"
+          size="small"
         >
           Thêm mới
-        </v-btn>
+        </Button>
       </div>
     </div>
 
-    <v-data-table
-      :headers="headers"
-      :items="productStore.computedItems"
-      :search="productStore.search"
-      :items-per-page="5"
-      density="comfortable"
+    <DataTable
+      :value="productStore.computedItems"
       :loading="productStore.loading"
+      :rows="5"
+      :filters="filters"
+      stripedRows
+      paginator
+      class="p-datatable-sm"
+      responsiveLayout="scroll"
     >
-    <template v-slot:item.stt="{ item }">
-    {{ item.stt }}
-  </template>
+      <!-- STT Column -->
+      <Column
+        field="stt"
+        header="STT"
+        style="width: 80px"
+        alignHeader="center"
+      />
 
-  <!-- Status Column -->
-  <!-- <template v-slot:item.status="{ item }">
-    <v-chip
-      :color="getStatusColor(item)"
-      :text-color="getStatusTextColor(item)"
-      size="small"
-    >
-      {{ item }}
-    </v-chip>
-  </template> -->
+      <!-- Product Name Column -->
+      <Column
+        field="ten"
+        header="Tên sản phẩm"
+        :sortable="true"
+      />
 
-  <!-- Actions Column -->
-  <template v-slot:item.actions="{ item }">
-    <v-btn
-      icon="mdi-eye"
-      variant="text"
-      size="small"
-      color="primary"
-      @click="viewDetails(item)"
-    ></v-btn>
-  </template>
-    </v-data-table>
-  </v-card>
-  <dialog_them-san-pham :modal="modalThemSanPham"></dialog_them-san-pham>
+      <!-- Created Date Column -->
+      <Column
+        field="createdAt"
+        header="Ngày thêm"
+        :sortable="true"
+      />
+
+      <!-- Quantity Column -->
+      <Column
+        field="soLuong"
+        header="Số lượng"
+        :sortable="true"
+        alignHeader="center"
+      />
+
+      <!-- Status Column -->
+      <Column
+        field="status"
+        header="Trạng thái"
+        alignHeader="center"
+      >
+        <template #body="slotProps">
+          <Tag
+            :severity="getStatusSeverity(slotProps.data.status)"
+            :value="slotProps.data.status"
+          />
+        </template>
+      </Column>
+
+      <!-- Actions Column -->
+      <Column
+        header="Thao tác"
+        alignHeader="center"
+        style="width: 100px"
+      >
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-eye"
+            class="p-button-text p-button-rounded"
+            @click="viewDetails(slotProps.data)"
+          />
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+  <dialog_them-san-pham :modal="modalThemSanPham" />
 </template>
 
 <script setup>
@@ -92,39 +121,28 @@ import dialog_themSanPham from './dialog_themSanPham.vue'
 import useEmitter from '@/useEmitter'
 import { useDanhSachSP } from '@/store/danhSachSanPhamStore'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 const emitter = useEmitter()
 const productStore = useDanhSachSP()
 const modalThemSanPham = ref(false)
 
-const headers = [
-  { title: 'STT', key: 'stt', align: 'center', width: '80px' },
-  { title: 'Tên sản phẩm', key: 'ten', sortable: true },
-  { title: 'Ngày thêm', key: 'createdAt', sortable: true },
-  { title: 'Số lượng', key: 'soLuong', align: 'center', sortable: true },
-  { title: 'Trạng thái', key: 'status', align: 'center' },
-  { title: 'Thao tác', key: 'actions', align: 'center', sortable: false }
+const statusOptions = [
+  { label: 'Tất cả', value: 'all' },
+  { label: 'Đang bán', value: 'selling' },
+  { label: 'Ngừng bán', value: 'stopped' }
 ]
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Đang bán':
-      return 'success'
-    case 'Ngừng bán':
-      return 'error'
-    default:
-      return 'grey'
-  }
-}
+const filters = ref({})
 
-const getStatusTextColor = (status) => {
+const getStatusSeverity = (status) => {
   switch (status) {
     case 'Đang bán':
       return 'success'
     case 'Ngừng bán':
-      return 'error'
+      return 'danger'
     default:
-      return 'grey'
+      return 'info'
   }
 }
 
@@ -137,7 +155,7 @@ const addNew = () => {
 }
 
 const viewDetails = (item) => {
-  console.log('Viewing details for:', item) 
+  console.log('Viewing details for:', item)
   router.push(`product-danhsach/${item.id}`)
 }
 
@@ -150,19 +168,25 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.search-field {
-  max-width: 300px;
+.card {
+  padding: 1.5rem;
+}
+
+:deep(.p-datatable) {
+  border-radius: 8px;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+}
+
+:deep(.p-datatable-header) {
+  background: var(--surface-ground);
+}
+
+.my-5 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .gap-2 {
-  gap: 8px;
-}
-
-:deep(.v-data-table) {
-  border-radius: 8px;
-}
-
-:deep(.v-data-table-header) {
-  background-color: rgb(var(--v-theme-surface-variant));
+  gap: 0.5rem;
 }
 </style>

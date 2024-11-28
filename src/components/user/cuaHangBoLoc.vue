@@ -1,278 +1,174 @@
 <template>
-  <v-container class="pa-0">
+  <div class="container">
     <!-- Active Filters -->
-    <v-card class="mb-6 premium-card" elevation="0">
-      <v-card-title class="d-flex justify-space-between align-center py-4 px-4">
-        <span class="premium-title">ACTIVE FILTERS</span>
-        <v-icon color="grey darken-2" size="20">mdi-chevron-down</v-icon>
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text class="px-4 py-3">
-        <div class="d-flex flex-wrap">
-          <v-chip
-            v-for="filter in activeFilters"
-            :key="filter"
-            class="ma-1 premium-chip"
-            closable
-            label
-            @click:close="removeFilter(filter)"
-          >
-            {{ filter }}
-          </v-chip>
-          <v-btn
-            v-if="activeFilters.length"
-            text
-            x-small
-            color="primary"
-            class="ml-2 text-none reset-btn"
-            @click="resetFilters"
-          >
-            Reset
-          </v-btn>
+    <Card class="mb-4">
+      <template #header>
+        <div class="flex justify-content-between align-items-center p-3">
+          <span class="text-lg font-semibold">ACTIVE FILTERS</span>
+          <i class="pi pi-chevron-down text-600"></i>
         </div>
-      </v-card-text>
-    </v-card>
+      </template>
+      <template #content>
+        <div class="flex flex-wrap gap-2">
+          <Chip v-for="filter in activeFilters"
+                :key="filter"
+                :label="filter"
+                removable
+                @remove="removeFilter(filter)"
+                class="custom-chip"
+          />
+          <Button v-if="activeFilters.length"
+                  label="Reset"
+                  link
+                  size="small"
+                  @click="resetFilters"
+          />
+        </div>
+      </template>
+    </Card>
 
     <!-- Categories -->
-    <v-card class="mb-6 premium-card" elevation="0">
-      <v-card-title class="d-flex justify-space-between align-center py-4 px-4">
-        <span class="premium-title">DANH MỤC</span>
-        <v-icon color="grey darken-2" size="20">mdi-chevron-down</v-icon>
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text class="pa-0">
-        <v-list class="premium-list">
-          <v-list-item
-            v-for="category in categories"
-            :key="category.value"
-            @click="toggleFilter(category.value)"
-            class="premium-list-item"
-            :class="{'selected': activeFilters.includes(category.value)}"
-            dense
+    <Card class="mb-4">
+      <template #header>
+        <div class="flex justify-content-between align-items-center p-3">
+          <span class="text-lg font-semibold">DANH MỤC</span>
+          <i class="pi pi-chevron-down text-600"></i>
+        </div>
+      </template>
+      <template #content>
+        <ul class="list-none p-0 m-0">
+          <li v-for="category in categories" 
+              :key="category.value"
+              @click="toggleFilter(category.value)"
+              class="category-item p-3 flex justify-content-between align-items-center cursor-pointer"
+              :class="{'selected': activeFilters.includes(category.value)}"
           >
-            <v-list-item-content>
-              <v-list-item-title 
-                class="category-title"
-                :class="{'font-weight-medium': activeFilters.includes(category.value)}"
-              >
-                {{ category.text }}
-              </v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action class="ma-0">
-              <v-chip
-                x-small
-                label
-                class="count-chip"
-                :color="activeFilters.includes(category.value) ? 'primary lighten-5' : 'grey lighten-4'"
-                :text-color="activeFilters.includes(category.value) ? 'primary' : 'grey darken-2'"
-              >
-                {{ category.count }}
-              </v-chip>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-    </v-card>
+            <span :class="{'font-medium': activeFilters.includes(category.value)}">
+              {{ category.text }}
+            </span>
+            <Badge :value="category.count" 
+                   :severity="activeFilters.includes(category.value) ? 'info' : 'secondary'"
+            />
+          </li>
+        </ul>
+      </template>
+    </Card>
 
     <!-- Price Filter -->
-    <v-card class="premium-card" elevation="0">
-      <v-card-title class="d-flex justify-space-between align-center py-4 px-4">
-        <span class="premium-title">LỌC GIÁ</span>
-        <v-icon color="grey darken-2" size="20">mdi-chevron-down</v-icon>
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text class="px-4 pt-6 pb-4">
-        <v-range-slider
-          v-model="priceRange"
-          :min="minPrice"
-          :max="maxPrice"
-          :step="1000"
-          thumb-label="always"
-          class="price-slider"
-          color="primary"
-          track-color="grey lighten-2"
-        >
-          <template v-slot:thumb-label="{ value }">
-            {{ formatPriceShort(value) }}
-          </template>
-        </v-range-slider>
-        <div class="d-flex justify-space-between mt-3">
-          <span class="price-label">{{ formatPrice(priceRange[0]) }}đ</span>
-          <span class="price-label">{{ formatPrice(priceRange[1]) }}đ</span>
+    <Card>
+      <template #header>
+        <div class="flex justify-content-between align-items-center p-3">
+          <span class="text-lg font-semibold">LỌC GIÁ</span>
+          <i class="pi pi-chevron-down text-600"></i>
         </div>
-      </v-card-text>
-    </v-card>
-  </v-container>
+      </template>
+      <template #content>
+        <div class="p-3">
+          <Slider v-model="priceRange" 
+                  :min="minPrice" 
+                  :max="maxPrice" 
+                  :step="1000"
+                  range
+                  class="mt-4"
+          />
+          <div class="flex justify-content-between mt-3">
+            <span class="text-sm text-600">{{ formatPrice(priceRange[0]) }}đ</span>
+            <span class="text-sm text-600">{{ formatPrice(priceRange[1]) }}đ</span>
+          </div>
+        </div>
+      </template>
+    </Card>
+  </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      activeFilters: ['Đồng hồ cặp đôi'],
-      categories: [
-        { value: 'CASIO', text: 'CASIO', count: 2 },
-        { value: 'CITIZEN', text: 'CITIZEN', count: 1 },
-        { value: 'Đồng hồ cặp đôi', text: 'ĐỒNG HỒ CẶP ĐÔI', count: 5 },
-        { value: 'Đồng hồ nam', text: 'ĐỒNG HỒ NAM', count: 3 },
-        { value: 'Đồng hồ nữ', text: 'ĐỒNG HỒ NỮ', count: 2 },
-        { value: 'ROLEX', text: 'ROLEX', count: 1 },
-        { value: 'SALE', text: 'SALE', count: 1 },
-        { value: 'Sản phẩm hot', text: 'SẢN PHẨM HOT', count: 1 }
-      ],
-      minPrice: 639000,
-      maxPrice: 739370000,
-      priceRange: [639000, 739370000],
-    }
-  },
-  methods: {
-    toggleFilter(filter) {
-      if (this.activeFilters.includes(filter)) {
-        this.activeFilters = this.activeFilters.filter(f => f !== filter);
-      } else {
-        this.activeFilters.push(filter);
-      }
-    },
-    removeFilter(filter) {
-      this.activeFilters = this.activeFilters.filter(f => f !== filter);
-    },
-    resetFilters() {
-      this.activeFilters = [];
-      this.priceRange = [this.minPrice, this.maxPrice];
-    },
-    formatPrice(value) {
-      return new Intl.NumberFormat('vi-VN').format(value);
-    },
-    formatPriceShort(value) {
-      if (value >= 1000000) {
-        return (value / 1000000).toFixed(1) + 'M';
-      }
-      return (value / 1000).toFixed(0) + 'K';
-    }
+<script setup>
+import { ref } from 'vue';
+
+const activeFilters = ref(['Đồng hồ cặp đôi']);
+const categories = ref([
+  { value: 'CASIO', text: 'CASIO', count: 2 },
+  { value: 'CITIZEN', text: 'CITIZEN', count: 1 },
+  { value: 'Đồng hồ cặp đôi', text: 'ĐỒNG HỒ CẶP ĐÔI', count: 5 },
+  { value: 'Đồng hồ nam', text: 'ĐỒNG HỒ NAM', count: 3 },
+  { value: 'Đồng hồ nữ', text: 'ĐỒNG HỒ NỮ', count: 2 },
+  { value: 'ROLEX', text: 'ROLEX', count: 1 },
+  { value: 'SALE', text: 'SALE', count: 1 },
+  { value: 'Sản phẩm hot', text: 'SẢN PHẨM HOT', count: 1 }
+]);
+
+const minPrice = ref(639000);
+const maxPrice = ref(739370000);
+const priceRange = ref([639000, 739370000]);
+
+const toggleFilter = (filter) => {
+  if (activeFilters.value.includes(filter)) {
+    activeFilters.value = activeFilters.value.filter(f => f !== filter);
+  } else {
+    activeFilters.value.push(filter);
   }
-}
+};
+
+const removeFilter = (filter) => {
+  activeFilters.value = activeFilters.value.filter(f => f !== filter);
+};
+
+const resetFilters = () => {
+  activeFilters.value = [];
+  priceRange.value = [minPrice.value, maxPrice.value];
+};
+
+const formatPrice = (value) => {
+  return new Intl.NumberFormat('vi-VN').format(value);
+};
 </script>
 
 <style scoped>
-.premium-card {
-  border: 1px solid rgba(0, 0, 0, 0.08);
+.category-item {
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.category-item:hover {
+  background-color: var(--surface-100);
+}
+
+.category-item.selected {
+  background-color: var(--primary-50);
+}
+
+.custom-chip {
+  background: var(--surface-200);
+  color: var(--text-color-secondary);
+}
+
+:deep(.p-card) {
   border-radius: 12px;
-  transition: all 0.3s ease;
-  background: white !important;
-  overflow: hidden;
+  border: 1px solid var(--surface-200);
 }
 
-.premium-card:hover {
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+:deep(.p-card-header) {
+  padding: 0;
+  border-bottom: 1px solid var(--surface-200);
 }
 
-.premium-title {
-  font-size: 0.875rem;
-  letter-spacing: 0.5px;
-  color: rgba(0, 0, 0, 0.87);
-  font-weight: 600;
+:deep(.p-slider) {
+  background: var(--surface-200);
 }
 
-.premium-chip {
-  background-color: #f5f5f5 !important;
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  height: 28px !important;
-  transition: all 0.2s ease;
+:deep(.p-slider .p-slider-range) {
+  background: var(--primary-color);
 }
 
-.premium-chip:hover {
-  background-color: #eeeeee !important;
-}
-
-.premium-chip .v-icon {
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.reset-btn {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-  height: 28px !important;
-}
-
-.premium-list {
-  padding: 4px !important;
-}
-
-.premium-list-item {
-  border-radius: 8px;
-  margin: 2px 4px;
-  min-height: 40px !important;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.premium-list-item:hover {
-  background-color: #fafafa;
-}
-
-.premium-list-item.selected {
-  background-color: #f5f9ff !important;
-}
-
-.category-title {
-  font-size: 0.875rem !important;
-  color: rgba(0, 0, 0, 0.75);
-  letter-spacing: 0.2px;
-}
-
-.count-chip {
-  min-width: 24px;
-  height: 20px !important;
+:deep(.p-badge) {
   font-size: 0.75rem;
   font-weight: 500;
 }
 
-.price-slider {
-  margin-top: 12px;
+:deep(.p-chip) {
+  background: var(--surface-200);
 }
 
-.price-slider .v-slider__thumb {
-  transform: scale(0.8);
-  transition: transform 0.2s ease;
-}
-
-.price-slider .v-slider__thumb:hover {
-  transform: scale(1);
-}
-
-.price-slider .v-slider__thumb-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.price-label {
-  font-size: 0.8125rem;
-  color: rgba(0, 0, 0, 0.6);
-  font-weight: 500;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+:deep(.p-chip .p-chip-remove-icon) {
+  margin-left: 0.5rem;
 }
 </style>
