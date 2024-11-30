@@ -219,12 +219,13 @@ const formatPrice = (price) => {
 .card-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 1; /* Duy trì tỷ lệ 1:1 */
+ /* Duy trì tỷ lệ 1:1 */
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f4f4f4;
+  height: 200px;
 }
 
 .card-image img {

@@ -11,6 +11,7 @@
     "@primevue/themes": "^4.2.2",
     "@vuepic/vue-datepicker": "^10.0.0",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
     "cors": "^2.8.5",
     "html2pdf.js": "^0.10.2",
     "lodash-es": "^4.17.21",

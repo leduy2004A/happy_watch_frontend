@@ -33,6 +33,10 @@ import phieuGiamGia from '@/components/admin/QuanLySanPham/phieuGiamGia.vue';
 import giamGiaSanPham from '@/components/admin/QuanLySanPham/giamGiaSanPham.vue';
 import nhanVien from '@/components/admin/QuanLySanPham/nhanVien.vue';
 import address from '@/components/user/profile/address.vue';
+import maGiamGia from '@/components/user/profile/maGiamGia.vue';
+import profile from '@/components/user/profile/profile.vue';
+import dangNhapDangKi from '@/components/dangNhapDangKi.vue';
+import thongke from '@/components/admin/ThongKe/thongke.vue';
 const routes = [
   { 
     path: '/admin', 
@@ -137,6 +141,11 @@ const routes = [
         path: 'nhan-vien',
         component: nhanVien,
         meta: { keepAlive: false } // Chi tiết thường cần load lại
+      },
+      {
+        path: 'thong-ke',
+        component: thongke,
+        meta: { keepAlive: false } // Chi tiết thường cần load lại
       }
     ]
   },
@@ -184,9 +193,21 @@ const routes = [
         path:'address',
         component:address
       },
+      {
+        path:'voucher',
+        component:maGiamGia
+      },
+      {
+        path:'ho-so',
+        component:profile
+      }
     ]
 
     
+   },
+   {
+    path:'/',
+    component:dangNhapDangKi
    }
 ]
 

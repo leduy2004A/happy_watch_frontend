@@ -1,48 +1,58 @@
 <template>
-  <v-container>
-    <v-list height="500">
-      <template v-for="(item, index) in cart.items" :key="index">
-        <v-list-item>
-          <v-row>
-            <v-col cols="4">
-              <v-img :src="item.image" class="rounded-lg" contain></v-img>
-            </v-col>
-            <v-col cols="6">
-              <div class="font-weight-medium">{{ item.name }}</div>
-              <div class="text-body-2">{{ item.quantity }} × {{ formatPrice(item.price) }}</div>
-            </v-col>
-            <v-col cols="2" class="d-flex align-center justify-end">
-         
-                <v-icon class="delete-icon" @click="removeItem(item.id)">mdi-delete</v-icon>
-           
-            </v-col>
-          </v-row>
-        </v-list-item>
-        <v-divider v-if="index < cartItems.length - 1"></v-divider>
-      </template>
-    </v-list>
+  <div class="cart-container">
+    <ScrollPanel style="height: 500px">
+      <div v-for="(item, index) in cart.items" :key="index" class="cart-item">
+        <div class="grid">
+          <div class="col-4">
+            <img :src="item.image" :alt="item.name" class="cart-item-image" />
+          </div>
+          <div class="col-6">
+            <div class="font-bold">{{ item.name }}</div>
+            <div class="text-sm">{{ item.quantity }} × {{ formatPrice(item.price) }}</div>
+          </div>
+          <div class="col-2 flex align-items-center justify-content-end">
+            <Button 
+              icon="pi pi-trash" 
+              @click="removeItem(item.id)" 
+              severity="danger" 
+              text 
+              class="delete-button p-0"
+            />
+          </div>
+        </div>
+        <Divider v-if="index < cartItems.length - 1" />
+      </div>
+    </ScrollPanel>
 
-    <v-row class="mt-4" justify="space-between" align="center">
-      <v-col cols="auto" class="font-weight-medium">Tổng số phụ:</v-col>
-      <v-col cols="auto" class="font-weight-bold">{{ formatPrice(cart.cartTotal) }}</v-col>
-    </v-row>
+    <div class="mt-4 flex justify-content-between align-items-center">
+      <span class="font-medium">Tổng số phụ:</span>
+      <span class="font-bold">{{ formatPrice(cart.cartTotal) }}</span>
+    </div>
 
-    <v-divider class="my-4"></v-divider>
+    <Divider class="my-4" />
 
-    <v-row justify="space-between">
+    <div class="flex justify-content-between">
       <router-link :to="`/product/cart`">
-        <v-btn outlined color="black" class="text-uppercase">Xem giỏ hàng</v-btn>
+        <Button 
+          label="Xem giỏ hàng" 
+          outlined 
+          class="p-button-outlined"
+        />
       </router-link>
       
-      <v-btn color="red" dark class="text-uppercase">Thanh toán</v-btn>
-    </v-row>
-  </v-container>
+      <Button 
+        label="Thanh toán" 
+        severity="danger"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { useCartStore } from '@/store/cartStore';
-const cart = useCartStore()
+
+const cart = useCartStore();
 const cartItems = ref([
   {
     name: "ĐỒNG HỒ CITIZEN AU1080-20A NAM ECO-DRIVE DÂY VẢI",
@@ -56,7 +66,6 @@ const cartItems = ref([
     price: 12530000,
     image: "https://cdn.pixabay.com/photo/2023/04/26/17/59/wrist-watch-7953062_640.jpg",
   },
-  // Thêm các sản phẩm khác ở đây...
 ]);
 
 const totalPrice = computed(() => {
@@ -71,23 +80,50 @@ function formatPrice(value) {
 }
 
 function removeItem(id) {
-  cart.removeFromCart(id)
+  cart.removeFromCart(id);
 }
 </script>
 
 <style scoped>
-.v-card {
+.cart-container {
   max-width: 400px;
   margin: auto;
+  padding: 1rem;
 }
-.v-img {
+
+.cart-item {
+  margin-bottom: 1rem;
+}
+
+.cart-item-image {
+  width: 100%;
   height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
 }
-.delete-icon {
-  font-size: 20px;
+
+.delete-button {
   transition: transform 0.2s;
 }
-.delete-icon:hover {
+
+.delete-button:hover {
   transform: scale(1.2);
+}
+
+:deep(.p-button) {
+  text-transform: uppercase;
+}
+
+:deep(.p-divider) {
+  margin: 1rem 0;
+}
+
+:deep(.p-scrollpanel) {
+  .p-scrollpanel-wrapper {
+    border-radius: 4px;
+  }
+  .p-scrollpanel-content {
+    padding: 1rem;
+  }
 }
 </style>

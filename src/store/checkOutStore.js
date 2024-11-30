@@ -5,6 +5,9 @@ export const useCheckOutStore = defineStore("checkout", {
     products: [],
     shippingFee: 0,
     tongCanNang: 0,
+    discount:0,
+    countCode:'',
+    idDiscount:0
   }),
   actions: {
     addProduct(product) {
@@ -31,7 +34,7 @@ export const useCheckOutStore = defineStore("checkout", {
         }, 0);
         
         // Cộng phí ship vào sau khi đã tính tổng tiền hàng
-        return tongTienHang + this.shippingFee;
+        return tongTienHang + this.shippingFee - this.discount;
       },
       tinhTongTienHang() {
         const tongTienHang = this.products.reduce((total, item) => {

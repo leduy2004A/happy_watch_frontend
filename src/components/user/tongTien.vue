@@ -51,23 +51,26 @@
       <v-row no-gutters class="mb-4">
         <v-col>
           <v-text-field
-            v-model="couponCode"
+            v-model="checkoutStore.countCode"
             label="Phiếu giảm giá"
             variant="outlined"
             density="compact"
             hide-details
-            class="rounded-e-0"
+            class="rounded-e-0 mb-2"
+            disabled
           >
-            <template v-slot:append>
+           
+          </v-text-field>
+         
               <v-btn
                 color="black"
-                class="rounded-s-0"
+                class="rounded"
                 height="44"
+                @click="chonMaGiamGia()"
               >
                 CHỌN
               </v-btn>
-            </template>
-          </v-text-field>
+         
         </v-col>
       </v-row>
 
@@ -86,7 +89,7 @@
           <template v-slot:title>
             <div class="d-flex justify-space-between">
               <span class="text-body-1">Giảm giá</span>
-              <span>{{ product.discount }}</span>
+              <span>{{ formatPrice(checkoutStore.discount)  }} đ</span>
             </div>
           </template>
         </v-list-item>
@@ -110,7 +113,9 @@
         </span>
       </div>
     </v-card-text>
+    <dialog-ma-giam-gia :modalMGG="modal"></dialog-ma-giam-gia>
   </v-card>
+  
 </template>
 
 <script setup>
@@ -118,12 +123,13 @@ import { ref, reactive, onMounted } from 'vue';
 import useEmitter from '@/useEmitter';
 const emitter = useEmitter()
 import { useOrderStore } from '@/store/tienStore';
+import dialogMaGiamGia from './dialogMaGiamGia.vue';
 const store = useOrderStore()
 import { useCheckOutStore } from '@/store/checkOutStore';
 const checkoutStore = useCheckOutStore()
 // Khai báo các biến trạng thái
 const couponCode = ref('');
-
+const modal = ref(false)
 const product = reactive({
   name: 'Balen Grey 2023 Bạc Đế nhựa',
   size: 42,
@@ -140,7 +146,9 @@ const formatPrice = (price) => {
   return price.toLocaleString('vi-VN');
 };
 
-
+const chonMaGiamGia = ()=>{
+  modal.value = true
+}
 // Định nghĩa hàm calculateTotal
 const calculateTotal = () => {
   return product.price + product.shippingFee - product.discount;
@@ -168,6 +176,9 @@ const checkOutCart = ()=>{
 onMounted(()=>{
   emitter.on("dataShip", async (data) => {
     await checkoutStore.calculateShippingFee(data.district, data.ward,checkoutStore.tongCanNang)
+  })
+  emitter.on("closeDialog",val =>{
+    modal.value = val
   })
   checkOutCart()
 })

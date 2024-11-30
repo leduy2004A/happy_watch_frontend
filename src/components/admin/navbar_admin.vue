@@ -215,7 +215,7 @@ const menuItems = ref([
   {
     title: "Thống kê",
 
-    path: "/admin/statistics",
+    path: "/admin/thong-ke",
 
     icon: "mdi-chart-bar",
   },

@@ -52,22 +52,22 @@ const menuItems = [
   {
     title: 'Hồ sơ',
     icon: 'mdi-card-account-details',
-    route: '/profileUser'
+    route: '/profile/ho-so'
   },
   {
     title: 'Địa chỉ',
     icon: 'mdi-map-marker',
-    route: '/address'
+    route: '/profile/address'
   },
   {
     title: 'Đơn mua',
     icon: 'mdi-file-document',
-    route: 'don-hang'
+    route: '/profile/hoa-don'
   },
   {
     title: 'Phiếu giảm giá',
     icon: 'mdi-ticket-percent',
-    route: '/vouchers'
+    route: '/profile/voucher'
   },
   {
     title: 'Đổi mật khẩu',
