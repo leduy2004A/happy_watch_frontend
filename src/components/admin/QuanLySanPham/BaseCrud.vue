@@ -73,15 +73,15 @@
         </template>
 
         <!-- Actions Column -->
-        <Column header="Actions" style="width: 80px">
+        <Column header="Hành động" style="width: 80px">
           <template #body="{ data }">
             <div class="flex gap-2 justify-content-center">
-              <Button
+              <!-- <Button
                 v-if="showView"
                 icon="pi pi-eye"
                 class="p-button-text p-button-rounded"
                 @click="handleView(data)"
-              />
+              /> -->
               <Button
                 v-if="showEdit"
                 icon="pi pi-pencil"

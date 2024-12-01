@@ -24,12 +24,8 @@
                 <InputText id="code" v-model="voucher.code" class="w-full" />
               </div>
 
-              <div class="col-12">
-                <label for="name">Tên phiếu giảm giá</label>
-                <InputText id="name" v-model="voucher.name" class="w-full" />
-              </div>
 
-              <div class="col-12">
+              <div class="col-6 ">
                 <label for="value">Giá trị</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -62,17 +58,6 @@
                 />
               </div>
 
-              <div class="col-6">
-                <label for="condition">Điều kiện</label>
-                <div class="p-inputgroup">
-                  <InputNumber
-                    id="condition"
-                    v-model="voucher.condition"
-                    class="w-full"
-                  />
-                  <span class="p-inputgroup-addon">đ</span>
-                </div>
-              </div>
 
               <div class="col-6">
                 <label for="startDate">Từ ngày</label>
@@ -96,27 +81,7 @@
                 />
               </div>
 
-              <div class="col-12">
-                <label class="mb-3">Loại</label>
-                <div class="flex gap-4">
-                  <div class="field-radiobutton">
-                    <RadioButton
-                      id="public"
-                      v-model="voucher.type"
-                      value="public"
-                    />
-                    <label for="public">Công khai</label>
-                  </div>
-                  <div class="field-radiobutton">
-                    <RadioButton
-                      id="private"
-                      v-model="voucher.type"
-                      value="private"
-                    />
-                    <label for="private">Cá nhân</label>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </template>
         </Card>
@@ -185,6 +150,8 @@ import { addKhuyenMai } from "@/axios/khuyenmai";
 import { useToast } from "vue-toastification";
 import { laySanPhamKemSoLuong } from "@/axios/sanpham";
 import { addKhuyenMaiSanPham } from "@/axios/khuyenmai";
+import { useVoucherStore } from '@/store/voucherSanPhamStore'
+const voucherStore = useVoucherStore()
 const toast = useToast();
 const emitter = useEmitter();
 const dataProps = defineProps({
@@ -233,10 +200,7 @@ const headers = [
   // { title: 'Ngày sinh', key: 'birthDate' }
 ];
 
-// Computed properties for pagination
-const totalPages = computed(() => {
-  return Math.ceil(filteredCustomers.value.length / itemsPerPage.value);
-});
+
 
 const startIndex = computed(() => {
   return (currentPage.value - 1) * itemsPerPage.value;
@@ -261,25 +225,9 @@ const filteredCustomers = computed(() => {
   });
 });
 
-const paginatedCustomers = computed(() => {
-  return filteredCustomers.value.slice(startIndex.value, endIndex.value);
-});
-
-// Methods
-const handlePageChange = (page) => {
-  currentPage.value = page;
-};
-
-const handleItemsPerPageChange = () => {
-  currentPage.value = 1; // Reset to first page when changing items per page
-};
 
 const handleSearch = () => {
   currentPage.value = 1; // Reset to first page when searching
-};
-
-const isItemSelectable = (item) => {
-  return true;
 };
 
 const addNew = async () => {
@@ -301,6 +249,7 @@ const addNew = async () => {
     const result = await addKhuyenMaiSanPham(dataAdd);
     if (result.status === 200) {
       toast.success("Thêm khuyến mãi thành công");
+      voucherStore.fetchVouchers()
     }
   
 };

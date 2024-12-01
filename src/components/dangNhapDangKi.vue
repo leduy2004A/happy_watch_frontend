@@ -80,8 +80,12 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { dangNhap } from "@/axios/dangNhapDangKi";
+import { dangNhap, layThongTinNguoiDung } from "@/axios/dangNhapDangKi";
 import { dangKi } from "@/axios/dangNhapDangKi";
+import { useRouter } from "vue-router";
+const router = useRouter();
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const isLogin = ref(true);
 const form = reactive({
   fullname: "",
@@ -103,15 +107,41 @@ const handleSubmit = async () => {
       const result = await dangNhap(dataLogin);
       if (result.status === 200) {
         // Lưu token vào localStorage
-        localStorage.setItem('token', result.data.token);
+        localStorage.setItem("token", result.data.access_token);
+        
+        try {
+          const resultUser = await layThongTinNguoiDung();
+          if (resultUser.status === 200) {
+            localStorage.setItem("user", JSON.stringify(resultUser.data));
+            toast.success("Đăng nhập thành công");
 
-        // Lưu thêm thông tin người dùng nếu cần
-        // localStorage.setItem('user', JSON.stringify(result.data.user));
+            // Lấy vai trò từ thông tin người dùng
+            const userRole = resultUser.data.vaiTro.tenVaiTro; // hoặc path phù hợp với API của bạn
+            
+            // Điều hướng dựa trên vai trò
+            switch(userRole) {
+              case 'Admin':
+                router.push('/admin/sell');
+                break;
+              case 'Khách hàng':
+                router.push('/product/');
+                break;
+              default:
+                router.push('/product/');
+                break;
+            }
 
-        console.log('Đăng nhập thành công!');
+        
+          }
+        } catch (e) {
+          toast.error("Lấy thông tin người dùng thất bại");
+        }
+
+        console.log("Đăng nhập thành công!");
       }
     } catch (error) {
-      console.error('Đăng nhập thất bại:', error);
+      console.error("Đăng nhập thất bại:", error);
+      toast.error("Đăng nhập thất bại" || error.response.data.message);
     }
   }
 };

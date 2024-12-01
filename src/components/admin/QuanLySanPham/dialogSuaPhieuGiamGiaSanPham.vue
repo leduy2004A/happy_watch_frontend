@@ -24,12 +24,8 @@
                 <InputText id="code" v-model="voucher.code" class="w-full" />
               </div>
 
-              <div class="col-12">
-                <label for="name">Tên phiếu giảm giá</label>
-                <InputText id="name" v-model="voucher.name" class="w-full" />
-              </div>
 
-              <div class="col-6">
+              <div class="col-12 ">
                 <label for="value">Giá trị</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -41,7 +37,7 @@
                 </div>
               </div>
 
-              <div class="col-6">
+              <div class="col-6" v-if="false">
                 <label for="maxValue">Giá trị tối đa</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -53,26 +49,15 @@
                 </div>
               </div>
 
-              <div class="col-6">
+              <!-- <div class="col-6">
                 <label for="quantity">Số lượng</label>
                 <InputNumber
                   id="quantity"
                   v-model="voucher.quantity"
                   class="w-full"
                 />
-              </div>
+              </div> -->
 
-              <div class="col-6">
-                <label for="condition">Điều kiện</label>
-                <div class="p-inputgroup">
-                  <InputNumber
-                    id="condition"
-                    v-model="voucher.condition"
-                    class="w-full"
-                  />
-                  <span class="p-inputgroup-addon">đ</span>
-                </div>
-              </div>
 
               <div class="col-6">
                 <label for="startDate">Từ ngày</label>
@@ -96,27 +81,7 @@
                 />
               </div>
 
-              <div class="col-12">
-                <label class="mb-3">Loại</label>
-                <div class="flex gap-4">
-                  <div class="field-radiobutton">
-                    <RadioButton
-                      id="public"
-                      v-model="voucher.type"
-                      value="public"
-                    />
-                    <label for="public">Công khai</label>
-                  </div>
-                  <div class="field-radiobutton">
-                    <RadioButton
-                      id="private"
-                      v-model="voucher.type"
-                      value="private"
-                    />
-                    <label for="private">Cá nhân</label>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </template>
         </Card>
@@ -181,16 +146,19 @@
 <script setup>
 import { ref, watch, defineProps, reactive, computed, onMounted } from "vue";
 import useEmitter from "@/useEmitter";
-import { layTatCaKhachHang } from "@/axios/sanpham";
 import { addKhuyenMai } from "@/axios/khuyenmai";
-import { sendMail } from "@/axios/email";
-import { useVoucherHoaDonStore } from "@/store/voucherHoaDonStore";
-const voucherStore = useVoucherHoaDonStore();
 import { useToast } from "vue-toastification";
+import { laySanPhamKemSoLuong } from "@/axios/sanpham";
+import { updateKhuyenMaiSanPham } from "@/axios/khuyenmai";
+import { useVoucherStore } from '@/store/voucherSanPhamStore'
+const voucherStore = useVoucherStore()
 const toast = useToast();
 const emitter = useEmitter();
+const idSanPhams = ref([])
+const idKhuyenMai = ref(0)
 const dataProps = defineProps({
   modal: Boolean,
+  dataKM:Object
 });
 
 // Dialog visibility
@@ -199,6 +167,18 @@ watch(
   () => dataProps.modal,
   (newVal) => {
     dialogVisible.value = newVal;
+  }
+);
+watch(
+  () => dataProps.dataKM,
+  (newVal) => {
+    voucher.code = newVal.ma
+    voucher.value = newVal.phanTramGiamGia
+    voucher.startDate = newVal.ngayBatDau
+    voucher.endDate = newVal.ngayKetThuc
+    idSanPhams.value = newVal.idSanPhams
+    idKhuyenMai.value = newVal.id
+    selected.value = customers.value.filter(item => idSanPhams.value.includes(item.id));
   }
 );
 
@@ -215,8 +195,8 @@ const voucher = reactive({
   maxValue: 0,
   quantity: 0,
   condition: 0,
-  startDate: new Date(),
-  endDate: new Date(),
+  startDate: "",
+  endDate: "",
   type: "public",
 });
 
@@ -231,15 +211,11 @@ const totalItems = ref(0);
 
 const headers = [
   { title: "Tên", key: "ten" },
-  { title: "Số điện thoại", key: "dienThoai" },
-  { title: "Email", key: "email" },
+  { title: "Số lượng", key: "soLuong" },
   // { title: 'Ngày sinh', key: 'birthDate' }
 ];
 
-// Computed properties for pagination
-const totalPages = computed(() => {
-  return Math.ceil(filteredCustomers.value.length / itemsPerPage.value);
-});
+
 
 const startIndex = computed(() => {
   return (currentPage.value - 1) * itemsPerPage.value;
@@ -264,97 +240,44 @@ const filteredCustomers = computed(() => {
   });
 });
 
-const paginatedCustomers = computed(() => {
-  return filteredCustomers.value.slice(startIndex.value, endIndex.value);
-});
-
-// Methods
-const handlePageChange = (page) => {
-  currentPage.value = page;
-};
-
-const handleItemsPerPageChange = () => {
-  currentPage.value = 1; // Reset to first page when changing items per page
-};
 
 const handleSearch = () => {
   currentPage.value = 1; // Reset to first page when searching
 };
 
-const isItemSelectable = (item) => {
-  return true;
-};
-
 const addNew = async () => {
-  console.log("Add new customer");
-  if (voucher.type === "public") {
-    const dataAdd = {
-      // id: 1,
-      ma: voucher.code,
-      ten: voucher.name,
-      loaiKhuyenMai: "phan tram",
-      phanTramGiamGia: voucher.value,
-      soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toISOString(),
-      ngayKetThuc: voucher.endDate.toISOString(),
-      soLuong: voucher.quantity,
-      dieuKien: "Áp dụng cho đơn hàng trên 500k",
-      khuyenMaiTuGia: voucher.condition,
-      // trangThai: "Đang chờ duyệt",
-      loaiApDung: "TOAN_BO",
-      // userIds: [1, 2, 3],
-    };
-    const result = await addKhuyenMai(dataAdd);
-    if (result.status === 201) {
-      voucherStore.fetchVouchers();
-      closeDialog();
-      toast.success("Thêm khuyến mãi thành công");
-    }
-  } else {
-    console.log(selected.value);
-    const selectedUserIds = selected.value.map((customer) => customer.id);
-    const emailList = selected.value.map((customer) => customer.email);
-    const dataAdd = {
-      // id: 1,
-      ma: voucher.code,
-      ten: voucher.name,
-      loaiKhuyenMai: "phan tram",
-      phanTramGiamGia: voucher.value,
-      soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toISOString(),
-      ngayKetThuc: voucher.endDate.toISOString(),
-      soLuong: voucher.quantity,
-      dieuKien: "Áp dụng cho đơn hàng trên 500k",
-      khuyenMaiTuGia: voucher.condition,
-      // trangThai: "Còn hiệu lực",
-      loaiApDung: "CA_NHAN",
-      userIds: selectedUserIds,
-    };
-    const result = await addKhuyenMai(dataAdd);
-    if (result.status === 201) {
-      voucherStore.fetchVouchers();
-      toast.success("Thêm khuyến mãi thành công");
-      closeDialog();
-      try {
-        const promises = emailList.map((email) => sendMail(dataAdd, email));
-        const results = await Promise.all(promises);
+  console.log(selected.value)
+  console.log(customers.value)
 
-        // Kiểm tra nếu tất cả email đều gửi thành công
-        if (results.every((result) => result.status === 200)) {
-          toast.success("Gửi mail thành công");
-        }
-      } catch (error) {
-        toast.error("Có lỗi xảy ra khi gửi mail");
-      }
+  console.log("Add new customer");
+  const selectedUserIds = selected.value.map((SanPham) => SanPham.id);
+  console.log(selectedUserIds)
+    const dataAdd = {
+      id:idKhuyenMai.value,
+      ma: voucher.code,
+      // moTa: "Khuyến mãi giảm giá dịp cuối năm",
+      loaiKhuyenMai: "phan tram",
+      phanTramGiamGia: voucher.value,
+      soTienGiam: voucher.maxValue,
+      ngayBatDau: voucher.startDate.toI,
+      ngayKetThuc: voucher.endDate,
+      // dieuKien: "Áp dụng cho đơn hàng trên 500,000 VNĐ",
+      // trangThai: "Đang diễn ra",
+      idSanPham: selectedUserIds,
+    };
+    const result = await updateKhuyenMaiSanPham(idKhuyenMai.value,dataAdd);
+    if (result.status === 200) {
+      toast.success("Sửa khuyến mãi thành công");
+      voucherStore.fetchVouchers()
     }
-  }
+  
 };
 
 // Fetch data
 const fetchCustomers = async () => {
   try {
     loading.value = true;
-    const result = await layTatCaKhachHang();
+    const result = await laySanPhamKemSoLuong();
     if (result.status === 200) {
       customers.value = result.data;
       totalItems.value = result.data.length;

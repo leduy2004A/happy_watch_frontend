@@ -1,123 +1,78 @@
 <template>
-  <v-container class="pa-4" fluid>
-    <v-row>
+  <div class="container">
+    <div class="grid">
       <!-- Search bar and buttons -->
-      <v-col cols="12" class="d-flex align-center mb-3">
-        <v-text-field
-          v-model="searchQuery"
-          prepend-inner-icon="mdi-magnify"
-          placeholder="Tìm kiếm hoá đơn"
-          hide-details
-          variant="outlined"
-          class="search-field mr-4"
-          style="max-width: 400px"
-        ></v-text-field>
+      <div class="col-12 flex align-items-center mb-3">
+        <span class="p-input-icon-left mr-4" style="max-width: 400px">
+          <InputText 
+            v-model="searchQuery"
+            placeholder="Tìm kiếm hoá đơn"
+            class="search-field"
+          />
+        </span>
+
         
-        <v-btn
-          color="warning"
-          variant="outlined"
-          class="mr-3 px-4"
-          prepend-icon="mdi-qrcode-scan"
-        >
-          Quét mã
-        </v-btn>
-        
-        <v-btn
-          color="primary"
-          class="px-4"
-          prepend-icon="mdi-plus"
-        >
-          Tạo hoá đơn
-        </v-btn>
-      </v-col>
+      </div>
 
       <!-- Date filters and type selection -->
-      <v-col cols="12" class="d-flex align-center">
-        <div class="d-flex align-center">
-          <v-menu
-            v-model="menuFrom"
-            :close-on-content-click="false"
-            transition="scale-transition"
-          >
-            <template v-slot:activator="{ props }">
-              <v-text-field
-                v-model="dateFrom"
-                label="Từ ngày"
-                prepend-inner-icon="mdi-calendar"
-                readonly
-                hide-details
-                variant="outlined"
-                class="mr-4"
-                style="width: 180px"
-                v-bind="props"
-              ></v-text-field>
-            </template>
-            <v-date-picker
+      <div class="col-12 flex align-items-center">
+        <div class="flex align-items-center">
+          <span class="p-float-label mr-4" style="width: 180px">
+            <Calendar
               v-model="dateFrom"
-              no-title
-              @update:model-value="menuFrom = false"
-            ></v-date-picker>
-          </v-menu>
+              dateFormat="dd/mm/yy"
+              showIcon
+              inputId="dateFrom"
+            />
+            <label for="dateFrom">Từ ngày</label>
+          </span>
 
-          <v-menu
-            v-model="menuTo"
-            :close-on-content-click="false"
-            transition="scale-transition"
-          >
-            <template v-slot:activator="{ props }">
-              <v-text-field
-                v-model="dateTo"
-                label="Đến ngày"
-                prepend-inner-icon="mdi-calendar"
-                readonly
-                hide-details
-                variant="outlined"
-                class="mr-6"
-                style="width: 180px"
-                v-bind="props"
-              ></v-text-field>
-            </template>
-            <v-date-picker
+          <span class="p-float-label mr-6" style="width: 180px">
+            <Calendar
               v-model="dateTo"
-              no-title
-              @update:model-value="menuTo = false"
-            ></v-date-picker>
-          </v-menu>
+              dateFormat="dd/mm/yy"
+              showIcon
+              inputId="dateTo"
+            />
+            <label for="dateTo">Đến ngày</label>
+          </span>
         </div>
 
-        <div class="d-flex align-center mr-6">
+        <div class="flex align-items-center mr-6">
           <span class="mr-3 text-subtitle-1">Loại:</span>
-          <v-radio-group
-            v-model="invoiceType"
-            inline
-            hide-details
-            class="mt-1"
-          >
-            <v-radio
-              label="Tất cả"
+          <div class="flex">
+            <RadioButton
+              v-model="invoiceType"
+              inputId="all"
+              name="type"
               value="all"
-            ></v-radio>
-            <v-radio
-              label="Trực tuyến"
+              class="mr-2"
+            />
+            <label for="all" class="mr-4">Tất cả</label>
+
+            <RadioButton
+              v-model="invoiceType"
+              inputId="online"
+              name="type"
               value="online"
-            ></v-radio>
-            <v-radio
-              label="Tại quầy"
+              class="mr-2"
+            />
+            <label for="online" class="mr-4">Trực tuyến</label>
+
+            <RadioButton
+              v-model="invoiceType"
+              inputId="offline"
+              name="type"
               value="offline"
-            ></v-radio>
-          </v-radio-group>
+              class="mr-2"
+            />
+            <label for="offline">Tại quầy</label>
+          </div>
         </div>
 
-        <v-btn
-          color="success"
-          class="px-4"
-          prepend-icon="mdi-microsoft-excel"
-        >
-          Export Excel
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -127,8 +82,6 @@ import { ref } from 'vue'
 const searchQuery = ref('')
 const dateFrom = ref('')
 const dateTo = ref('')
-const menuFrom = ref(false)
-const menuTo = ref(false)
 const invoiceType = ref('all')
 
 // Methods
@@ -155,29 +108,33 @@ const handleCreate = () => {
 </script>
 
 <style scoped>
-:deep(.v-field) {
-  border-radius: 4px;
+.search-field {
+  width: 100%;
 }
 
-:deep(.v-text-field .v-input__prepend-inner) {
-  margin-right: 8px;
-}
-
-:deep(.v-radio-group .v-radio) {
-  margin-right: 12px;
-}
-
-:deep(.v-field__input) {
-  min-height: 44px;
-  padding: 0 15px;
-}
-
-:deep(.v-btn) {
+:deep(.p-inputtext),
+:deep(.p-button) {
   height: 44px;
+}
+
+:deep(.p-float-label) {
+  display: block;
+}
+
+:deep(.p-float-label label) {
+  background: white;
+}
+
+:deep(.p-radiobutton) {
+  width: 20px;
+  height: 20px;
+}
+
+:deep(.p-button) {
   font-weight: 500;
 }
 
-:deep(.v-radio label) {
+label {
   font-size: 14px;
 }
 </style>

@@ -12,6 +12,15 @@ export const layTatCaKhuyenMai =async ()=>{
 export const addKhuyenMaiSanPham =async (data)=>{
    return await api.post(`/api/khuyenmai/create`,data)
 }
+export const updateKhuyenMaiSanPham =async (id,data)=>{
+   return await api.put(`/api/khuyenmai/${id}`,data)
+}
 export const updateKhuyenMai =async (data)=>{
    return await api.put(`/api/khuyenmaihoadon/update-kmhd`,data)
+}
+export const thayDoiTrangThaiKhuyenMaiSanPham =async (id)=>{
+   return await api.put(`/api/khuyenmai/da-ket-thuc/${id}`)
+}
+export const thayDoiTrangThaiKhuyenMaiHoaDon =async (id)=>{
+   return await api.put(`/api/khuyenmaihoadon/da-ket-thuc/${id}`)
 }

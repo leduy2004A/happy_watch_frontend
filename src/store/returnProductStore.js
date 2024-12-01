@@ -8,26 +8,6 @@ const toast = useToast();
 export const useReturnProductStore = defineStore("returnProduct", {
   state: () => ({
     products: [
-      {
-        id: 1,
-        name: 'Balen Grey 2023 Bac Đế nhựa "Tim" [41]',
-        image: "path_to_image1.jpg",
-        quantity: 0,
-        stock: 4,
-        price: 137500,
-        selected: false,
-        note: "",
-      },
-      {
-        id: 2,
-        name: 'Kkkk Sắt Đế sắt "Xanh dương" [40]',
-        image: "path_to_image2.jpg",
-        quantity: 0,
-        stock: 3,
-        price: 80000,
-        selected: false,
-        note: "",
-      },
     ],
     returnInfo: {
       customerName: "Nguyễn Thị Thùy Dương",

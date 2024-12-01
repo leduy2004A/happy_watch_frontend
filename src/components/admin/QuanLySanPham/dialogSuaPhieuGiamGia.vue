@@ -193,7 +193,8 @@
 </template>
 
 <script setup>
-
+import { useVoucherHoaDonStore } from "@/store/voucherHoaDonStore";
+const voucherStore = useVoucherHoaDonStore();
 import { ref, watch, defineProps, reactive, computed, onMounted } from "vue";
 import useEmitter from "@/useEmitter";
 import { layTatCaKhachHang } from "@/axios/sanpham";
@@ -337,6 +338,7 @@ const addNew = async () => {
     };
     const result = await updateKhuyenMai(dataAdd);
     if (result.status === 200) {
+      voucherStore.fetchVouchers()
       closeDialog()
       toast.success("Thêm khuyến mãi thành công");
     }
@@ -359,6 +361,7 @@ const addNew = async () => {
     };
     const result = await updateKhuyenMai(dataAdd);
     if (result.status === 200) {
+      voucherStore.fetchVouchers()
       toast.success("Thêm khuyến mãi thành công");
       closeDialog()
       try {

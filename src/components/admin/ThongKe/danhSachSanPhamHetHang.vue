@@ -3,7 +3,7 @@
   <div class="">
     <div class="title-header">
             <h4>Danh sách sản phẩm sắp hết hàng</h4>
-      <InputText  placeholder="Nhập số lượng" type="number"/>
+      <InputText  placeholder="Nhập số lượng" type="number" v-model="inputQuantity"  @blur="onInputQuantityChange()" />
     </div>
 
   <DataTable :value="products" :paginator="true" :rows="5" responsive-layout="scroll"
@@ -16,6 +16,9 @@
       <Column field="maCTSP" header="Tên sản phẩm" sortable>
         <template #filter="{ filterModel, filterCallback }">
           <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Tìm theo tên" />
+        </template>
+        <template #body="slotProps">
+          {{ slotProps.data.ten }}
         </template>
       </Column>
       <Column field="tongSoLuong" header="Số lượng" sortable />
@@ -30,7 +33,7 @@
 </template>
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getThongKeHomNaySanPham } from '@/axios/thongKe';
+import { getThongKeSanPhamSapHetHang } from '@/axios/thongKe';
 // Danh sách sản phẩm giả lập
 const products = ref([
   {
@@ -69,7 +72,7 @@ const products = ref([
     size: '38,39,40,41,42',
   },
 ]);
-
+const inputQuantity = ref(10);
 // Biến trạng thái
 
 
@@ -85,7 +88,7 @@ const filters = ref({
 // Hàm thiết lập loại bộ lọc
 
 onMounted(async()=>{
-  products.value = (await getThongKeHomNaySanPham()).data
+  products.value = (await getThongKeSanPhamSapHetHang(inputQuantity.value)).data
 })
 // Định dạng tiền tệ
 const formatCurrency = (value) => {
@@ -98,6 +101,10 @@ const formatCurrency = (value) => {
 // Xuất dữ liệu sang Excel
 const exportToExcel = () => {
   console.log('Export to Excel!');
+};
+const onInputQuantityChange =async () => {
+  console.log('Số lượng nhập vào:', inputQuantity.value);
+  products.value = (await getThongKeSanPhamSapHetHang(inputQuantity.value)).data
 };
 </script>
 <style scoped>

@@ -108,7 +108,7 @@
           block
           color="orange"
           @click="confirmSelection"
-          class="text-white"
+         
         >
           XÁC NHẬN
         </v-btn>
