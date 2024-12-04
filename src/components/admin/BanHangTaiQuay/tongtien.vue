@@ -153,7 +153,9 @@ const handleConfirmOrder = async () => {
 
             
         let loader = null;
-        try {
+        if(store.isDelivery)
+        {
+             try {
             loader = $loading.show();
             const result = await diaChiStore.xacNhanDonHang()
             console.log(result)
@@ -186,6 +188,42 @@ const handleConfirmOrder = async () => {
                 loader.hide()
             }
         }
+        }else{
+          try {
+            loader = $loading.show();
+            const result = await diaChiStore.xacNhanDonHangTaiQuay()
+            console.log(result)
+            if(result.result.status == 200) {
+                toast.success("Đã xác nhận đơn hàng")
+                const dataExportPdf = {
+                  tenKhachHang:store.customerInfo,
+                  diaChiNhanHang:"Tại cửa hàng",
+                  nhanVien:"",
+                  hoaDonId:hoaDonStore.hoaDonId,
+                  maHoaDon:hoaDonStore.maHoaDon,
+                  ngayTao:hoaDonStore.ngayTao,
+                  products: sanPhamHoaDonStore.products,
+                  tienHang:store.orderAmountFormatted,
+                  giamGia:store.discountAmountFormatted,
+                  phiGiaoHang:store.shippingFeeFormatted,
+                  tongTien:store.formatCurrency(store.totalAmountValue)
+                }
+                exportToPdf(dataExportPdf)
+                // Thêm delay trước khi reload
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                window.location.href = window.location.href
+                console.log(result.data)
+            }
+        } catch (error) {
+            toast.error(error.response.data || error.response)
+        } finally {
+            // Kiểm tra nếu loader tồn tại thì mới hide
+            if (loader) {
+                loader.hide()
+            }
+        }
+        }
+     
           
         } else if (result.isDenied) {
           Swal.fire("Changes are not saved", "", "info");

@@ -34,10 +34,9 @@
         <Calendar v-model="dateRange.from" placeholder="Từ ngày" class="mr-2" />
         <Calendar v-model="dateRange.to" placeholder="Đến ngày" />
         <Button
-          label="EXPORT TO EXCEL"
-          icon="pi pi-file-excel"
+          label="XEM"
           class="p-button-success ml-2"
-          @click="exportToExcel"
+          @click="exportToExcel()"
         />
       </div>
     </div>
@@ -85,7 +84,7 @@
 
       <!-- Status Chart -->
       <div class="chart-section mt-4 chart">
-        <h3>Biểu đồ trạng thái tùy chỉnh</h3>
+        <h3>Biểu đồ trạng thái</h3>
         <Chart
           type="pie"
           :data="chartData"
@@ -109,7 +108,10 @@ import {
   getThongKeThangNaySanPhamPhanTram,
   getThongKeTuanNaySanPhamPhanTram,
   getThongKeTheoNamSanPhamPhanTram,
+  getThongKeSanPhamTuyChinhSapHetHang,
+  getThongKeTuyChinhSanPhamPhanTram
 } from "@/axios/thongKe";
+import moment from "moment";
 // Danh sách sản phẩm giả lập
 const products = ref([
   {
@@ -234,8 +236,11 @@ const setFilterType = async (type) => {
     chartData.value.labels = resultBieuDo.data.map(item => item.trangThaiTiengViet)
     chartData.value.datasets[0].data = resultBieuDo.data.map(item => item.phanTram)
   } else if (type === "custom") {
-    products.value = (await getThongKeTuanNaySanPham()).data;
-    console.log(dateRange.value.from.toISOString);
+    products.value = (await getThongKeHomNaySanPham()).data;
+    console.log(products.value);
+    const resultBieuDo = await (getThongKeHomNaySanPhamPhanTram())
+    chartData.value.labels = resultBieuDo.data.map(item => item.trangThaiTiengViet)
+    chartData.value.datasets[0].data = resultBieuDo.data.map(item => item.phanTram)
   }
 };
 onMounted(async () => {
@@ -253,8 +258,18 @@ const formatCurrency = (value) => {
 };
 
 // Xuất dữ liệu sang Excel
-const exportToExcel = () => {
-  console.log("Export to Excel!");
+const exportToExcel =async () => {
+  console.log(dateRange.value.from);
+  console.log(dateRange.value.to);
+  const datefrom = moment(dateRange.value.from, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (ZZ)").format('YYYY-MM-DD')
+  const dateTo = moment(dateRange.value.to, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (ZZ)").format('YYYY-MM-DD')
+  products.value = (await getThongKeSanPhamTuyChinhSapHetHang(datefrom,dateTo)).data;
+  const result = await getThongKeTuyChinhSanPhamPhanTram(datefrom,dateTo)
+  if(result.status === 200)
+  {
+    chartData.value.labels = result.data.map(item => item.trangThaiTiengViet)
+    chartData.value.datasets[0].data = result.data.map(item => item.phanTram)
+  }
 };
 </script>
 

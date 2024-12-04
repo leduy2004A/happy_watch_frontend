@@ -1,9 +1,10 @@
 // stores/productStore.js
 import { defineStore } from 'pinia'
-import { addSanPham, addThuongHieu, layTatCaGioiTinh, layTatCaThuongHieu, addGioiTinh } from '@/axios/sanpham'
+import { addSanPham, addThuongHieu, layTatCaGioiTinh, layTatCaThuongHieu, addGioiTinh,updateSanPham } from '@/axios/sanpham'
 
 export const useQLSPStore = defineStore('QLSPStore', {
   state: () => ({
+    maSanPham:'',
     productName: '',
     product: {
       category: 'Giày cao cổ',
@@ -86,20 +87,78 @@ export const useQLSPStore = defineStore('QLSPStore', {
     },
 
     async saveProduct() {
-      const dataSanPham = {
-        ten: this.productName,
-        thuongHieu: {
-          id: this.product.brand.id
-        },
-        moTa: this.product.description,
-        gioiTinh: {
-          id: this.product.category.id
+      
+      try {
+        const brandId = typeof this.product.brand === 'object' 
+          ? this.product.brand.id 
+          : this.brands.find(b => b.ten === this.product.brand)?.id
+    
+        const categoryId = typeof this.product.category === 'object'
+          ? this.product.category.id
+          : this.categories.find(c => c.ten === this.product.category)?.id
+    
+        if (!brandId) {
+          throw new Error('Không tìm thấy thông tin thương hiệu')
         }
+    
+        if (!categoryId) {
+          throw new Error('Không tìm thấy thông tin giới tính')
+        }
+    
+        const dataSanPham = {
+          ten: this.productName,
+          thuongHieu: {
+            id: brandId
+          },
+          ma:this.maSanPham,
+          trangThai:'Đang kinh doanh',
+          moTa: this.product.description,
+          gioiTinh: {
+            id: categoryId
+          }
+        }
+    
+        return await addSanPham(dataSanPham)
+      } catch (error) {
+        console.error('Lỗi khi thêm sản phẩm', error)
+        throw error
       }
-
-      return await addSanPham(dataSanPham)
     },
-
+    async updateProduct(idSanPham) {
+      try {
+        const brandId = typeof this.product.brand === 'object' 
+          ? this.product.brand.id 
+          : this.brands.find(b => b.ten === this.product.brand)?.id
+    
+        const categoryId = typeof this.product.category === 'object'
+          ? this.product.category.id
+          : this.categories.find(c => c.ten === this.product.category)?.id
+    
+        if (!brandId) {
+          throw new Error('Không tìm thấy thông tin thương hiệu')
+        }
+    
+        if (!categoryId) {
+          throw new Error('Không tìm thấy thông tin giới tính')
+        }
+    
+        const dataSanPham = {
+          ten: this.productName,
+          thuongHieu: {
+            id: brandId
+          },
+          moTa: this.product.description,
+          gioiTinh: {
+            id: categoryId
+          }
+        }
+    
+        return await updateSanPham(idSanPham, dataSanPham)
+      } catch (error) {
+        console.error('Lỗi khi cập nhật sản phẩm:', error)
+        throw error
+      }
+    },
     filterSuggestions() {
       if (!this.productName) {
         this.showSuggestions = false

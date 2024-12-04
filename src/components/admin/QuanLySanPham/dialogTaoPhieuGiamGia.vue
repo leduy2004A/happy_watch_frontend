@@ -28,8 +28,10 @@
                 <label for="name">Tên phiếu giảm giá</label>
                 <InputText id="name" v-model="voucher.name" class="w-full" />
               </div>
-
-              <div class="col-6">
+              <div class="col-12">
+                <SelectButton v-model="valueSelect" :options="optionsSelect" />
+              </div>
+              <div class="col-12" v-if="valueSelect === 'Phần trăm'?true:false">
                 <label for="value">Giá trị</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -41,7 +43,7 @@
                 </div>
               </div>
 
-              <div class="col-6">
+              <div class="col-12" v-if="valueSelect === 'Số tiền'?true:false">
                 <label for="maxValue">Giá trị tối đa</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -187,12 +189,14 @@ import { sendMail } from "@/axios/email";
 import { useVoucherHoaDonStore } from "@/store/voucherHoaDonStore";
 const voucherStore = useVoucherHoaDonStore();
 import { useToast } from "vue-toastification";
+import moment from "moment";
 const toast = useToast();
 const emitter = useEmitter();
 const dataProps = defineProps({
   modal: Boolean,
 });
-
+const optionsSelect = ['Phần trăm','Số tiền']
+const valueSelect = ref('Phần trăm')
 // Dialog visibility
 const dialogVisible = ref(dataProps.modal);
 watch(
@@ -295,8 +299,8 @@ const addNew = async () => {
       loaiKhuyenMai: "phan tram",
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toISOString(),
-      ngayKetThuc: voucher.endDate.toISOString(),
+      ngayBatDau: moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
       soLuong: voucher.quantity,
       dieuKien: "Áp dụng cho đơn hàng trên 500k",
       khuyenMaiTuGia: voucher.condition,

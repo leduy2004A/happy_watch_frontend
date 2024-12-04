@@ -26,7 +26,9 @@ export const getThongKeTheoNamSanPham= async ()=>{
 export const getThongKeSanPhamSapHetHang = async (soLuong) =>{
     return await api.get(`/api/thong-ke/san-pham-sap-het?soLuong=${soLuong}`)
 }
-
+export const getThongKeSanPhamTuyChinhSapHetHang = async (from,to) =>{
+    return await api.get(`/api/thong-ke/san-pham-ban-chay-theo-ngay?startDate=${from}&endDate=${to}`)
+}
 
 export const getThongKeHomNaySanPhamPhanTram = async ()=>{
     return await api.get("/api/thong-ke/phan-tram-hoa-don-hom-nay");
@@ -39,6 +41,9 @@ export const getThongKeThangNaySanPhamPhanTram = async ()=>{
 }
 export const getThongKeTheoNamSanPhamPhanTram= async ()=>{
     return await api.get("/api/thong-ke/phan-tram-hoa-don");
+}
+export const getThongKeTuyChinhSanPhamPhanTram= async (from,to)=>{
+    return await api.get(`/api/thong-ke/phan-tram-hoa-don-theo-ngay?startDate=${from}&endDate=${to}`);
 }
 // export const getThongKeSanPhamSapHetHang = async (soLuong) =>{
 //     return await api.get(`/api/thong-ke/san-pham-sap-het?soLuong=${soLuong}`)

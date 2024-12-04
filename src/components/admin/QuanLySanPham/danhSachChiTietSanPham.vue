@@ -7,7 +7,6 @@
       <div class="grid mb-4">
         <div class="col-12">
           <span class="p-input-icon-left w-full">
-            <i class="pi pi-search" />
             <InputText 
               v-model="store.search" 
               class="w-full"
@@ -97,6 +96,17 @@
             </Tag>
           </template>
         </Column>
+        <Column field="trangThai" header="Trạng thái">
+          <template #body="slotProps">
+            <Tag 
+              :severity="slotProps.data.trangThai === 'Còn hàng' ? 'success' : 'danger'"
+              class="text-sm"
+              @click="updateTrangThai(slotProps.data)"
+            >
+              {{ slotProps.data.trangThai }}
+            </Tag>
+          </template>
+        </Column>
         <Column header="Thao tác" :sortable="false" style="min-width: 100px">
           <template #body="slotProps">
             <Button 
@@ -109,6 +119,32 @@
           </template>
         </Column>
       </DataTable>
+      <Dialog 
+      v-model:visible="displayStatusDialog" 
+      modal 
+      header="Xác nhận thay đổi trạng thái" 
+      :style="{ width: '350px' }"
+    >
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+        <span>Bạn có chắc muốn thay đổi trạng thái thành "Đã kết thúc"?</span>
+      </div>
+      <template #footer>
+        <Button 
+          label="Không" 
+          icon="pi pi-times" 
+          @click="displayStatusDialog = false" 
+          text
+        />
+        <Button 
+          label="Có" 
+          icon="pi pi-check" 
+          @click="handleConfirmStatusChange()" 
+          severity="danger" 
+          autofocus 
+        />
+      </template>
+    </Dialog>
     </div>
   </div>
   <dialog_themchitietsanpham :modal="store.openModalCTSP"></dialog_themchitietsanpham>
@@ -121,11 +157,15 @@ import useEmitter from '@/useEmitter'
 import { useRoute } from 'vue-router'
 import { quanLyCTSPMAIN } from '@/store/quanLyCTSPMain'
 import { useCTSPStore } from '@/store/quanLyChiTietSanPhamStore'
-
+import { updateTrangThaiChiTietSanPham } from '@/axios/sanpham'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+const displayStatusDialog = ref(false)
 const ctspStore = useCTSPStore()
 const route = useRoute()
 const emitter = useEmitter()
 const store = quanLyCTSPMAIN()
+const chiTietSanPhamId = ref(0)
 const filters = ref({
   global: { value: null, matchMode: 'contains' }
 })
@@ -148,6 +188,22 @@ const open = () => {
   emitter.on("closeModalCTSP", value => {
     store.setOpenModal(value)
   })
+}
+const updateTrangThai = (data)=>{
+  displayStatusDialog.value = true
+  chiTietSanPhamId.value = data.id
+}
+const handleConfirmStatusChange =async ()=>{
+  const result = await updateTrangThaiChiTietSanPham(chiTietSanPhamId.value)
+  if(result.status === 200)
+  {
+    displayStatusDialog.value = false
+    store.fetchProducts(route.params.id)
+    toast.success("Sửa trạng thái thành công")
+  }else{
+    displayStatusDialog.value = false
+    toast.error("Sửa trạng thái thất bại")
+  }
 }
 </script>
 

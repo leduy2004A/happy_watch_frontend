@@ -161,10 +161,11 @@ onMounted(async () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
          let loader = null;
-    try {
+         if(tienStore.isDelivery)
+      {
+         try {
       // Show loading
       loader = $loading.show();
-
       const result = await store.xacNhanDonHang();
       if (result.result.status == 200) {
         toast.success("Đã xác nhận đơn hàng");
@@ -202,9 +203,49 @@ onMounted(async () => {
         loader.hide();
       }
     }
+      }else{
+        try {
+      // Show loading
+      loader = $loading.show();
+      const result = await store.xacNhanDonHangTaiQuay();
+      if (result.result.status == 200) {
+        toast.success("Đã xác nhận đơn hàng");
+        // Thêm delay trước khi reload
 
-
-
+        const dataExportPdf = {
+          tenKhachHang: tienStore.customerInfo,
+          diaChiNhanHang:
+            store.formData.detailAddress +
+            ", " +
+            tienStore.diachi.xaPhuongThiTran +
+            ", " +
+            tienStore.diachi.quanHuyen +
+            ", " +
+            tienStore.diachi.tinhThanhPho,
+          nhanVien: "",
+          hoaDonId: invoiceStore.hoaDonId,
+          maHoaDon: invoiceStore.maHoaDon,
+          ngayTao: invoiceStore.ngayTao,
+          products: sanPhamHoaDonStore.products,
+          tienHang: tienStore.orderAmountFormatted,
+          giamGia: tienStore.discountAmountFormatted,
+          phiGiaoHang: tienStore.shippingFeeFormatted,
+          tongTien: tienStore.formatCurrency(tienStore.totalAmountValue),
+        };
+        exportToPdf(dataExportPdf);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        window.location.href = window.location.href;
+      }
+    } catch (error) {
+      toast.error(error.response.data || error.response);
+    } finally {
+      // Hide loading nếu không có reload
+      if (loader) {
+        loader.hide();
+      }
+    }
+      }
+   
 
         } else if (result.isDenied) {
           Swal.fire("Changes are not saved", "", "info");

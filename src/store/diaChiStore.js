@@ -1,7 +1,7 @@
 // stores/addressStore.js
 import { defineStore } from 'pinia'
 import { getTinhThanh, getQuanHuyen, getPhuongXa } from "@/axios/diachi"
-import { xacNhanDonHang } from "@/axios/hoadon"
+import { xacNhanDonHang,xacNhanDonHangMuaTaiQuay } from "@/axios/hoadon"
 import { useOrderStore } from './tienStore'
 export const useAddressStore = defineStore('address', {
   state: () => ({
@@ -138,7 +138,38 @@ export const useAddressStore = defineStore('address', {
           throw error
         }
       },
+      async xacNhanDonHangTaiQuay() {
+        const tienStore = useOrderStore()
+        
+        // Tìm tên tỉnh/thành phố từ ID
+        const selectedProvince = this.provinces.find(p => p.value === this.formData.province)
+        const selectedDistrict = this.districts.find(d => d.value === this.formData.district)
+        const selectedWard = this.wards.find(w => w.value === this.formData.ward)
   
+        const data = {
+          hoaDonId: tienStore.hoaDonId,
+          province: selectedProvince?.text || this.formData.province,
+          district: selectedDistrict?.text || this.formData.district,
+          ward: selectedWard?.text || this.formData.ward,
+          diaChiCuThe: `${this.formData.detailAddress}, ${selectedWard?.text || ''}, ${selectedDistrict?.text || ''}, ${selectedProvince?.text || ''}`,
+          dienThoai: this.formData.phone,
+          ten: this.formData.ten,
+          tongTienHoaDon:tienStore.totalAmountValue,
+          phiShip:tienStore.shippingFee,
+          maKhuyenMaiHoaDon:tienStore.discountCode
+        }
+        console.log(data)
+        try {
+          const result = await xacNhanDonHangMuaTaiQuay(data)
+          return{
+            result,
+            data
+          } 
+        } catch (error) {
+          console.error('Error confirming order:', error)
+          throw error
+        }
+      },
 
     setHoaDonId(id) {
       this.hoaDonId = id

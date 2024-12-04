@@ -70,6 +70,12 @@ const STATUS_MAPPING = {
     color: 'red-lighten-4', 
     icon: 'mdi-check-circle',
     iconColor: 'red'
+  },
+  'Đã Hoàn Trả Hàng': {
+    title: 'Trả hàng',
+    color: 'red-lighten-4', 
+    icon: 'mdi-check-circle',
+    iconColor: 'red'
   }
 };
 

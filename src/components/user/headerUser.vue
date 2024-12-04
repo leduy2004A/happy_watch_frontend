@@ -60,7 +60,7 @@
               <v-list-item-title>Hóa đơn</v-list-item-title>
             </v-list-item>
 
-            <v-list-item to="/profile" class="account-menu-item">
+            <v-list-item to="/profile/ho-so" class="account-menu-item">
               <template v-slot:prepend>
                 <v-icon>mdi-account-details</v-icon>
               </template>

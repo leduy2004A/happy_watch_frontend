@@ -7,6 +7,15 @@
           <h2 class="text-center mb-6">Thêm sản phẩm</h2>
 
           <v-form ref="form" v-model="valid">
+            <v-text-field
+                v-model="store.maSanPham"
+                label="Mã sản phẩm"
+                required
+                variant="outlined"
+                class="mb-4"
+                density="comfortable"
+                :rules="[(v) => !!v || 'Mã là bắt buộc']"
+              ></v-text-field>
             <div class="position-relative">
               <v-text-field
                 v-model="store.productName"

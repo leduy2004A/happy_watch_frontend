@@ -6,8 +6,6 @@
     :table-headers="headers"
     dialog-width="1200px"
   >
-    <!-- :default-item="defaultItem" -->
-    <!-- Custom dialog content -->
     <template #dialog-content="{ editedItem, showAdress }">
       <v-row>
         <!-- Customer Information Section -->
@@ -20,8 +18,8 @@
                 <div class="text-center mb-4">
                   <v-avatar size="150" color="grey-lighten-2">
                     <v-img
-                      v-if="form.avatar"
-                      :src="form.avatar"
+                      v-if="editedItem.avatar"
+                      :src="editedItem.avatar"
                       alt="Avatar"
                     ></v-img>
                     <span v-else>Chọn ảnh</span>
@@ -72,6 +70,16 @@
                   <v-radio label="Nam" value="Nam"></v-radio>
                   <v-radio label="Nữ" value="Nữ"></v-radio>
                 </v-radio-group>
+
+                <div class="col-12" v-if="showAdress">
+                  <SelectButton
+                    v-model="editedItem.trangThai"
+                    :options="optionsSelect"
+                    optionLabel="label"
+                    optionValue="value"
+                     @update:modelValue="updateTrangThai(editedItem)"
+                  />
+                </div>
               </v-form>
             </v-card-text>
           </v-card>
@@ -99,7 +107,7 @@
                         icon="mdi-delete"
                         variant="text"
                         color="error"
-                        @click.stop="removeAddress(index,address)"
+                        @click.stop="removeAddress(index, address)"
                       ></v-btn>
                     </template>
                   </v-expansion-panel-title>
@@ -163,7 +171,6 @@
                       <v-btn @click="themDiaChiVao(address)">
                         <v-icon>mdi-plus</v-icon>
                       </v-btn>
-                      
                     </v-form>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -187,31 +194,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, reactive,watch } from "vue";
+import { ref, onMounted, onUnmounted, reactive, watch } from "vue";
 import BaseCrud from "./BaseCrud.vue";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 import useEmitter from "@/useEmitter";
 import { useCustomerStore } from "@/store/customerStore";
-const addressStore = useCustomerStore()
+const addressStore = useCustomerStore();
 import {
   layTatCaKhachHang,
   addChatLieuDay,
   updateChatLieuDay,
   themKhachHang,
-  updateKhachHang
+  updateKhachHang,
 } from "@/axios/sanpham";
 import { getAllDiaChiKhachHang, themDiaChiKhachHang } from "@/axios/khachhang";
+import { updateTrangThaiNhanVien } from "@/axios/sanpham";
 // import { addThuongHieu } from "@/axios/sanpham";
 const emitter = useEmitter();
 // Table headers
+const optionsSelect = [
+  { label: "Hoạt động", value: true },
+  { label: "Không hoạt động", value: false },
+];
 const headers = [
   // { title: "STT", key: "stt", align: "center" },
   { title: "Họ Tên", key: "ten", align: "center" },
   { title: "Email", key: "email", align: "center" },
   { title: "Số Điện Thoại", key: "dienThoai", align: "center" },
   { title: "Giới Tính", key: "gioiTinh", align: "center" },
-  { title: "Trạng thái", key: "trangThai", align: "center" },
+  // { title: "Trạng thái", key: "trangThai", align: "center" },
   // { title: "Thao tác", key: "actions", align: "center" },
 ];
 const form = reactive({
@@ -222,6 +234,7 @@ const form = reactive({
   birthDate: "",
   gender: "",
   addresses: [],
+  trangThai: false,
 });
 const dialogDiaChi = ref(true);
 // References
@@ -229,7 +242,7 @@ const customerForm = ref(null);
 const addressForms = ref([]);
 const expandedPanel = ref(0);
 const avatarFile = ref(null);
-const idNguoiDung = ref(0)
+const idNguoiDung = ref(0);
 // Mock data for dropdowns
 // watch(
 //   () => addressStore.address,
@@ -256,7 +269,13 @@ const handleAvatarChange = (file) => {
     reader.readAsDataURL(file);
   }
 };
-
+const updateTrangThai =async (editedItem)=>{
+  const result = await updateTrangThaiNhanVien(editedItem.id)
+  if(result.status === 200)
+  {
+    toast.success("Sửa trạng thái thành công")
+  }
+}
 const addNewAddress = () => {
   addressStore.address.push({
     name: "",
@@ -270,44 +289,48 @@ const addNewAddress = () => {
   expandedPanel.value = form.addresses.length - 1;
 };
 
-const removeAddress = (index,item) => {
-  console.log(item)
+const removeAddress = (index, item) => {
+  console.log(item);
   addressStore.address.splice(index, 1);
   if (addressStore.address.length === 0) {
     addNewAddress();
   }
 };
-const themDiaChiVao =async (item)=>{
-  console.log(item)
-      let provinceName = addressStore.provinces.find(p => p.value === item.tinhThanhPho)?.text
-      let districtName = addressStore.districts.find(d => d.value === item.quanHuyen)?.text
-      let wardName = addressStore.wards.find(w => w.value === item.xaPhuongThiTran)?.text
-    
-      // Sử dụng giá trị text đã lưu nếu không tìm được từ value
-      provinceName = provinceName || item.tinhThanhPho
-      districtName = districtName || item.quanHuyen
-      wardName = wardName || item.xaPhuongThiTran
-      const dataAdress = {
-        ma: "",
-        tenNguoiNhan: item.tenNguoiNhan,
-        tinhThanhPho: provinceName,
-        quanHuyen: districtName,
-        xaPhuongThiTran: wardName,
-        diaChiCuThe: item.diaChiCuThe,
-        dienThoai: item.dienThoai,
-        nguoiDung: {
-          id: idNguoiDung.value,
-        },
-      }
-      const result = await themDiaChiKhachHang(dataAdress)
-      if(result.status === 200)
-      {
-        toast.success("Thêm địa chỉ thành công")
-      }
-      else{
-        toast.error("Thêm địa chỉ thất bại")
-      }
-}
+const themDiaChiVao = async (item) => {
+  console.log(item);
+  let provinceName = addressStore.provinces.find(
+    (p) => p.value === item.tinhThanhPho
+  )?.text;
+  let districtName = addressStore.districts.find(
+    (d) => d.value === item.quanHuyen
+  )?.text;
+  let wardName = addressStore.wards.find(
+    (w) => w.value === item.xaPhuongThiTran
+  )?.text;
+
+  // Sử dụng giá trị text đã lưu nếu không tìm được từ value
+  provinceName = provinceName || item.tinhThanhPho;
+  districtName = districtName || item.quanHuyen;
+  wardName = wardName || item.xaPhuongThiTran;
+  const dataAdress = {
+    ma: "",
+    tenNguoiNhan: item.tenNguoiNhan,
+    tinhThanhPho: provinceName,
+    quanHuyen: districtName,
+    xaPhuongThiTran: wardName,
+    diaChiCuThe: item.diaChiCuThe,
+    dienThoai: item.dienThoai,
+    nguoiDung: {
+      id: idNguoiDung.value,
+    },
+  };
+  const result = await themDiaChiKhachHang(dataAdress);
+  if (result.status === 200) {
+    toast.success("Thêm địa chỉ thành công");
+  } else {
+    toast.error("Thêm địa chỉ thất bại");
+  }
+};
 const handleDefaultAddressChange = (index) => {
   if (addressStore.address[index].isDefault) {
     addressStore.address.forEach((addr, idx) => {
@@ -332,14 +355,7 @@ if (addressStore.address.length === 0) {
 // }
 
 // Mock data
-const data = ref([
-  {
-    id: 3,
-    ma: "TH03",
-    ten: "Seiko",
-    logo: "logo3.png",
-  },
-]);
+const data = ref([]);
 
 // CRUD handlers
 const handleCreate = async (newItem) => {
@@ -368,7 +384,7 @@ const handleCreate = async (newItem) => {
 };
 
 const handleUpdate = async ({ item, index }) => {
-  console.log(item)
+  console.log(item);
   try {
     const result = await updateKhachHang(item);
     if (result.status === 200) {
@@ -421,15 +437,14 @@ const handleError = (error) => {
 };
 emitter.on("crud:edit", async (item) => {
   if (item && item.id) {
-    idNguoiDung.value = item.id
-   await addressStore.fetchProvinces()
+    idNguoiDung.value = item.id;
+    await addressStore.fetchProvinces();
     const result = await getAllDiaChiKhachHang(item.id);
     if (result.status === 200) {
-    addressStore.address = result.data;
-    await addressStore.loadAddressesWithLocation(result.data);
+      addressStore.address = result.data;
+      await addressStore.loadAddressesWithLocation(result.data);
     }
     // await fetchUserAddresses(item.id);
-
   }
 });
 

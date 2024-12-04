@@ -45,14 +45,24 @@
             class="w-full"
           />
         </div> -->
+        <v-btn>Lưu</v-btn>
       </div>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 const genderOptions = ["Nam", "Nữ"];
 const employee = ref({});
 const employees = ref([]);
+onMounted(()=>{
+  const data = JSON.parse(localStorage.getItem("user")) 
+  console.log(data)
+  employee.value.avatar = data.avatar
+  employee.value.ten = data.ten
+  employee.value.email = data.email
+  employee.value.dienThoai = data.dienThoai
+  employee.value.gioiTinh = data.gioiTinh
+})
 </script>
 <style scoped>
     .p-avatar{

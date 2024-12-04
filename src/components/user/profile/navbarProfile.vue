@@ -36,7 +36,7 @@
   </template>
   
   <script setup>
-import { reactive } from 'vue';
+import { onMounted, reactive } from 'vue';
 
 const profile = reactive({
   name: 'Nguyễn Thị Thùy Dương',
@@ -44,11 +44,6 @@ const profile = reactive({
 });
 
 const menuItems = [
-  {
-    title: 'Tài khoản của tôi',
-    icon: 'mdi-account',
-    route: '/account'
-  },
   {
     title: 'Hồ sơ',
     icon: 'mdi-card-account-details',
@@ -75,6 +70,11 @@ const menuItems = [
     route: '/change-password'
   }
 ];
+onMounted(()=>{
+  const data = JSON.parse(localStorage.getItem("user")) 
+  profile.avatar = data.avatar
+  profile.name = data.ten
+})
 </script>
   
   <style scoped>

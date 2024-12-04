@@ -84,14 +84,15 @@
 
       <!-- Status Column -->
       <Column
-        field="status"
+        field="trangThai"
         header="Trạng thái"
         alignHeader="center"
       >
         <template #body="slotProps">
           <Tag
-            :severity="getStatusSeverity(slotProps.data.status)"
-            :value="slotProps.data.status"
+            :severity="getStatusSeverity(slotProps.data.trangThai)"
+            :value="slotProps.data.trangThai"
+            @click="thayDoiTrangThaiSanPham(slotProps.data)"
           />
         </template>
       </Column>
@@ -108,25 +109,63 @@
             class="p-button-text p-button-rounded"
             @click="viewDetails(slotProps.data)"
           />
+          <Button
+            icon="pi pi-pencil"
+            class="p-button-text p-button-rounded"
+            @click="updateSanPham(slotProps.data)"
+          />
         </template>
       </Column>
     </DataTable>
+    <Dialog 
+      v-model:visible="displayStatusDialog" 
+      modal 
+      header="Xác nhận thay đổi trạng thái" 
+      :style="{ width: '350px' }"
+    >
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+        <span>Bạn có chắc muốn thay đổi trạng thái thành "Đã kết thúc"?</span>
+      </div>
+      <template #footer>
+        <Button 
+          label="Không" 
+          icon="pi pi-times" 
+          @click="displayStatusDialog = false" 
+          text
+        />
+        <Button 
+          label="Có" 
+          icon="pi pi-check" 
+          @click="handleConfirmStatusChange()" 
+          severity="danger" 
+          autofocus 
+        />
+      </template>
+    </Dialog>
   </div>
   <dialog_them-san-pham :modal="modalThemSanPham" />
+  <dialogSuaSanPham :modal="modalSuaSanPham" :data-san-pham="data"></dialogSuaSanPham>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import dialog_themSanPham from './dialog_themSanPham.vue'
+import dialogSuaSanPham from './dialogSuaSanPham.vue'
 import useEmitter from '@/useEmitter'
+import { updateTrangThaiSanPham } from '@/axios/sanpham'
 import { useDanhSachSP } from '@/store/danhSachSanPhamStore'
 import { useRouter } from 'vue-router'
-
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+const data = ref({})
 const router = useRouter()
 const emitter = useEmitter()
 const productStore = useDanhSachSP()
 const modalThemSanPham = ref(false)
-
+const modalSuaSanPham = ref(false)
+const displayStatusDialog = ref(false)
+const idSanPham = ref(0)
 const statusOptions = [
   { label: 'Tất cả', value: 'all' },
   { label: 'Đang bán', value: 'selling' },
@@ -145,7 +184,19 @@ const getStatusSeverity = (status) => {
       return 'info'
   }
 }
+const thayDoiTrangThaiSanPham = (trangThai)=>{
+  displayStatusDialog.value = true
+  idSanPham.value = trangThai.id
 
+}
+const handleConfirmStatusChange =async ()=>{
+  const result = await updateTrangThaiSanPham(idSanPham.value)
+  if(result.status === 200)
+  {
+    toast.success("Thay đổi trạng thái thành công")
+    await productStore.fetchProducts()
+  }
+}
 const exportExcel = () => {
   console.log('Exporting to Excel...')
 }
@@ -158,10 +209,15 @@ const viewDetails = (item) => {
   console.log('Viewing details for:', item)
   router.push(`product-danhsach/${item.id}`)
 }
-
+const updateSanPham = (item)=>{
+  console.log(item)
+  data.value = item
+  modalSuaSanPham.value = true
+}
 onMounted(async () => {
   emitter.on("closeModalThemSanPham", value => {
     modalThemSanPham.value = value
+    modalSuaSanPham.value = value
   })
   await productStore.fetchProducts()
 })

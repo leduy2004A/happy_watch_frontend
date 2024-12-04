@@ -74,7 +74,8 @@
         <template #body="{ data }">
           <Tag
             :severity="data.trangThai === true ? 'success' : 'danger'"
-            :value="data.trangThai"
+            :value="data.trangThai === true ? 'Hoạt động':'Không hoạt động'"
+            @click="updateTrangThai(data)"
           />
         </template>
       </Column>
@@ -149,20 +150,47 @@
         <Button label="Lưu" icon="pi pi-check" @click="saveEmployee" />
       </template>
     </Dialog>
+
+    <Dialog 
+      v-model:visible="displayStatusDialog" 
+      modal 
+      header="Xác nhận thay đổi trạng thái" 
+      :style="{ width: '350px' }"
+    >
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+        <span>Bạn có chắc muốn thay đổi trạng thái thành "Đã kết thúc"?</span>
+      </div>
+      <template #footer>
+        <Button 
+          label="Không" 
+          icon="pi pi-times" 
+          @click="displayStatusDialog = false" 
+          text
+        />
+        <Button 
+          label="Có" 
+          icon="pi pi-check" 
+          @click="handleConfirmStatusChange()" 
+          severity="danger" 
+          autofocus 
+        />
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useToast } from "vue-toastification";
-import { getNhanVien, addNhanVien,updateNhanVien } from "@/axios/sanpham";
+import { getNhanVien, addNhanVien,updateNhanVien,updateTrangThaiNhanVien } from "@/axios/sanpham";
 const toast = useToast();
 const image = ref("");
 // Options for dropdowns
 const genderOptions = ["Nam", "Nữ"];
 const positionOptions = ["Nhân viên", "Quản lý", "Giám đốc"];
 const statusOptions = ["Hoạt động", "Không hoạt động"];
-
+const displayStatusDialog = ref(false)
 // Reactive state
 const employees = ref([]);
 const widget = window.cloudinary.createUploadWidget(
@@ -211,7 +239,23 @@ const filteredEmployees = computed(() => {
     return matchSearch && matchGender && matchPosition && matchStatus;
   });
 });
-
+const idnv = ref(0)
+const updateTrangThai = (data)=>{
+  displayStatusDialog.value = true
+  idnv.value = data.id
+}
+const handleConfirmStatusChange = async ()=>{
+  const result = await updateTrangThaiNhanVien(idnv.value)
+  if(result.status === 200)
+  {
+    const result = await getNhanVien();
+  if (result.status === 200) {
+    employees.value = result.data;
+  }
+  displayStatusDialog.value = false
+    toast.success("Thay đổi trạng thái thành công")
+  }
+}
 // Methods
 const openNewDialog = () => {
   employee.value = {

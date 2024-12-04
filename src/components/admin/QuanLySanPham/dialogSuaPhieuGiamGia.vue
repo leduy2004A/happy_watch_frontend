@@ -36,8 +36,10 @@
                   class="w-full"
                 />
               </div>
-
-              <div class="col-6">
+              <div class="col-12">
+                <SelectButton v-model="valueSelect" :options="optionsSelect" />
+              </div>
+              <div class="col-12" v-if="valueSelect === 'Phần trăm'?true:false">
                 <label for="value">Giá trị</label>
                 <div class="p-inputgroup">
                   <InputNumber 
@@ -49,7 +51,7 @@
                 </div>
               </div>
 
-              <div class="col-6">
+              <div class="col-12" v-if="valueSelect === 'Số tiền' ? true: false">
                 <label for="maxValue">Giá trị tối đa</label>
                 <div class="p-inputgroup">
                   <InputNumber 
@@ -201,6 +203,8 @@ import { layTatCaKhachHang } from "@/axios/sanpham";
 import { addKhuyenMai,updateKhuyenMai } from "@/axios/khuyenmai";
 import { sendMail } from "@/axios/email";
 import { useToast } from "vue-toastification";
+const optionsSelect = ref(['Phần trăm','Số tiền'])
+const valueSelect = ref('Phần trăm')
 const toast = useToast();
 const emitter = useEmitter();
 const voucher = reactive({
@@ -330,8 +334,8 @@ const addNew = async () => {
       ten: voucher.name,
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toISOString(),
-      ngayKetThuc: voucher.endDate.toISOString(),
+      ngayBatDau: moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
       soLuong: voucher.quantity,
       khuyenMaiTuGia: voucher.condition,
       loaiApDung: "TOAN_BO",
@@ -352,8 +356,8 @@ const addNew = async () => {
       ten: voucher.name,
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toISOString(),
-      ngayKetThuc: voucher.endDate.toISOString(),
+      ngayBatDau: moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
       soLuong: voucher.quantity,
       khuyenMaiTuGia: voucher.condition,
       loaiApDung: "CA_NHAN",

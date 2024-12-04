@@ -63,7 +63,7 @@
 
       <Column field="giaSauGiam" header="Đơn giá" class="text-right">
         <template #body="slotProps">
-          {{ formatPrice(slotProps.data.giaSauGiam) }}
+          {{ formatPrice(slotProps.data.giaTungSanPham) }}
         </template>
       </Column>
     </DataTable>
@@ -78,14 +78,14 @@
           <DataTable v-if="store.selectedProducts.length" :value="store.selectedProducts">
             <Column field="tenSanPham" header="Sản phẩm" />
             <Column field="quantity" header="Số lượng" class="text-center" />
-            <Column field="giaSauGiam" header="Đơn giá" class="text-right">
+            <Column field="giaTungSanPham" header="Đơn giá" class="text-right">
               <template #body="slotProps">
-                {{ formatPrice(slotProps.data.giaSauGiam) }}
+                {{ formatPrice(slotProps.data.giaTungSanPham) }}
               </template>
             </Column>
             <Column header="Tổng" class="text-right">
               <template #body="slotProps">
-                {{ formatPrice(slotProps.data.giaSauGiam * slotProps.data.quantity) }}
+                {{ formatPrice(slotProps.data.giaTungSanPham * slotProps.data.quantity) }}
               </template>
             </Column>
             <Column header="Ghi chú">

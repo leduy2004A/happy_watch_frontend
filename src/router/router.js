@@ -43,7 +43,7 @@ const routes = [
   {
     path: "/admin",
     component: page_admin,
-    meta: { keepAlive: true, requiresAuth: true, roles: ["Admin"] },
+    meta: { requiresAuth: true, roles: ["Admin"] },
     children: [
       {
         path: "sell",
@@ -155,7 +155,7 @@ const routes = [
   {
     path: "/product",
     component: trangChu,
-    meta: { keepAlive: true, requiresAuth: false, roles: ["Khách hàng"] },
+    meta: { requiresAuth: false, roles: ["Khách hàng"] },
     children: [
       {
         path: "",
@@ -224,6 +224,17 @@ router.beforeEach((to, from, next) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
+  // Nếu đang truy cập trang đăng nhập và đã có token
+  if (to.path === '/' && token) {
+    // Chuyển hướng theo vai trò
+    if (user?.vaiTro?.tenVaiTro === 'Admin') {
+      next('/admin/sell');
+    } else {
+      next('/product');
+    }
+    return;
+  }
+
   // Kiểm tra route Admin
   if (to.path.startsWith('/admin')) {
     if (!token) {
@@ -231,15 +242,27 @@ router.beforeEach((to, from, next) => {
       return;
     }
     if (!user?.vaiTro?.tenVaiTro || user.vaiTro.tenVaiTro !== 'Admin') {
-      next('/forbidden');
+      next('/product');
       return;
     }
   }
 
-  // Kiểm tra route Product và Profile
-  if (to.path.startsWith('/product') || to.path.startsWith('/profile')) {
+  // Kiểm tra route Profile cần đăng nhập
+  if (to.path.startsWith('/profile')) {
+    if (!token) {
+      next('/');
+      return;
+    }
+    if (user?.vaiTro?.tenVaiTro === 'Admin') {
+      next('/admin/sell');
+      return;
+    }
+  }
+
+  // Kiểm tra route Product
+  if (to.path.startsWith('/product')) {
     if (token && user?.vaiTro?.tenVaiTro === 'Admin') {
-      next('/forbidden');
+      next('/admin/sell');
       return;
     }
   }

@@ -23,9 +23,14 @@
                 <label for="code">Mã phiếu giảm giá</label>
                 <InputText id="code" v-model="voucher.code" class="w-full" />
               </div>
+              <div class="col-12">
+                <SelectButton v-model="valueSelect" :options="optionsSelect" />
+              </div>
 
-
-              <div class="col-12 ">
+              <div
+                class="col-12"
+                v-if="valueSelect === 'Phần trăm' ? true : false"
+              >
                 <label for="value">Giá trị</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -37,7 +42,10 @@
                 </div>
               </div>
 
-              <div class="col-6" v-if="false">
+              <div
+                class="col-12"
+                v-if="valueSelect === 'Số tiền' ? true : false"
+              >
                 <label for="maxValue">Giá trị tối đa</label>
                 <div class="p-inputgroup">
                   <InputNumber
@@ -57,7 +65,6 @@
                   class="w-full"
                 />
               </div> -->
-
 
               <div class="col-6">
                 <label for="startDate">Từ ngày</label>
@@ -80,8 +87,6 @@
                   class="w-full"
                 />
               </div>
-
-
             </div>
           </template>
         </Card>
@@ -92,7 +97,7 @@
         <Card>
           <template #title>
             <div class="flex align-items-center justify-content-between">
-              <h4>Danh sách khách hàng</h4>
+              <h4>Danh sách sản phẩm</h4>
               <span class="p-input-icon-left" style="max-width: 300px">
                 <i class="pi pi-search" />
                 <InputText
@@ -119,10 +124,7 @@
               filterDisplay="menu"
               :globalFilterFields="['name', 'email']"
             >
-              <Column
-                selectionMode="multiple"
-                headerStyle="width: 3rem"
-              ></Column>
+              <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
               <Column
                 v-for="col in headers"
                 :key="col.key"
@@ -131,7 +133,83 @@
                 :sortable="true"
               ></Column>
             </DataTable>
+          </template>
+        </Card>
+      </div>
+      <div class="col-12">
+        <Card>
+          <template #title>
+            <div class="flex align-items-center justify-content-between">
+              <h4>Danh sách Chi tiết sản phẩm</h4>
+            </div>
+          </template>
 
+          <template #content>
+            <DataTable
+              v-model:selection="selectedSanPham"
+              :value="dataChiTietSanPham"
+              :rows="itemsPerPage"
+              :paginator="true"
+              :loading="loading"
+              :rowsPerPageOptions="[5, 10, 15, 20]"
+              selectionMode="multiple"
+              dataKey="id"
+              :filters="filters"
+              filterDisplay="menu"
+              :globalFilterFields="['name', 'email']"
+            >
+              <Column
+                selectionMode="multiple"
+                headerStyle="width: 3rem"
+              ></Column>
+              <Column field="hinhAnhChiTiet" header="Ảnh" :sortable="false">
+                <template #body="slotProps">
+                  <img
+                    :src="slotProps.data.hinhAnhChiTiet"
+                    :alt="slotProps.data.ma"
+                    width="70"
+                    height="70"
+                    style="object-fit: cover"
+                  />
+                </template>
+              </Column>
+              <Column field="ma" header="Mã" sortable></Column>
+              <Column field="mauSac" header="Màu sắc" sortable></Column>
+              <Column field="loaiMay" header="Loại máy" sortable></Column>
+              <Column
+                field="chatLieuVo"
+                header="Chất liệu vỏ"
+                sortable
+              ></Column>
+              <Column
+                field="chatLieuDay"
+                header="Chất liệu dây"
+                sortable
+              ></Column>
+              <Column field="xuatXu" header="Xuất xứ" sortable></Column>
+              <Column field="soLuong" header="Số lượng" sortable></Column>
+              <Column field="gia" header="Giá" sortable>
+                <template #body="slotProps">
+                  {{ formatPrice(slotProps.data.gia) }}
+                </template>
+              </Column>
+              <Column field="giaSauGiam" header="Giá khuyến mãi">
+                <template #body="slotProps">
+                  <Tag
+                    :severity="
+                      slotProps.data.giaSauGiam !== null ? 'success' : 'danger'
+                    "
+                    class="text-sm"
+                  >
+                    {{
+                      slotProps.data.giaSauGiam !== null
+                        ? formatPrice(slotProps.data.giaSauGiam)
+                        : "Không có khuyến mãi"
+                    }}
+                  </Tag>
+                </template>
+              </Column>
+            </DataTable>
             <Button label="THÊM MỚI" class="mt-3" @click="addNew" />
           </template>
         </Card>
@@ -148,19 +226,23 @@ import { ref, watch, defineProps, reactive, computed, onMounted } from "vue";
 import useEmitter from "@/useEmitter";
 import { addKhuyenMai } from "@/axios/khuyenmai";
 import { useToast } from "vue-toastification";
-import { laySanPhamKemSoLuong } from "@/axios/sanpham";
+import { laySanPhamKemSoLuong, layTatCaChiTietTheoSP } from "@/axios/sanpham";
 import { updateKhuyenMaiSanPham } from "@/axios/khuyenmai";
 import { useVoucherStore } from '@/store/voucherSanPhamStore'
+import moment from "moment";
 const voucherStore = useVoucherStore()
 const toast = useToast();
 const emitter = useEmitter();
 const idSanPhams = ref([])
+const ididCTSanPhams = ref([])
 const idKhuyenMai = ref(0)
+const optionsSelect = ['Phần trăm','Số tiền']
+const valueSelect = ref('Phần trăm')
 const dataProps = defineProps({
   modal: Boolean,
   dataKM:Object
 });
-
+const dataChiTietSanPham = ref([])
 // Dialog visibility
 const dialogVisible = ref(dataProps.modal);
 watch(
@@ -174,13 +256,21 @@ watch(
   (newVal) => {
     voucher.code = newVal.ma
     voucher.value = newVal.phanTramGiamGia
-    voucher.startDate = newVal.ngayBatDau
-    voucher.endDate = newVal.ngayKetThuc
+    voucher.startDate =new Date(newVal.ngayBatDau) 
+    voucher.endDate = new Date(newVal.ngayKetThuc)
     idSanPhams.value = newVal.idSanPhams
+    ididCTSanPhams.value = newVal.idCTSanPhams
     idKhuyenMai.value = newVal.id
     selected.value = customers.value.filter(item => idSanPhams.value.includes(item.id));
   }
 );
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};
 
 const closeDialog = () => {
   dialogVisible.value = false;
@@ -208,14 +298,22 @@ const customers = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
 const totalItems = ref(0);
-
+const selectedSanPham = ref([]);
 const headers = [
   { title: "Tên", key: "ten" },
   { title: "Số lượng", key: "soLuong" },
   // { title: 'Ngày sinh', key: 'birthDate' }
 ];
-
-
+const dataSanPham = ref([])
+watch(
+  () => selected.value,
+  async (newVal) => {
+    // Dùng Promise.all để đợi tất cả Promise hoàn thành
+     dataSanPham.value = await Promise.all(newVal.map(async item => (await layTatCaChiTietTheoSP(item.id)).data));
+    dataChiTietSanPham.value = dataSanPham.value.flat(); // Hoặc sử dụng kết quả nếu cần
+    selectedSanPham.value = dataChiTietSanPham.value.filter(item => ididCTSanPhams.value.includes(item.id));
+  }
+);
 
 const startIndex = computed(() => {
   return (currentPage.value - 1) * itemsPerPage.value;
@@ -246,11 +344,8 @@ const handleSearch = () => {
 };
 
 const addNew = async () => {
-  console.log(selected.value)
-  console.log(customers.value)
-
-  console.log("Add new customer");
-  const selectedUserIds = selected.value.map((SanPham) => SanPham.id);
+  const selectedUserIds = selectedSanPham.value.map((SanPham) => SanPham.id);
+  // selected.value = customers.value.filter(item => idSanPhams.value.includes(item.id));
   console.log(selectedUserIds)
     const dataAdd = {
       id:idKhuyenMai.value,
@@ -259,15 +354,16 @@ const addNew = async () => {
       loaiKhuyenMai: "phan tram",
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: voucher.startDate.toI,
-      ngayKetThuc: voucher.endDate,
+      ngayBatDau:  moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
       // dieuKien: "Áp dụng cho đơn hàng trên 500,000 VNĐ",
       // trangThai: "Đang diễn ra",
-      idSanPham: selectedUserIds,
+      idChiTietSanPham: selectedUserIds,
     };
     const result = await updateKhuyenMaiSanPham(idKhuyenMai.value,dataAdd);
     if (result.status === 200) {
       toast.success("Sửa khuyến mãi thành công");
+      dialogVisible.value = false
       voucherStore.fetchVouchers()
     }
   

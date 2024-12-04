@@ -8,6 +8,10 @@ export const laySanPhamCuaHang = async (page,size)=>{
 export const laySanPhamKemSoLuong =async ()=>{
    return await api.get("/api/sanpham/tat-ca")
 }
+
+export const updateTrangThaiSanPham =async (id)=>{
+   return await api.put(`/api/sanpham/update-trang-thai/${id}`)
+}
 export const layTatCaGioiTinh =async ()=>{
    return await api.get("/api/gioi-tinh/all")
 }
@@ -26,6 +30,9 @@ export const updateThuongHieu =async (data)=>{
 
 export const addSanPham =async (data)=>{
    return await api.post("api/sanpham/create",data)
+}
+export const updateSanPham =async (idSanPham,data)=>{
+   return await api.put(`api/sanpham/update/${idSanPham}`,data)
 }
 export const layTatCaChiTietTheoSP =async (idSanPham)=>{
    return await api.get(`/api/chi-tiet-san-pham/chi-tiet-sp-id?idSanPham=${idSanPham}`)
@@ -100,6 +107,10 @@ export const layChiTietSanPham =async (data)=>{
 export const updateChiTietSanPham =async (data)=>{
    return await api.put(`/api/chi-tiet-san-pham/update/${data.id}`,data)
 }
+
+export const updateTrangThaiChiTietSanPham =async (data)=>{
+   return await api.put(`/api/chi-tiet-san-pham/update-trang-thai/${data}`)
+}
 export const layTatCaKhachHang =async ()=>{
    return await api.get(`/api/khach-hang`)
 }
@@ -117,4 +128,8 @@ export const addNhanVien = async (data) =>{
 }
 export const updateNhanVien = async (data) =>{
    return await api.put(`/api/admin/${data.id}`,data)
+}
+
+export const updateTrangThaiNhanVien = async (data) =>{
+   return await api.put(`/api/nhan-vien/${data}`)
 }
