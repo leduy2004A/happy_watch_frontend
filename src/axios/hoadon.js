@@ -35,7 +35,7 @@ export const xacNhanDonHang = async (data)=>{
   return await api.put(`/api/hoadon/confirm-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}&tongTienHoaDon=${data.tongTienHoaDon}&phiShip=${data.phiShip}&maKhuyenMaiHoaDon=${data.maKhuyenMaiHoaDon}`)
 }
 export const xacNhanDonHangMuaTaiQuay = async (data)=>{
-  return await api.put(`/api/hoadon/completed-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}&tongTienHoaDon=${data.tongTienHoaDon}&phiShip=${data.phiShip}&maKhuyenMaiHoaDon=${data.maKhuyenMaiHoaDon}`)
+  return await api.put(`/api/hoadon/completed-with-address/${data.hoaDonId}?tinhThanhPho=${data.province}&quanHuyen=${data.district}&xaPhuongThiTran=${data.ward}&diaChiCuThe=${data.diaChiCuThe}&dienThoai=${data.dienThoai}&tenNguoiNhan=${data.ten}&tongTienHoaDon=${data.tongTienHoaDon}&phiShip=${data.phiShip}&maKhuyenMaiHoaDon=${data.maKhuyenMaiHoaDon === undefined ? null : data.maKhuyenMaiHoaDon}`)
 }
 export const xoaSanPhamTrongHoaDon =async (data)=>{
   return await api.delete(`api/chitiethoadon/delete?id=${data}`)

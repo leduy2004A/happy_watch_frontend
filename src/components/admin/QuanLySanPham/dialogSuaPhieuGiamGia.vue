@@ -203,6 +203,7 @@ import { layTatCaKhachHang } from "@/axios/sanpham";
 import { addKhuyenMai,updateKhuyenMai } from "@/axios/khuyenmai";
 import { sendMail } from "@/axios/email";
 import { useToast } from "vue-toastification";
+import moment from "moment";
 const optionsSelect = ref(['Phần trăm','Số tiền'])
 const valueSelect = ref('Phần trăm')
 const toast = useToast();

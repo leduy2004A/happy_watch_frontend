@@ -48,7 +48,7 @@ const routes = [
       {
         path: "sell",
         component: main_content,
-        meta: { keepAlive: true }, // Thêm meta
+        meta: { keepAlive: true }, 
       },
       {
         path: "thongke",
@@ -58,7 +58,7 @@ const routes = [
       {
         path: "pdf_check",
         component: hoa_don_pdf,
-        meta: { keepAlive: false }, // PDF không cần cache
+        meta: { keepAlive: true }, 
       },
       {
         path: "bill",
@@ -73,82 +73,82 @@ const routes = [
       {
         path: "bill-detail/:ma",
         component: chiTietHoaDon,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "product-list",
         component: mainQuanLySanPham,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "product-add/:id",
         component: ThemSanPham,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "product-danhsach/:id",
         component: DanhSachChiTietSanPham,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "thuong-hieu",
         component: thuongHieu,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "mau-sac",
         component: mauSac,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "hinh-dang",
         component: hinhDang,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "loai-may",
         component: loaiMay,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true }, 
       },
       {
         path: "chat-lieu-vo",
         component: chatLieuVo,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "chat-lieu-day",
         component: chatLieuDay,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "loai-kinh",
         component: loaiKinh,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "khach-hang",
         component: khachHang,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "voucher",
         component: phieuGiamGia,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "voucher-sanpham",
         component: giamGiaSanPham,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "nhan-vien",
         component: nhanVien,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
       {
         path: "thong-ke",
         component: thongke,
-        meta: { keepAlive: true }, // Chi tiết thường cần load lại
+        meta: { keepAlive: true },
       },
     ],
   },
