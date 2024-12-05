@@ -41,7 +41,7 @@
                 <div class="product-image-container">
                   <v-img
                     v-if="!isHovering"
-                    :src="watch.hinhAnh1"
+                    :src="watch.image"
                     height="250"
                     cover
                     class="product-image cursor-pointer"
@@ -49,7 +49,7 @@
                   ></v-img>
                   <v-img
                     v-else
-                    :src="watch.hinhAnh2 || watch.hinhAnh1"
+                    :src="watch.image2 || watch.image"
                     height="250"
                     cover
                     class="product-image cursor-pointer"
@@ -85,17 +85,17 @@
                   @click="navigateToProduct(watch.id)"
                 >
                   <div class="text-subtitle-1 text-truncate mb-2">
-                    {{ watch.tenSanPham }}
+                    {{ watch.name }}
                   </div>
                   <div class="d-flex justify-center align-center">
                     <span
                       class="text-grey-darken-1 text-decoration-line-through me-2"
-                      v-if="watch.giaSauGiam"
+                      v-if="watch.oldPrice"
                     >
-                      {{ formatPrice(watch.giaSauGiam) }}
+                      {{ formatPrice(watch.oldPrice) }}
                     </span>
                     <span class="text-primary font-weight-bold">
-                      {{ formatPrice(watch.gia) }}
+                      {{ formatPrice(watch.price) }}
                     </span>
                   </div>
                 </v-card-text>
@@ -110,92 +110,131 @@
     <div>
       <h2 class="text-h4 font-weight-medium text-center mb-12">ĐỒNG HỒ NỮ</h2>
       <v-row>
-          <v-col
-            v-for="watch in womensWatches"
-            :key="watch.id"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-          >
-            <v-hover v-slot="{ isHovering, props }">
-              <v-card
-                v-bind="props"
-                :elevation="isHovering ? 4 : 0"
-                class="watch-card h-100"
-              >
-                <!-- Sale Badge -->
-                <div v-if="watch.discount" class="sale-badge">
-                  -{{ watch.discount }}%
-                </div>
+        <v-col
+          v-for="watch in womensWatches"
+          :key="watch.id"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
+        >
+          <v-hover v-slot="{ isHovering, props }">
+            <v-card
+              v-bind="props"
+              :elevation="isHovering ? 4 : 0"
+              class="watch-card h-100"
+            >
+              <!-- Sale Badge -->
+              <div v-if="watch.discount" class="sale-badge">
+                -{{ watch.discount }}%
+              </div>
 
-                <!-- Product Image -->
-                <div class="product-image-container">
-                  <v-img
-                    v-if="!isHovering"
-                    :src="watch.hinhAnh1"
-                    height="250"
-                    cover
-                    class="product-image cursor-pointer"
-                    @click="navigateToProduct(watch.id)"
-                  ></v-img>
-                  <v-img
-                    v-else
-                    :src="watch.hinhAnh2 || watch.hinhAnh1"
-                    height="250"
-                    cover
-                    class="product-image cursor-pointer"
-                    @click="navigateToProduct(watch.id)"
-                  >
-                    <!-- Quick Action Buttons -->
-                    <div class="action-buttons show-actions" @click.stop>
-                      <v-btn
-                        icon="mdi-lightning-bolt"
-                        variant="text"
-                        class="action-btn"
-                        @click="muaNgay(watch)"
-                      ></v-btn>
-                      <v-btn
-                        icon="mdi-cart"
-                        variant="text"
-                        class="action-btn"
-                        @click="addToCart(watch)"
-                      ></v-btn>
-                      <v-btn
-                        icon="mdi-eye"
-                        variant="text"
-                        class="action-btn"
-                        @click="openQuickView(watch)"
-                      ></v-btn>
-                    </div>
-                  </v-img>
-                </div>
-
-                <!-- Product Info -->
-                <v-card-text
-                  class="text-center cursor-pointer"
+              <!-- Product Image -->
+              <div class="product-image-container">
+                <v-img
+                  v-if="!isHovering"
+                  :src="watch.image"
+                  height="250"
+                  cover
+                  class="product-image cursor-pointer"
+                  @click="navigateToProduct(watch.id)"
+                ></v-img>
+                <v-img
+                  v-else
+                  :src="watch.image2 || watch.image"
+                  height="250"
+                  cover
+                  class="product-image cursor-pointer"
                   @click="navigateToProduct(watch.id)"
                 >
-                  <div class="text-subtitle-1 text-truncate mb-2">
-                    {{ watch.tenSanPham }}
+                  <!-- Quick Action Buttons -->
+                  <div class="action-buttons show-actions" @click.stop>
+                    <v-btn
+                      icon="mdi-lightning-bolt"
+                      variant="text"
+                      class="action-btn"
+                      @click="muaNgay(watch)"
+                    ></v-btn>
+                    <v-btn
+                      icon="mdi-cart"
+                      variant="text"
+                      class="action-btn"
+                      @click="addToCart(watch)"
+                    ></v-btn>
+                    <v-btn
+                      icon="mdi-eye"
+                      variant="text"
+                      class="action-btn"
+                      @click="openQuickView(watch)"
+                    ></v-btn>
                   </div>
-                  <div class="d-flex justify-center align-center">
-                    <span
-                      class="text-grey-darken-1 text-decoration-line-through me-2"
-                      v-if="watch.giaSauGiam"
-                    >
-                      {{ formatPrice(watch.giaSauGiam) }}
-                    </span>
-                    <span class="text-primary font-weight-bold">
-                      {{ formatPrice(watch.gia) }}
-                    </span>
-                  </div>
-                </v-card-text>
-              </v-card>
-            </v-hover>
-          </v-col>
-        </v-row>
+                </v-img>
+              </div>
+
+              <!-- Product Info -->
+              <v-card-text
+                class="text-center cursor-pointer"
+                @click="navigateToProduct(watch.id)"
+              >
+                <div class="text-subtitle-1 text-truncate mb-2">
+                  {{ watch.name }}
+                </div>
+                <div class="d-flex justify-center align-center">
+                  <span
+                    class="text-grey-darken-1 text-decoration-line-through me-2"
+                    v-if="watch.oldPrice"
+                  >
+                    {{ formatPrice(watch.oldPrice) }}
+                  </span>
+                  <span class="text-primary font-weight-bold">
+                    {{ formatPrice(watch.price) }}
+                  </span>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-hover>
+        </v-col>
+      </v-row>
     </div>
+    <v-dialog v-model="showQuickView" max-width="800px">
+      <v-card v-if="selectedProduct">
+        <v-card-title class="text-h5 pa-4">
+          {{ selectedProduct.name }}
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="showQuickView = false"
+            class="float-right"
+          ></v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-img :src="selectedProduct.image" cover height="400"></v-img>
+            </v-col>
+            <v-col cols="12" md="6">
+              <div class="text-h6 mb-2">Thông tin sản phẩm</div>
+              <div class="mb-4">
+                <div class="d-flex align-center mb-2">
+                  <span
+                    class="text-grey-darken-1 text-decoration-line-through me-2"
+                    v-if="selectedProduct.oldPrice"
+                  >
+                    {{ formatPrice(selectedProduct.oldPrice) }}
+                  </span>
+                  <span class="text-primary font-weight-bold text-h6">
+                    {{ formatPrice(selectedProduct.price) }}
+                  </span>
+                </div>
+              </div>
+              <v-btn color="primary" block @click="addToCart(selectedProduct)">
+                Thêm vào giỏ hàng
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -206,7 +245,7 @@ import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
 import { useCartStore } from "@/store/cartStore";
 import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
-import { sanPhamNam,sanPhamNu } from "@/axios/sanpham";
+import { sanPhamNam, sanPhamNu } from "@/axios/sanpham";
 const checkOutStore = useCheckOutStore();
 // const router = useRouter()
 const emitter = useEmitter();
@@ -215,9 +254,8 @@ const router = useRouter();
 
 const showQuickView = ref(false);
 const selectedProduct = ref(null);
-const mensWatches = ref([])
-const womensWatches = ref([])
-
+const mensWatches = ref([]);
+const womensWatches = ref([]);
 
 const navigateToProduct = (productId) => {
   router.push(`/product/detail/${productId}`);
@@ -225,23 +263,27 @@ const navigateToProduct = (productId) => {
 
 const openQuickView = (product) => {
   selectedProduct.value = product;
+  console.log(selectedProduct.value);
   showQuickView.value = true;
 };
 
 const addToCart = (product) => {
   emitter.emit("openModalCart", true);
+  console.log(product);
   cart.addToCart(product);
 };
 const muaNgay = (product) => {
-  const data = [{
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    image: product.image,
-    canNang: product.canNang,
-    code: product.code,
-    quantity: 1,
-  }];
+  const data = [
+    {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      canNang: product.canNang,
+      code: product.code,
+      quantity: 1,
+    },
+  ];
   // const dataPick = {
   //   productGoc: product,
   //   soLuongChon: 1,
@@ -263,25 +305,52 @@ const muaNgay = (product) => {
   // checkOutStore.addProduct(productSelect.value)
 
   // console.log(checkOutStore.products)
-  localStorage.setItem("check-out",JSON.stringify(data))
+  localStorage.setItem("check-out", JSON.stringify(data));
   router.push("/product/checkout");
 };
 const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price);
-  };
-  
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};
+const calculateDiscount = (oldPrice, newPrice) => {
+  return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
+};
 onMounted(async () => {
   const result = await sanPhamNam();
   const resultNu = await sanPhamNu();
   if (result.status === 200) {
-    mensWatches.value = result.data;
+    mensWatches.value = result.data.map((item) => ({
+      id: item.id,
+      name: item.ten,
+      oldPrice: item.gia,
+      price: item.giaSauGiam,
+      discount: calculateDiscount(item.gia, item.giaSauGiam),
+      image: item.hinhAnhDauTien,
+      image2: item.hinhAnhThuHai,
+      secondImage: item.hinhAnhThuHai,
+      soLuong: item.soLuong,
+      canNang: item.canNang,
+      code: item.ma,
+    }));
+  
   }
   if (resultNu.status === 200) {
     console.log(resultNu.data);
-    womensWatches.value = resultNu.data;
+    womensWatches.value = resultNu.data.map((item) => ({
+      id: item.id,
+      name: item.ten,
+      oldPrice: item.gia,
+      price: item.giaSauGiam,
+      discount: calculateDiscount(item.gia, item.giaSauGiam),
+      image: item.hinhAnhDauTien,
+      image2: item.hinhAnhThuHai,
+      secondImage: item.hinhAnhThuHai,
+      soLuong: item.soLuong,
+      canNang: item.canNang,
+      code: item.ma,
+    }));
   }
 });
 </script>

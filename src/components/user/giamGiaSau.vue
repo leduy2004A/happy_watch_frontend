@@ -24,14 +24,14 @@
               <Card>
                 <template #header>
                   <div class="relative">
-                    <Tag v-if="product.isNew" 
+                    <!-- <Tag v-if="product.isNew" 
                         severity="danger"
                         class="absolute m-2"
                         value="NEW!"
-                    />
+                    /> -->
                     <Tag v-if="product.discount"
                         severity="warning"
-                        class="absolute m-2 ml-8"
+                        class="absolute m-2 ml-2"
                         :value="`-${product.discount}%`"
                     />
                     <Image 
@@ -55,18 +55,19 @@
                 <template #content>
                   <div class="flex flex-column">
                     <span class="text-sm line-through text-500 mb-1">
-                      {{ formatPrice(product.originalPrice) }}
+                      {{ formatPrice(product.oldPrice) }}
                     </span>
                     <span class="text-xl text-red-500">
-                      {{ formatPrice(product.salePrice) }}
+                      {{ formatPrice(product.price) }}
                     </span>
                   </div>
                   <div class="flex justify-content-center mt-4 mb-2">
-                    <Button v-for="icon in ['pi pi-heart', 'pi pi-shopping-cart', 'pi pi-search']"
+                    <Button v-for="icon in ['pi pi-eye', 'pi pi-shopping-cart', 'pi pi-bolt']"
                             :key="icon"
                             :icon="icon"
                             text
                             class="mx-1"
+                            @click="useIcon(icon,product)"
                     />
                   </div>
                 </template>
@@ -75,59 +76,69 @@
           </div>
         </template>
       </Carousel>
+      <v-dialog v-model="showQuickView" max-width="800px">
+      <v-card v-if="selectedProduct">
+        <v-card-title class="text-h5 pa-4">
+          {{ selectedProduct.name }}
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="showQuickView = false"
+            class="float-right"
+          ></v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-img :src="selectedProduct.image" cover height="400"></v-img>
+            </v-col>
+            <v-col cols="12" md="6">
+              <div class="text-h6 mb-2">Thông tin sản phẩm</div>
+              <div class="mb-4">
+                <div class="d-flex align-center mb-2">
+                  <span
+                    class="text-grey-darken-1 text-decoration-line-through me-2"
+                    v-if="selectedProduct.oldPrice"
+                  >
+                    {{ formatPrice(selectedProduct.oldPrice) }}
+                  </span>
+                  <span class="text-primary font-weight-bold text-h6">
+                    {{ formatPrice(selectedProduct.price) }}
+                  </span>
+                </div>
+              </div>
+              <v-btn color="primary" block @click="addToCart(selectedProduct)">
+                Thêm vào giỏ hàng
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { sanPhamDangKhuyenMai } from '@/axios/sanpham';
+import { useRouter } from "vue-router";
+import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
+import { useCartStore } from "@/store/cartStore";
+import useEmitter from "@/useEmitter";
+import { useCheckOutStore } from "@/store/checkOutStore";
+import { sanPhamNam, sanPhamNu } from "@/axios/sanpham";
+const checkOutStore = useCheckOutStore();
+// const router = useRouter()
+const emitter = useEmitter();
+const cart = useCartStore();
+const router = useRouter();
+
+const showQuickView = ref(false);
+const selectedProduct = ref(null);
 
 const products = ref([
-  {
-    id: 1,
-    name: 'Dịch Vụ In Logo Mẫu Lên Mặt Số',
-    image: 'https://lh5.googleusercontent.com/proxy/D2R0iAXSS6a04m0Pw5qpPO7sWnkiUYrHMydLZbi9sj5cKY-2vtLGNOUsse7f59opPuvlALVBGq6l9hSn',
-    originalPrice: 2990000,
-    salePrice: 2590000,
-    discount: 15,
-    isNew: true
-  },
-  {
-    id: 2,
-    name: 'DÂY DA ZRC 654 TASMAN',
-    image: 'https://donghoduyanh.com/upload_images/images/2023/12/08/25-nam-may-co-9s-31.jpg',
-    originalPrice: 710000,
-    salePrice: 639000,
-    discount: 10,
-    isNew: true
-  },
-  {
-    id: 3,
-    name: 'ĐỒNG HỒ ĐÔI SUNRISE SG',
-    image: 'https://cdn.tgdd.vn/Files/2021/11/13/1397804/co1_1280x628-800-resize.jpg',
-    originalPrice: 4700000,
-    salePrice: 4230000,
-    discount: 10,
-    isNew: true
-  },
-  {
-    id: 4,
-    name: 'ĐỒNG HỒ ĐÔI OLYMPIA STAR',
-    image: 'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2024_3_8_638454875983791681_harabo-nen.jpg',
-    originalPrice: 7728000,
-    salePrice: 6955000,
-    discount: 10,
-    isNew: true
-  },
-  {
-    id: 5,
-    name: 'ĐỒNG HỒ ĐÔI OLYMPIA STAR',
-    image: 'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:quality(100)/2024_3_8_638454875983791681_harabo-nen.jpg',
-    originalPrice: 7728000,
-    salePrice: 6955000,
-    discount: 10,
-    isNew: true
-  }
+  
 ])
 
 const chunkedProducts = computed(() => {
@@ -138,12 +149,80 @@ const chunkedProducts = computed(() => {
   return chunks
 })
 
+
+const navigateToProduct = (productId) => {
+  router.push(`/product/detail/${productId}`);
+};
+
+const openQuickView = (product) => {
+  selectedProduct.value = product;
+  console.log(selectedProduct.value);
+  showQuickView.value = true;
+};
+
+const addToCart = (product) => {
+  emitter.emit("openModalCart", true);
+  console.log(product);
+  cart.addToCart(product);
+};
+const muaNgay = (product) => {
+  const data = [
+    {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      canNang: product.canNang,
+      code: product.code,
+      quantity: 1,
+    },
+  ];
+  localStorage.setItem("check-out", JSON.stringify(data));
+  router.push("/product/checkout");
+};
+const useIcon = (icon,product) =>{
+  console.log(icon)
+  if(icon === 'pi pi-shopping-cart')
+  {
+    addToCart(product)
+  }
+  if(icon === 'pi pi-bolt')
+  {
+    muaNgay(product)
+  }
+  if(icon === 'pi pi-eye')
+  {
+    openQuickView(product)
+  }
+}
 const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(price)
 }
+const calculateDiscount = (oldPrice, newPrice) => {
+  return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
+};
+onMounted(async ()=>{
+  const result = await sanPhamDangKhuyenMai();
+  if (result.status === 200) {
+    products.value = result.data.map((item) => ({
+      id: item.id,
+      name: item.ten,
+      oldPrice: item.gia,
+      price: item.giaSauGiam,
+      discount: calculateDiscount(item.gia, item.giaSauGiam),
+      image: item.hinhAnhDauTien,
+      image2: item.hinhAnhThuHai,
+      secondImage: item.hinhAnhThuHai,
+      soLuong: item.soLuong,
+      canNang: item.canNang,
+      code: item.ma,
+    }));
+  
+  }
+})
 </script>
 
 <style scoped>
@@ -225,13 +304,15 @@ const formatPrice = (price) => {
   align-items: center;
   justify-content: center;
   background: #f4f4f4;
-  height: 200px;
+  height: 250px;
 }
 
 .card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  overflow: hidden;
+
 }
 
 /* Grid */
@@ -242,6 +323,7 @@ const formatPrice = (price) => {
 
 .grid .col-12 .p-card {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

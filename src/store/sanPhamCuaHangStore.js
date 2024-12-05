@@ -3,29 +3,29 @@ import { ref } from 'vue'
 import { laySanPhamCuaHang } from '@/axios/sanpham'
 
 export const sanPhamCuaHangStore = defineStore('sanPhamCuaHangStore', {
-  // STATE
   state: () => ({
-    products: [], // Danh sách sản phẩm
-    isLoading: false, // Trạng thái đang tải
-    noMoreContent: false, // Cờ kiểm tra còn dữ liệu để tải
-    page: 1, // Trang hiện tại
-    itemsPerPage: 12, // Số lượng sản phẩm mỗi trang
-    layoutType: 'grid' // Kiểu bố cục hiển thị (grid hoặc list)
+    products: [],
+    isLoading: false,
+    currentPage: 1,
+    itemsPerPage: 6,
+    layoutType: 'grid',
+    totalItems: 0
   }),
 
-  // GETTERS
   getters: {
     gridClasses(state) {
       return {
         'grid-layout': state.layoutType === 'grid',
         'list-layout': state.layoutType === 'list'
       }
+    },
+    
+    totalPages(state) {
+      return Math.ceil(state.totalItems / state.itemsPerPage)
     }
   },
 
-  // ACTIONS
   actions: {
-    // Định dạng giá theo tiền tệ Việt Nam
     formatPrice(price) {
       return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -33,78 +33,70 @@ export const sanPhamCuaHangStore = defineStore('sanPhamCuaHangStore', {
       }).format(price)
     },
 
-    // Tính phần trăm giảm giá giữa giá gốc và giá mới
     calculateDiscount(oldPrice, newPrice) {
       return Math.round(((oldPrice - newPrice) / oldPrice) * 100)
     },
 
-    // Tải danh sách sản phẩm từ server
-    async fetchProducts(pageNum, limit) {
+    async fetchProducts(page, limit) {
       try {
         this.isLoading = true
-        const response = await laySanPhamCuaHang(pageNum - 1, limit)
+        const response = await laySanPhamCuaHang(page - 1, limit)
         
-        if (!response.data.content || response.data.content.length === 0) {
-          this.noMoreContent = true
-          return []
+        if (!response.data.content) {
+          return {
+            products: [],
+            total: 0
+          }
         }
 
-        // Định dạng sản phẩm
-        return response.data.content.map(item => ({
+        const formattedProducts = response.data.content.map(item => ({
           id: item.id,
           name: item.ten,
           oldPrice: item.gia,
           price: item.giaSauGiam,
           discount: this.calculateDiscount(item.gia, item.giaSauGiam),
           image: item.hinhAnhDauTien,
-          image2:item.hinhAnhThuHai,
+          image2: item.hinhAnhThuHai,
           secondImage: item.hinhAnhThuHai,
-          soLuong:item.soLuong,
-          canNang:item.canNang,
+          soLuong: item.soLuong,
+          canNang: item.canNang,
           code: item.ma
         }))
+
+        return {
+          products: formattedProducts,
+          total: response.data.totalElements // Giả sử API trả về tổng số sản phẩm
+        }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error)
-        return []
+        return {
+          products: [],
+          total: 0
+        }
       } finally {
         this.isLoading = false
       }
     },
 
-    // Tải thêm sản phẩm và cập nhật danh sách
-    async loadMoreProducts() {
-      if (this.isLoading || this.noMoreContent) return
-
-      try {
-        const newProducts = await this.fetchProducts(this.page, this.itemsPerPage)
-        if (newProducts.length === 0) {
-          this.noMoreContent = true
-        } else {
-          this.products.push(...newProducts)
-          this.page++
-        }
-      } catch (error) {
-        console.error('Error loading products:', error)
-      }
+    async loadProducts() {
+      const result = await this.fetchProducts(this.currentPage, this.itemsPerPage)
+      this.products = result.products
+      this.totalItems = result.total
     },
 
-    // Đặt lại danh sách và tải lại từ đầu
-    resetAndReload() {
-      this.products = []
-      this.page = 1
-      this.noMoreContent = false
-      this.loadMoreProducts()
+    async handlePageChange(newPage) {
+      this.currentPage = newPage
+      await this.loadProducts()
     },
 
-    // Chuyển đổi kiểu bố cục hiển thị
     toggleLayout() {
       this.layoutType = this.layoutType === 'grid' ? 'list' : 'grid'
     },
 
-    // Cập nhật số sản phẩm mỗi trang và tải lại
-    setItemsPerPage(value) {
+    async setItemsPerPage(value) {
       this.itemsPerPage = value
-      this.resetAndReload()
+      this.currentPage = 1 // Reset về trang đầu tiên
+      await this.loadProducts()
     }
   }
 })

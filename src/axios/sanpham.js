@@ -141,3 +141,10 @@ export const sanPhamNam =async ()=>{
 export const sanPhamNu =async ()=>{
    return await api.get("/api/chi-tiet-san-pham/dong-ho-nu")
 }
+export const sanPhamDangKhuyenMai =async ()=>{
+   return await api.get("/api/khuyenmai/dang-giam-gia")
+}
+
+export const layChiTietSanPhamTuIdCTSP = async (idctsp) =>{
+   return await api.get(`/api/carts/chi-tiet-san-pham/${idctsp}`)
+}

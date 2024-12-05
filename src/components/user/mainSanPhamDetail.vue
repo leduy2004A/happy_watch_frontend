@@ -8,7 +8,7 @@
     <thongSo></thongSo>
     
   </v-container>
-  <thuongDuocMua class="mt-10"></thuongDuocMua>
+  <giamGiaSau class="mt-10"></giamGiaSau>
 </template>
 <script setup>
 import moTaSanPham from "./moTaSanPham.vue";
@@ -16,6 +16,7 @@ import hinhAnhDetail from "./hinhAnhDetail.vue";
 import datHangDetail from "./datHangDetail.vue";
 import thongSo from "./thongSo.vue";
 import thuongDuocMua from "./thuongDuocMua.vue";
+import giamGiaSau from "./giamGiaSau.vue";
 </script>
 <style scoped>
 .detail {

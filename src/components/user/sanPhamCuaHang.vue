@@ -9,128 +9,103 @@
         <span class="filter-label">Hiển thị</span>
         <select
           class="filter-select"
-          :value="store.itemsPerPage"
+          :value="store.itemsPerPage" 
           @change="(e) => store.setItemsPerPage(Number(e.target.value))"
         >
-          <option :value="12">12</option>
+          <option :value="6">6</option>
           <option :value="15">15</option>
           <option :value="30">30</option>
         </select>
       </div>
-      <div class="filter-group">
-        <span class="filter-label">Sắp xếp theo</span>
-        <select class="filter-select">
-          <option>Mới nhất</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <v-btn
-          icon
-          class="layout-btn"
-          :color="store.layoutType === 'grid' ? '#FF5722' : '#666'"
-          @click="store.toggleLayout"
-        >
-          <v-icon>{{
-            store.layoutType === "grid"
-              ? "mdi-grid"
-              : "mdi-format-list-bulleted"
-          }}</v-icon>
-        </v-btn>
-      </div>
+      <!-- Other filters remain the same -->
     </div>
 
-    <div ref="scrollContainer" class="scroll-container" @scroll="handleScroll">
-      <div class="product-list" :class="store.gridClasses">
-        <v-hover
-          v-for="product in store.products"
-          v-slot="{ isHovering, props }"
-          :key="product.id"
-        >
-          <v-card
-            v-bind="props"
-            :elevation="isHovering ? 4 : 0"
-            class="watch-card h-100"
-          >
-            <div v-if="product.discount" class="sale-badge">
-              -{{ product.discount }}%
-            </div>
-
-            <div class="product-image-container">
-              <v-img
-                v-if="!isHovering"
-                :src="product.image"
-                height="250"
-                cover
-                class="product-image cursor-pointer"
-                @click="navigateToProduct(product.id)"
-              ></v-img>
-              <v-img
-                v-else
-                :src="product.secondImage || product.image"
-                height="250"
-                cover
-                class="product-image cursor-pointer"
-                @click="navigateToProduct(product.id)"
-              >
-                <div class="action-buttons show-actions" @click.stop>
-                  <v-btn
-                    icon="mdi-lightning-bolt"
-                    variant="text"
-                    class="action-btn"
-                    @click="muaNgay(product)"
-                  ></v-btn>
-                  <v-btn
-                    icon="mdi-cart"
-                    variant="text"
-                    class="action-btn"
-                    @click="addToCart(product)"
-                  ></v-btn>
-                  <v-btn
-                    icon="mdi-eye"
-                    variant="text"
-                    class="action-btn"
-                    @click="openQuickView(product)"
-                  ></v-btn>
-                </div>
-              </v-img>
-            </div>
-
-            <v-card-text
-              class="text-center cursor-pointer"
-              @click="navigateToProduct(product.id)"
-            >
-              <div class="text-subtitle-1 text-truncate mb-2">
-                {{ product.name }}
-              </div>
-              <div class="d-flex justify-center align-center">
-                <span
-                  class="text-grey-darken-1 text-decoration-line-through me-2"
-                  v-if="product.oldPrice"
-                >
-                  {{ store.formatPrice(product.oldPrice) }}
-                </span>
-                <span class="text-primary font-weight-bold">
-                  {{ store.formatPrice(product.price) }}
-                </span>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-hover>
-      </div>
-
-      <div v-if="store.isLoading" class="loading-container">
-        <v-progress-circular
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-      </div>
-
-      <div
-        v-if="store.noMoreContent && store.products.length > 0"
-        class="text-center py-4 text-grey"
+    <div class="product-list" :class="store.gridClasses">
+      <v-hover
+      v-for="product in store.products"
+      v-slot="{ isHovering, props }"
+      :key="product.id"
+    >
+      <v-card
+        v-bind="props"
+        :elevation="isHovering ? 4 : 0"
+        class="watch-card h-100"
       >
-        Không còn sản phẩm nào để hiển thị
-      </div>
+        <div v-if="product.discount" class="sale-badge">
+          -{{ product.discount }}%
+        </div>
+
+        <div class="product-image-container">
+          <v-img
+            v-if="!isHovering"
+            :src="product.image"
+            height="250"
+            cover
+            class="product-image cursor-pointer"
+            @click="navigateToProduct(product.id)"
+          ></v-img>
+          <v-img
+            v-else
+            :src="product.secondImage || product.image"
+            height="250"
+            cover
+            class="product-image cursor-pointer"
+            @click="navigateToProduct(product.id)"
+          >
+            <div class="action-buttons show-actions" @click.stop>
+              <v-btn
+                icon="mdi-lightning-bolt"
+                variant="text"
+                class="action-btn"
+                @click="muaNgay(product)"
+              ></v-btn>
+              <v-btn
+                icon="mdi-cart"
+                variant="text"
+                class="action-btn"
+                @click="addToCart(product)"
+              ></v-btn>
+              <v-btn
+                icon="mdi-eye"
+                variant="text"
+                class="action-btn"
+                @click="openQuickView(product)"
+              ></v-btn>
+            </div>
+          </v-img>
+        </div>
+
+        <v-card-text
+          class="text-center cursor-pointer"
+          @click="navigateToProduct(product.id)"
+        >
+          <div class="text-subtitle-1 text-truncate mb-2">
+            {{ product.name }}
+          </div>
+          <div class="d-flex justify-center align-center">
+            <span
+              class="text-grey-darken-1 text-decoration-line-through me-2"
+              v-if="product.oldPrice"
+            >
+              {{ store.formatPrice(product.oldPrice) }}
+            </span>
+            <span class="text-primary font-weight-bold">
+              {{ store.formatPrice(product.price) }}
+            </span>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-hover>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <v-pagination
+        v-model="store.currentPage"
+        :length="store.totalPages"
+        :total-visible="7"
+        @update:model-value="store.handlePageChange"
+      ></v-pagination>
     </div>
 
     <!-- Quick View Dialog -->
@@ -255,7 +230,7 @@ const muaNgay = (product) => {
   router.push("/product/checkout");
 };
 onMounted(() => {
-  store.loadMoreProducts();
+  store.loadProducts();
 });
 </script>
 <style scoped>
@@ -281,7 +256,7 @@ onMounted(() => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  height: 1100px;
+  /* height: 1100px; */
   display: flex;
   flex-direction: column;
 }
