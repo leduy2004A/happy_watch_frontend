@@ -6,12 +6,35 @@ export const useDanhSachSP = defineStore('DanhSachSP', {
     products: [],
     loading: false,
     search: '',
-    statusFilter: 'stopped'
+    statusFilter: 'all'
   }),
   
   getters: {
     computedItems: (state) => {
-      return state.products.map((item, index) => ({
+      let filteredProducts = [...state.products]
+
+      // Lọc theo search
+      if (state.search.trim()) {
+        const searchLower = state.search.toLowerCase().trim()
+        filteredProducts = filteredProducts.filter(product => 
+          product.ten.toLowerCase().includes(searchLower)
+        )
+      }
+
+      // Lọc theo trạng thái
+      if (state.statusFilter !== 'all') {
+        filteredProducts = filteredProducts.filter(product => {
+          if (state.statusFilter === 'selling') {
+            return product.trangThai === 'Đang kinh doanh'
+          } else if (state.statusFilter === 'stopped') {
+            return product.trangThai === 'Ngừng kinh doanh'
+          }
+          return true
+        })
+      }
+
+      // Thêm STT
+      return filteredProducts.map((item, index) => ({
         ...item,
         stt: index + 1
       }))

@@ -34,7 +34,9 @@ export const capNhatPhiShipTheoMaHoaDon = async(maHoaDon,phiShip)=>{
 export const traHang = async(data)=>{
     return await api.post(`api/tra-hang/yeu-cau-tra-hang`,data)
 }
-
+export const thongTinTraHang = async(data)=>{
+    return await api.post(`api/tra-hang/tinh-gia-tri-hoan`,data)
+}
 export const layTraHang = async(data)=>{
     return await api.get(`api/tra-hang/by-ma-hoa-don/${data}`)
 }

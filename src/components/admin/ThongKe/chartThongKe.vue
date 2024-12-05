@@ -190,7 +190,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <div class="grid">
     <!-- Revenue Cards -->
@@ -206,7 +205,7 @@
 
     <div class="col-12 md:col-6 lg:col-6">
       <div class="card">
-        <h5>Trạng Thái Đơn Hàng</h5>
+        <h5>Trạng Thái Đơn Hàng Theo Năm</h5>
         <Chart type="pie" :data="orderStatusData" :options="pieOptions" />
       </div>
     </div>
@@ -260,6 +259,10 @@
         </div>
       </div> -->
   </div>
+
+  </div>
+
+
 </template>
 
 <script setup>
@@ -271,6 +274,7 @@ import {
   getThongKeTuanNay,
   getThongKeThangNay,
   getThongKeTheoNam,
+  
 } from "@/axios/thongKe";
 const thongKeHomNay = ref(null);
 const thongKeTuanNay = ref(null);

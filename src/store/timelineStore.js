@@ -47,7 +47,7 @@ const STATUS_MAPPING = {
     icon: 'mdi-check-circle',
     iconColor: 'green'
   },
-  'Đã hủy': {
+  'Đã Hủy': {
     title: 'Đã hủy',
     color: 'red-lighten-4', 
     icon: 'mdi-close-circle',
@@ -76,7 +76,13 @@ const STATUS_MAPPING = {
     color: 'red-lighten-4', 
     icon: 'mdi-check-circle',
     iconColor: 'red'
-  }
+  },
+  // 'Đã Hủy': {
+  //   title: 'Đã Huỷ',
+  //   color: 'red-lighten-4', 
+  //   icon: 'mdi-close-circle',
+  //   iconColor: 'red'
+  // },
 };
 
 export const useTimelineStore = defineStore('timeline', {
@@ -95,14 +101,15 @@ export const useTimelineStore = defineStore('timeline', {
       try {
         this.loading = true;
         const response = await layTrangThaiHoadonTheoMa(orderId);
+        console.log("ồ hêy lona")
         console.log(response)
         if (response.data) {
           this.nutTrangThai = response.data.trangThaiTiepTheo
           // Chuyển đổi dữ liệu API thành format timeline
           this.timelineItems = response.data.lichSuTrangThai.map(item => ({
+            ...STATUS_MAPPING[item.trangThaiDaLuu], // Map style dựa trên trạng thái
             id: item.id,
             ma: item.ma,
-            ...STATUS_MAPPING[item.trangThaiDaLuu], // Map style dựa trên trạng thái
             timestamp: item.ngayChinhSua,
             note: item.ghiChu
           }));

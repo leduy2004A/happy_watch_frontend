@@ -30,6 +30,11 @@ export const getThongKeSanPhamTuyChinhSapHetHang = async (from,to) =>{
     return await api.get(`/api/thong-ke/san-pham-ban-chay-theo-ngay?startDate=${from}&endDate=${to}`)
 }
 
+export const getThongKeTuyChinh = async (from,to) =>{
+    return await api.get(`/api/thong-ke/thong-ke-theo-ngay?startDate=${from}&endDate=${to}`)
+}
+
+
 export const getThongKeHomNaySanPhamPhanTram = async ()=>{
     return await api.get("/api/thong-ke/phan-tram-hoa-don-hom-nay");
 }

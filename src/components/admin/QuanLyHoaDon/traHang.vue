@@ -61,7 +61,7 @@
         </template>
       </Column>
 
-      <Column field="giaSauGiam" header="Đơn giá" class="text-right">
+      <Column field="giaTungSanPham" header="Đơn giá" class="text-right">
         <template #body="slotProps">
           {{ formatPrice(slotProps.data.giaTungSanPham) }}
         </template>
@@ -85,7 +85,7 @@
             </Column>
             <Column header="Tổng" class="text-right">
               <template #body="slotProps">
-                {{ formatPrice(slotProps.data.giaTungSanPham * slotProps.data.quantity) }}
+                {{ formatPrice(slotProps.data.giaTungSanPham * slotProps.data.soLuong) }}
               </template>
             </Column>
             <Column header="Ghi chú">
@@ -115,7 +115,7 @@
               </div>
             </div>
 
-            <div class="flex align-items-start">
+            <div class="flex align-items-start" v-if="store.diaChi.diaChiCuThe && store.diaChi.xaPhuongThiTran && store.diaChi.quanHuyen && store.diaChi.tinhThanhPho != ''">
               <i class="pi pi-map-marker mr-2 mt-1"></i>
               <div>
                 <div class="font-bold">Địa chỉ</div>
@@ -127,10 +127,19 @@
           <Divider />
 
           <div class="flex justify-content-between mb-2">
-            <span>Tổng tiền</span>
-            <span>{{ formatPrice(store.totalAmount) }}</span>
+            <span>Tổng tiền hoá đơn</span>
+            <span>{{ formatPrice(store.tongTienHoaDon) }}</span>
           </div>
 
+          <div class="flex justify-content-between mb-2">
+            <span>Khuyến mãi</span>
+            <span>{{ store.khuyenMai }}</span>
+          </div>
+          
+          <div class="flex justify-content-between mb-2">
+            <span>Giá trị hoàn trả</span>
+            <span>{{ formatPrice(store.giaTriHoanTra) }}</span>
+          </div>
           <Button 
             label="TRẢ HÀNG" 
             severity="warning" 
@@ -146,6 +155,7 @@
 
 <script setup>
 import { useReturnProductStore } from '@/store/returnProductStore'
+import { watch } from 'vue';
 
 const store = useReturnProductStore()
 
@@ -155,7 +165,9 @@ const formatPrice = (price) => {
     currency: 'VND'
   }).format(price)
 }
-
+watch(()=>store.selectedProducts,newVal =>{
+  store.fetchThongTinTraHang()
+})
 const findHoaDon = async () => {
   await store.fetchDataStoreByMa(store.searchQuery)
   await store.fetchthongTinGiaoHang(store.searchQuery)

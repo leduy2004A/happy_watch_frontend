@@ -3,7 +3,7 @@
     <div class="py-4 px-4">
         <h4 class="my-4">Thống kê</h4>
         <chartThongKe></chartThongKe>
-        <sanPhamBanChay></sanPhamBanChay>
+        <sanPhamBanChay class="mb-4"></sanPhamBanChay>
         <danhSachSanPhamHetHang></danhSachSanPhamHetHang>
     </div>
 </template>

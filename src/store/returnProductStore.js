@@ -3,21 +3,23 @@ import { defineStore } from "pinia";
 import { layDanhSachSanPhamTheoMaHoaDon } from "@/axios/quanlihoadon";
 import { thongTinGiaoHang } from "@/axios/quanlihoadon";
 import { useToast } from "vue-toastification";
-import { traHang } from "@/axios/quanlihoadon";
+import { traHang,thongTinTraHang } from "@/axios/quanlihoadon";
 const toast = useToast();
 export const useReturnProductStore = defineStore("returnProduct", {
   state: () => ({
-    products: [
-    ],
+    products: [],
     returnInfo: {
       customerName: "Nguyễn Thị Thùy Dương",
       receiver: "Địa chỉ 12",
       address: "aaaaa, Xã Mường Giàng, Huyện Quỳnh Nhai, Sơn La",
     },
     discount: 13750,
+    khuyenMai:"",
+    giaTriHoanTra:0,
+    tongTienHoaDon:0,
     searchQuery: "",
     selectAll: false,
-    diaChi:{}
+    diaChi: {},
   }),
 
   getters: {
@@ -28,7 +30,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
     },
     totalAmount: (state) => {
       return state.selectedProducts.reduce((sum, product) => {
-        return sum + product.giaSauGiam * product.quantity;
+        return sum + product.giaTungSanPham * product.quantity;
       }, 0);
     },
     finalAmount: (state) => {
@@ -86,29 +88,55 @@ export const useReturnProductStore = defineStore("returnProduct", {
         product.note = note;
       }
     },
-    
-   async submitReturn() {
-       const chiTietTraHangList = this.selectedProducts.map(item => ({
+
+    async submitReturn() {
+      const chiTietTraHangList = this.selectedProducts.map((item) => ({
         idChiTietSanPham: item.chiTietSanPhamId,
         soLuongTra: item.quantity,
-        ghiChu: item.note
+        ghiChu: item.note,
       }));
-      console.log(this.searchQuery)
+      console.log(this.searchQuery);
       const data = {
         maHoaDon: this.searchQuery,
         ghiChu: "Lý do trả hàng: Sản phẩm lỗi",
-        chiTietTraHangList:chiTietTraHangList
+        chiTietTraHangList: chiTietTraHangList,
       };
-      const result = await traHang(data)
-      try{
-        if(result.status === 200)
-          {
-            toast.success("Trả hàng thành công")
-          }
-        
-      }catch(e){
-        toast.error("có lỗi xảy ra")
+      
+      try {
+        const result = await traHang(data);
+        console.log(result)
+        if (result.status === 200) {
+          toast.success("Trả hàng thành công");
+          window.location.reload()
+        }
+        else{
+          throw new Error("Trả hàng thất bại: " + (result.message || "Lỗi không xác định"));
+        }
+      } catch (error) {
+        if (error.response?.data) {
+          toast.error(error.response.data.message);
+        } else {
+          // Nếu là lỗi khác
+          toast.error(error.message || "Có lỗi xảy ra");
+        }
       }
+    },
+   async fetchThongTinTraHang() {
+      const dataSanPhamChon = this.selectedProducts
+      const resultSanPham = dataSanPhamChon.map(item => ({
+        idChiTietHoaDon: item.chiTietHoaDonId,
+        soLuongTra: item.quantity
+    }));
+      const data = {
+        maHD: this.searchQuery,
+        chiTietHoaDonTraHangDTOList: resultSanPham,
+      };
+      const dataTraHang =await thongTinTraHang(data)
+      if(dataTraHang.status === 200)
+        {
+          this.khuyenMai = dataTraHang.data.khuyenMai
+          this.giaTriHoanTra = dataTraHang.data.giaTriHoanTra
+        }
     },
     async fetchDataStoreByMa(ma) {
       try {
@@ -121,6 +149,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
             quantity: 0,
             note: "",
           }));
+          this.tongTienHoaDon = result.data.tongTienHoaDon
         }
       } catch (e) {
         toast.error(e);
@@ -131,7 +160,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
         const result = await thongTinGiaoHang(ma);
         console.log(result);
         if (result.status === 200) {
-          this.diaChi = result.data
+          this.diaChi = result.data;
         }
       } catch (e) {
         toast.error(e);

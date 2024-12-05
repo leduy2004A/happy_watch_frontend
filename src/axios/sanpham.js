@@ -133,3 +133,11 @@ export const updateNhanVien = async (data) =>{
 export const updateTrangThaiNhanVien = async (data) =>{
    return await api.put(`/api/nhan-vien/${data}`)
 }
+
+export const sanPhamNam =async ()=>{
+   return await api.get("/api/chi-tiet-san-pham/dong-ho-nam")
+}
+
+export const sanPhamNu =async ()=>{
+   return await api.get("/api/chi-tiet-san-pham/dong-ho-nu")
+}

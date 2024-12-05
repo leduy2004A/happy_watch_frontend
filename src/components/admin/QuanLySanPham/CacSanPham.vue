@@ -4,15 +4,14 @@
     <div class="flex flex-wrap justify-content-between align-items-center mb-4">
       <!-- Search bar -->
       <span class="p-input-icon-left">
-        <i class="pi pi-search" />
         <InputText
           v-model="productStore.search"
           placeholder="Nhập tên sản phẩm để tìm..."
-          class="p-inputtext-sm"
+          class="p-inputtext-md"
         />
       </span>
 
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 button-sp">
         <!-- Status filter -->
         <SelectButton
           v-model="productStore.statusFilter"
@@ -34,6 +33,7 @@
 
         <Button
           icon="pi pi-plus"
+          
           @click="addNew"
           size="small"
         >
@@ -149,7 +149,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,watch } from 'vue'
 import dialog_themSanPham from './dialog_themSanPham.vue'
 import dialogSuaSanPham from './dialogSuaSanPham.vue'
 import useEmitter from '@/useEmitter'
@@ -173,7 +173,19 @@ const statusOptions = [
 ]
 
 const filters = ref({})
+watch(
+  () => productStore.search,
+  () => {
+    productStore.setSearch(productStore.search)
+  }
+)
 
+watch(
+  () => productStore.statusFilter,
+  () => {
+    productStore.setStatusFilter(productStore.statusFilter)
+  }
+)
 const getStatusSeverity = (status) => {
   switch (status) {
     case 'Đang bán':
@@ -244,5 +256,8 @@ onMounted(async () => {
 
 .gap-2 {
   gap: 0.5rem;
+}
+.button-sp .p-button{
+  width: 80px;
 }
 </style>

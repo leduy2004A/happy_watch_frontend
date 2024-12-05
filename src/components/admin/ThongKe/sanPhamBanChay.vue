@@ -1,6 +1,54 @@
 <template>
   <div class="card">
     <!-- Filter Section -->
+    <div class="grid"  v-if="Object.keys(thongKeTuyChinh).length > 0">
+      <!-- Hôm nay -->
+      <div class="col-12 md:col-12 lg:col-12 bg-green my-4">
+        <div class="surface-card shadow-2 p-3 border-round">
+          <div class="flex justify-content-between mb-3">
+            <div>
+              <span class="block text-500 font-medium mb-3">Tuỳ chỉnh</span>
+              <div class="text-900 font-medium text-xl">
+                {{ formatCurrency(thongKeTuyChinh.tongDoanhThu) }}
+              </div>
+            </div>
+            <div
+              class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+              style="width: 2.5rem; height: 2.5rem"
+            >
+              <i class="pi pi-calendar text-cyan-500 text-xl"></i>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-3">
+              <span class="text-500 font-medium">Sản phẩm</span>
+              <div class="text-900 font-medium">
+                {{ thongKeTuyChinh.tongSoLuongSanPhamDaBan }}
+              </div>
+            </div>
+            <div class="col-3">
+              <span class="text-500 font-medium">Đơn thành công</span>
+              <div class="text-900 font-medium">
+                {{ thongKeTuyChinh.tongSoLuongHoaDonHoanThanh }}
+              </div>
+            </div>
+            <div class="col-3">
+              <span class="text-500 font-medium">Đơn hủy</span>
+              <div class="text-900 font-medium">
+                {{ thongKeTuyChinh.tongSoLuongHoaDonHuy }}
+              </div>
+            </div>
+            <div class="col-3">
+              <span class="text-500 font-medium">Đơn trả</span>
+              <div class="text-900 font-medium">
+                {{ thongKeTuyChinh.tongSoLuongHoaDonTraHang}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
     <div class="filter-section mb-4">
       <div class="p-buttonset">
         <Button
@@ -109,7 +157,8 @@ import {
   getThongKeTuanNaySanPhamPhanTram,
   getThongKeTheoNamSanPhamPhanTram,
   getThongKeSanPhamTuyChinhSapHetHang,
-  getThongKeTuyChinhSanPhamPhanTram
+  getThongKeTuyChinhSanPhamPhanTram,
+  getThongKeTuyChinh
 } from "@/axios/thongKe";
 import moment from "moment";
 // Danh sách sản phẩm giả lập
@@ -150,7 +199,7 @@ const products = ref([
     size: "38,39,40,41,42",
   },
 ]);
-
+const thongKeTuyChinh = ref({})
 // Biến trạng thái
 const filterType = ref("day");
 const dateRange = ref({
@@ -237,7 +286,6 @@ const setFilterType = async (type) => {
     chartData.value.datasets[0].data = resultBieuDo.data.map(item => item.phanTram)
   } else if (type === "custom") {
     products.value = (await getThongKeHomNaySanPham()).data;
-    console.log(products.value);
     const resultBieuDo = await (getThongKeHomNaySanPhamPhanTram())
     chartData.value.labels = resultBieuDo.data.map(item => item.trangThaiTiengViet)
     chartData.value.datasets[0].data = resultBieuDo.data.map(item => item.phanTram)
@@ -264,6 +312,7 @@ const exportToExcel =async () => {
   const datefrom = moment(dateRange.value.from, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (ZZ)").format('YYYY-MM-DD')
   const dateTo = moment(dateRange.value.to, "ddd MMM DD YYYY HH:mm:ss [GMT]Z (ZZ)").format('YYYY-MM-DD')
   products.value = (await getThongKeSanPhamTuyChinhSapHetHang(datefrom,dateTo)).data;
+  thongKeTuyChinh.value = (await getThongKeTuyChinh(datefrom,dateTo)).data;
   const result = await getThongKeTuyChinhSanPhamPhanTram(datefrom,dateTo)
   if(result.status === 200)
   {

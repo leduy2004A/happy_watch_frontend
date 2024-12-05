@@ -6,17 +6,61 @@
       </template>
 
       <template v-slot:append>
-        
-          <v-avatar>
+        <div class="avatar-menu">
+          <v-avatar @click="toggleMenu" style="cursor: pointer">
             <v-img
               alt="John"
               src="https://cdn.vuetifyjs.com/images/john.jpg"
             ></v-img>
           </v-avatar>
-      
+          
+          <Menu ref="menu" :model="items" :popup="true" class="my-4">
+          </Menu>
+        </div>
       </template>
     </v-app-bar>
   </div>
 </template>
-<script setup></script>
-<style scoped></style>
+
+<script setup>
+import { ref } from 'vue'
+import Menu from 'primevue/menu'
+
+const menu = ref()
+const items = ref([
+  {
+    label: 'Profile',
+    icon: 'pi pi-user',
+    command: () => {
+      // handle profile click
+    }
+  },
+  {
+    label: 'Settings',
+    icon: 'pi pi-cog',
+    command: () => {
+      // handle settings click  
+    }
+  },
+  {
+    separator: true
+  },
+  {
+    label: 'Logout',
+    icon: 'pi pi-power-off',
+    command: () => {
+      // handle logout click
+    }
+  }
+])
+
+const toggleMenu = (event) => {
+  menu.value.toggle(event)
+}
+</script>
+
+<style scoped>
+.avatar-menu {
+  position: relative;
+}
+</style>

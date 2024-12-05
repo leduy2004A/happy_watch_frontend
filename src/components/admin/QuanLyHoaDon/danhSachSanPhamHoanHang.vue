@@ -35,7 +35,7 @@
       <v-divider class="mt-4"></v-divider>
     </div>
     <div class="tongtien">
-      <b>Tổng Tiền</b>
+      <b>Tổng tiền hoàn trả</b>
       <b>{{ formatPrice(products.tongGiaTriHoan) }}</b>
     </div>
     

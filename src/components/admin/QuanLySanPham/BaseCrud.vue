@@ -1,4 +1,5 @@
 <!-- components/BaseCrudManagement.vue -->
+<!-- components/BaseCrudManagement.vue -->
 <template>
   <div class="card">
     <div class="flex align-items-center justify-content-between p-4">
@@ -8,85 +9,77 @@
     <div class="p-4">
       <!-- Search and Action Buttons -->
       <div class="flex align-items-center gap-4 mb-4">
-        <span class="p-input-icon-left">
-          <i class="pi pi-search" />
-          <InputText
-            v-model="search"
-            :placeholder="searchPlaceholder"
-            class="p-inputtext-sm"
-          />
-        </span>
+        <div class="search-container">
 
-        <Button
+          <InputText
+        v-model="searchQuery"
+        :placeholder="searchPlaceholder"
+        class="p-inputtext-sm"
+         @input="handleSearch"
+      />
+          
+        </div>
+
+        <button
           v-if="showExport"
-          class="p-button-outlined"
+          class="p-button p-button-outlined"
           @click="handleExport"
         >
           <i class="pi pi-file-excel mr-2"></i>
           Export Excel
-        </Button>
+        </button>
 
-        <Button
+        <button
           v-if="showAdd"
+          class="p-button"
           @click="openDialog()"
         >
           <i class="pi pi-plus mr-2"></i>
           {{ addButtonText }}
-        </Button>
+        </button>
       </div>
 
       <!-- Data Table -->
       <DataTable
-        :value="items"
-        :loading="loading"
+        :value="filteredItems"
+        :paginator="true"
         :rows="itemsPerPage"
-        :filters="filters"
-        stripedRows
-        paginator
-        table-style="min-width: 30rem"
-        class="p-datatable-sm text-center"
+        :currentPage="currentPage"
+        striped-rows
+        responsiveLayout="scroll"
       >
-        <!-- STT Column -->
-        <Column
-          field="stt"
-          header="STT"
-          style="width: 80px"
-                    alignHeader="center"
-          class="text-center"
-        >
+        <Column field="index" header="STT" style="width: 80px">
           <template #body="{ index }">
             {{ index + 1 }}
           </template>
         </Column>
 
-        <!-- Dynamic Columns -->
-        <template v-for="header in tableHeaders" :key="header.key">
-          <Column
-            :field="header.key"
-            :header="header.title || header.header"
-            :sortable="header.sortable"
-          >
-            <template #body="slotProps" v-if="$slots[header.key]">
-              <slot :name="header.key" v-bind="slotProps" />
+        <Column
+          v-for="header in tableHeaders"
+          :key="header.key"
+          :field="header.key"
+          :header="header.title || header.header"
+        >
+          <template #body="slotProps">
+            <slot
+              v-if="$slots[header.key]"
+              :name="header.key"
+              :data="slotProps.data"
+            />
+            <template v-else>
+              {{ slotProps.data[header.key] }}
             </template>
-          </Column>
-        </template>
+          </template>
+        </Column>
 
-        <!-- Actions Column -->
         <Column header="Hành động" style="width: 80px">
-          <template #body="{ data }">
+          <template #body="slotProps">
             <div class="flex gap-2 justify-content-center">
-              <!-- <Button
-                v-if="showView"
-                icon="pi pi-eye"
-                class="p-button-text p-button-rounded"
-                @click="handleView(data)"
-              /> -->
               <Button
                 v-if="showEdit"
                 icon="pi pi-pencil"
-                class="p-button-text p-button-rounded p-button-warning"
-                @click="handleEdit(data)"
+                class="p-button-warning p-button-sm"
+                @click="handleEdit(slotProps.data)"
               />
             </div>
           </template>
@@ -118,15 +111,15 @@
       <template #footer>
         <Button
           :label="saveButtonText"
+          class="mr-2"
           @click="handleSave"
           :loading="saving"
-          class="mr-2"
         />
         <Button
           :label="cancelButtonText"
+          class="p-button-text"
           @click="closeDialog"
           :disabled="saving"
-          class="p-button-text"
         />
       </template>
     </Dialog>
@@ -146,15 +139,15 @@
       <template #footer>
         <Button
           label="Xóa"
+          class="p-button-danger mr-2"
           @click="handleDelete"
           :loading="deleting"
-          class="p-button-danger mr-2"
         />
         <Button
           label="Hủy"
+          class="p-button-text"
           @click="deleteDialog = false"
           :disabled="deleting"
-          class="p-button-text"
         />
       </template>
     </Dialog>
@@ -244,7 +237,8 @@ const props = defineProps({
 })
 
 // State management
-const search = ref('')
+const searchQuery = ref('')
+const currentPage = ref(1)
 const dialog = ref(false)
 const deleteDialog = ref(false)
 const editedIndex = ref(-1)
@@ -258,7 +252,29 @@ const deleting = ref(false)
 const isEditing = computed(() => editedIndex.value > -1)
 const dialogTitle = computed(() => isEditing.value ? 'Chỉnh sửa' : 'Thêm mới')
 
-// Methods for handling item updates
+const filteredItems = computed(() => {
+  let result = [...props.items]
+  
+  // Tìm kiếm
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(item => {
+      return Object.keys(item).some(key => {
+        const value = item[key]
+        if (value === null || value === undefined) return false
+        return String(value).toLowerCase().includes(query)
+      })
+    })
+  }
+  
+  return result
+})
+
+// Methods
+function handleSearch() {
+  currentPage.value = 1
+}
+
 function handleUpdateEditedItem(value) {
   editedItem.value = value
   console.log('Updated edited item:', editedItem.value)
@@ -285,11 +301,6 @@ function closeDialog() {
     editedIndex.value = -1
     console.log('Dialog closed and state reset')
   }, 300)
-}
-
-function handleView(item) {
-  console.log('Viewing item:', item)
-  emitter.emit('crud:view', item.raw)
 }
 
 function handleEdit(item) {
@@ -331,7 +342,6 @@ async function handleSave() {
 
 function confirmDelete(item) {
   console.log('Confirming delete for item:', item)
-  // Đảm bảo lấy đúng data từ item
   itemToDelete.value = item.raw || item
   deleteDialog.value = true
 }
@@ -358,7 +368,6 @@ function handleExport() {
   console.log('Exporting items')
   emitter.emit('crud:export', props.items)
 }
-
 </script>
 <style scoped>
 .table-container {

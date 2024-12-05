@@ -31,11 +31,11 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
       return Array.isArray(state.products)
         ? state.products.map(product => ({
             ...product,
-            formattedPrice: product.giaSauGiam != null 
-              ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.giaSauGiam) 
+            formattedPrice: product.giaTungSanPham != null 
+              ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.giaTungSanPham) 
               : '',
-            formattedTotalPrice: product.giaSauGiam != null && product.soLuong != null
-              ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.giaSauGiam * product.soLuong) 
+            formattedTotalPrice: product.giaTungSanPham != null && product.soLuong != null
+              ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.giaTungSanPham * product.soLuong) 
               : ''
           }))
         : [];
