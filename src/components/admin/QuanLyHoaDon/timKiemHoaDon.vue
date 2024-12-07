@@ -4,14 +4,14 @@
       <!-- Search bar and buttons -->
       <div class="col-12 flex align-items-center mb-3">
         <span class="p-input-icon-left mr-4" style="max-width: 400px">
-          <InputText 
+          <InputText
             v-model="searchQuery"
             placeholder="Tìm kiếm hoá đơn"
             class="search-field"
+            @input="handleSearch"
           />
         </span>
-
-        
+        <Button label="Bỏ bộ lọc" @click="deleteBoLoc()" />
       </div>
 
       <!-- Date filters and type selection -->
@@ -20,9 +20,11 @@
           <span class="p-float-label mr-4" style="width: 180px">
             <Calendar
               v-model="dateFrom"
+              :show-time="true"
               dateFormat="dd/mm/yy"
               showIcon
               inputId="dateFrom"
+              @change="handleDateChange"
             />
             <label for="dateFrom">Từ ngày</label>
           </span>
@@ -30,9 +32,11 @@
           <span class="p-float-label mr-6" style="width: 180px">
             <Calendar
               v-model="dateTo"
+              :show-time="true"
               dateFormat="dd/mm/yy"
               showIcon
               inputId="dateTo"
+              @change="handleDateChange"
             />
             <label for="dateTo">Đến ngày</label>
           </span>
@@ -47,6 +51,7 @@
               name="type"
               value="all"
               class="mr-2"
+              @change="handleTypeChange"
             />
             <label for="all" class="mr-4">Tất cả</label>
 
@@ -56,6 +61,7 @@
               name="type"
               value="online"
               class="mr-2"
+              @change="handleTypeChange"
             />
             <label for="online" class="mr-4">Trực tuyến</label>
 
@@ -65,46 +71,58 @@
               name="type"
               value="offline"
               class="mr-2"
+              @change="handleTypeChange"
             />
             <label for="offline">Tại quầy</label>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from "vue";
+import { quanLyHoaDonStore } from "@/store/quanLyhoaDonStore";
 
-// State
-const searchQuery = ref('')
-const dateFrom = ref('')
-const dateTo = ref('')
-const invoiceType = ref('all')
+const store = quanLyHoaDonStore();
 
-// Methods
+const searchQuery = ref("");
+const dateFrom = ref("");
+const dateTo = ref("");
+const invoiceType = ref("all");
+
+// Handlers
 const handleSearch = () => {
-  console.log('Searching:', {
-    query: searchQuery.value,
-    dateFrom: dateFrom.value,
-    dateTo: dateTo.value,
-    type: invoiceType.value
-  })
-}
+  store.setSearchQuery(searchQuery.value);
+};
 
-const handleExport = () => {
-  console.log('Exporting to Excel...')
-}
+const handleDateChange = () => {
+  store.setDateRange(dateFrom.value, dateTo.value);
+};
 
-const handleScan = () => {
-  console.log('Opening scanner...')
-}
+const handleTypeChange = () => {
+  store.setInvoiceType(invoiceType.value);
+};
+const deleteBoLoc = () => {
+  searchQuery.value = "";
+  dateFrom.value = "";
+  dateTo.value = "";
+  invoiceType.value = "all";
+  store.deleteBoLoc();
+};
+// Watch changes
+watch(searchQuery, (newVal) => {
+  store.setSearchQuery(newVal);
+});
 
-const handleCreate = () => {
-  console.log('Creating new invoice...')
-}
+watch([dateFrom, dateTo], ([newFrom, newTo]) => {
+  store.setDateRange(newFrom, newTo);
+});
+
+watch(invoiceType, (newVal) => {
+  store.setInvoiceType(newVal);
+});
 </script>
 
 <style scoped>

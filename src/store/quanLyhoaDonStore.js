@@ -30,66 +30,74 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
       "Đã thanh toán": "green",
       "Chờ thanh toán": "orange",
       "Đã xác nhận": "orange",
-    }
+    },
+    searchQuery: '',
+    dateFrom: '',
+    dateTo: '',
+    invoiceType: 'all',
   }),
 
   getters: {
     filteredInvoices: (state) => {
-      if (state.activeTab === 'all') {
-        return state.invoices;
+      let filtered = [...state.invoices];
+      console.log(filtered)
+      // Lọc theo search query
+      if (state.searchQuery) {
+        filtered = filtered.filter(invoice => 
+          invoice.maHoaDon.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          invoice.tenKhachHang?.toLowerCase().includes(state.searchQuery.toLowerCase())
+
+        );
       }
-      else if(state.activeTab === 'cancelled') {
-        console.log(state.statusMap['cancelled']);  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          return invoice.trangThai === state.statusMap['cancelled']; // So sánh với giá trị trong statusMap
+
+      // Lọc theo khoảng thời gian
+      if (state.dateFrom && state.dateTo) {
+        const fromDate = new Date(state.dateFrom);
+        const toDate = new Date(state.dateTo);
+        filtered = filtered.filter(invoice => {
+          const invoiceDate = new Date(invoice.ngayTao);
+          return invoiceDate >= fromDate && invoiceDate <= toDate;
         });
       }
-      else if(state.activeTab === 'pending') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Đang chờ xác nhận'; // So sánh với giá trị trong statusMap
+
+      // Lọc theo loại hóa đơn
+      console.log(state.invoiceType)
+      if (state.invoiceType !== 'all') {
+        filtered = filtered.filter(invoice => 
+          invoice.loaiHoaDon.toLowerCase() === (state.invoiceType === 'online' ? 'trực tuyến'.toLowerCase() : 'tại quầy'.toLowerCase())
+        );
+  
+      }
+
+      // Lọc theo trạng thái tab
+      if (state.activeTab !== 'all') {
+        filtered = filtered.filter(invoice => {
+          switch(state.activeTab) {
+            case 'cancelled':
+              return invoice.trangThai === 'Đã Hủy';
+            case 'pending':
+              return invoice.trangThai === 'Đang chờ xác nhận';
+            case 'waiting':
+              return invoice.trangThai === 'Chờ giao hàng';
+            case 'shipping':
+              return invoice.trangThai === 'Đang giao hàng';
+            case 'delivered':
+              return invoice.trangThai === 'Đã giao';
+            case 'paid':
+              return invoice.trangThai === 'Đã thanh toán';
+            case 'completed':
+              return invoice.trangThai === 'Hoàn thành';
+            case 'confirmed':
+              return invoice.trangThai === 'Đã xác nhận';
+            default:
+              return true;
+          }
         });
       }
-      else if(state.activeTab === 'waiting') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Chờ giao hàng'; // So sánh với giá trị trong statusMap
-        });
-      }
-      else if(state.activeTab === 'shipping') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Đang giao hàng'; // So sánh với giá trị trong statusMap
-        });
-      }
-      else if(state.activeTab === 'delivered') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Đã giao'; // So sánh với giá trị trong statusMap
-        });
-      }
-      else if(state.activeTab === 'paid') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Đã thanh toán'; // So sánh với giá trị trong statusMap
-        });
-      }
-      else if(state.activeTab === 'completed') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Hoàn thành'; // So sánh với giá trị trong statusMap
-        });
-      }
-      else if(state.activeTab === 'confirmed') {  // Kiểm tra giá trị trong statusMap
-        return state.invoices.filter(invoice => {
-          console.log(invoice)
-          return invoice.trangThai === 'Đã xác nhận'; // So sánh với giá trị trong statusMap
-        });
-      }
-      return state.invoices.filter(invoice => 
-        invoice.status === state.statusMap[state.activeTab]
-      );
+
+      return filtered;
     },
+
 
     totalPages: (state) => {
       return Math.max(1, Math.ceil(state.filteredInvoices.length / state.itemsPerPage));
@@ -111,7 +119,12 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
     setPage(newPage) {
       this.page = newPage;
     },
-
+     deleteBoLoc(){
+      this.searchQuery = '',
+      this.dateFrom= '',
+      this.dateTo= '',
+      this.invoiceType = 'all'
+     },
     setItemsPerPage(newItemsPerPage) {
       this.itemsPerPage = newItemsPerPage;
       this.page = 1;
@@ -140,6 +153,21 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
     // Thêm action để set error
     setError(error) {
       this.error = error;
+    },
+    setSearchQuery(query) {
+      this.searchQuery = query;
+      this.page = 1;
+    },
+
+    setDateRange(from, to) {
+      this.dateFrom = from;
+      this.dateTo = to;
+      this.page = 1;
+    },
+
+    setInvoiceType(type) {
+      this.invoiceType = type;
+      this.page = 1;
     },
 
     // Action fetch data với xử lý loading và error

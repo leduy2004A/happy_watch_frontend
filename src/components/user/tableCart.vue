@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useCartStore } from '@/store/cartStore';
 const store = useCartStore()
 const discountCode = ref('');
@@ -109,6 +109,9 @@ const changeQuantity = (id,item)=>{
   console.log(id)
   store.updateQuantity(id,item)
 }
+onMounted(async ()=>{
+  await store.loadFromLocalStorage()
+})
 </script>
 
 

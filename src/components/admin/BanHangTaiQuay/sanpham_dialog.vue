@@ -67,7 +67,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in productStore.products" :key="item.id">
+              <tr v-for="item in productStore.filteredProducts" :key="item.id">
                 <td class="text-center">
                   <v-img
                     :src="item.hinhAnh[0]"
@@ -84,6 +84,7 @@
                   </v-img>
                 </td>
                 <td>{{ item.tenSanPham + ' - ' + item.maSanPham }}</td>
+                <td>{{ item.xuatXu }}</td>
                 <td>{{ item.tenMauSac }}</td>
                 <td>{{ item.hinhDang }}</td>
                 <td class="text-center">{{ item.kichThuoc }}</td>
@@ -132,6 +133,7 @@ const route = useRoute()
 const headers = [
   { title: 'Ảnh', key: 'hinhAnh', align: 'center' },
   { title: 'Tên', key: 'tenSanPham', align: 'start' },
+  { title: 'Thương Hiệu', key: 'tenThuongHieu', align: 'start' },
   { title: 'Màu sắc', key: 'tenMauSac', align: 'start' },
   { title: 'Hình dáng', key: 'hinhDang', align: 'start' },
   { title: 'Kích thước', key: 'kichThuoc', align: 'center' },
@@ -145,6 +147,7 @@ const headers = [
 
 onMounted(async () => {
   await productStore.fetchProducts()
+  await productStore.getComBoBox()
   emitter.on("closeDialog",data =>{
     console.log(data)
     openDialog.value = false
@@ -266,8 +269,8 @@ const selectProduct = (product) => {
     height: 60px;
   }
 }
-table > tbody > tr > td:nth-child(11), 
-  table > thead > tr > th:nth-child(11) {
+table > tbody > tr > td:nth-child(12), 
+  table > thead > tr > th:nth-child(12) {
     position: sticky !important; 
     position: -webkit-sticky !important; 
     right: 0; 
@@ -275,7 +278,7 @@ table > tbody > tr > td:nth-child(11),
     background: white;
   }
 
-  table > thead > tr > th:nth-child(11) {
+  table > thead > tr > th:nth-child(12) {
     z-index: 9999;
   }
   table > tbody > tr > td:nth-child(1), 

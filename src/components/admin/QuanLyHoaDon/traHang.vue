@@ -5,6 +5,7 @@
         <InputText 
           v-model="store.searchQuery" 
           placeholder="Tìm kiếm hoá đơn"
+          class="mr-3"
         />
         <Button 
           icon="pi pi-search" 

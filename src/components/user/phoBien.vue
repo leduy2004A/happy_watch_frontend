@@ -69,21 +69,21 @@
   <script setup>
   const categories = [
     {
-      title: 'MEN',
+      title: 'Nam',
       image: 'https://donghoolevs.vn/wp-content/uploads/2024/01/hinh-anh-chinh-5-10.jpg'
     },
     {
-      title: 'WOMEN',
+      title: 'Nữ',
       image: 'https://channel.mediacdn.vn/2019/9/25/photo-1-1569390566273627570347.jpg'
     },
-    {
-      title: 'SANG TRỌNG',
-      image: 'https://bandonghocu.com/wp-content/uploads/2021/05/dong-ho-franck-muller-vanguard-v32-sc-at-f0-mau-den-dinh-kim-cuong-1.jpg'
-    },
-    {
-      title: 'KIM CƯƠNG',
-      image: 'https://cdn.tgdd.vn/News/1474099/top-10-mau-dong-ho-kim-cuong-dat-nhat-the-gioi-5-800x450.jpg'
-    }
+    // {
+    //   title: 'SANG TRỌNG',
+    //   image: 'https://bandonghocu.com/wp-content/uploads/2021/05/dong-ho-franck-muller-vanguard-v32-sc-at-f0-mau-den-dinh-kim-cuong-1.jpg'
+    // },
+    // {
+    //   title: 'KIM CƯƠNG',
+    //   image: 'https://cdn.tgdd.vn/News/1474099/top-10-mau-dong-ho-kim-cuong-dat-nhat-the-gioi-5-800x450.jpg'
+    // }
   ]
   </script>
   
@@ -103,6 +103,7 @@
     transition: all 0.3s ease;
     cursor: pointer;
     overflow: hidden;
+    margin: 0 auto;
   }
   
   .overlay {

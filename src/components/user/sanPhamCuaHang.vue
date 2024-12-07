@@ -22,9 +22,9 @@
 
     <div class="product-list" :class="store.gridClasses">
       <v-hover
-      v-for="product in store.products"
+      v-for="product in store.currentPageProducts"
       v-slot="{ isHovering, props }"
-      :key="product.id"
+      :key="product.id" 
     >
       <v-card
         v-bind="props"
@@ -79,8 +79,8 @@
           class="text-center cursor-pointer"
           @click="navigateToProduct(product.id)"
         >
-          <div class="text-subtitle-1 text-truncate mb-2">
-            {{ product.name }}
+          <div class="text-subtitle-1 mb-2" >
+            {{ product.name }} – {{ product.gioiTinh }} – {{ product.loaiKinh }} – {{ product.chatLieuVo }} – {{ product.loaiMay }} – {{ product.chatLieuDay }}
           </div>
           <div class="d-flex justify-center align-center">
             <span
@@ -158,31 +158,24 @@ import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
 import { useCartStore } from "@/store/cartStore";
 import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
+
+
 const checkOutStore = useCheckOutStore();
 // const router = useRouter()
 const emitter = useEmitter();
 const cart = useCartStore();
 const router = useRouter();
 const store = sanPhamCuaHangStore();
-const scrollContainer = ref(null);
 const showQuickView = ref(false);
 const selectedProduct = ref(null);
-const productSelect = ref([]);
-const handleScroll = () => {
-  if (!scrollContainer.value) return;
 
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
-
-  if (scrollHeight - scrollTop - clientHeight < 50) {
-    store.loadMoreProducts();
-  }
-};
 
 const navigateToProduct = (productId) => {
   router.push(`/product/detail/${productId}`);
 };
 
 const openQuickView = (product) => {
+  console.log(product)
   selectedProduct.value = product;
   showQuickView.value = true;
 };
@@ -197,37 +190,17 @@ const addToCart = (product) => {
 };
 const muaNgay = (product) => {
   const data = [{
+    
     id: product.id,
-    name: product.name,
+    name:  product.name + '–'+  product.gioiTinh+ '–' +  product.loaiKinh + '–'+ product.chatLieuVo + '-'+ product.loaiMay + '–' +  product.chatLieuDay ,
     price: product.price,
     image: product.image,
     canNang: product.canNang,
     code: product.code,
     quantity: 1,
   }];
-  // const dataPick = {
-  //   productGoc: product,
-  //   soLuongChon: 1,
-  //   tongCanNang: 1 * product.canNang  // Thêm tongCanNang vào đây
-  // }
-
-  // // Thêm sản phẩm mới vào trước
-  // productSelect.value.push(dataPick)
-
-  // // Sau đó mới tính tổng cân nặng
-  // const tongCanNangList = productSelect.value.reduce((total, item) => {
-  //   return total + item.tongCanNang
-  // }, 0)
-
-  // console.log(tongCanNangList)
-  // checkOutStore.tongCanNang = tongCanNangList
-
-  // // Thêm vào store
-  // checkOutStore.addProduct(productSelect.value)
-
-  // console.log(checkOutStore.products)
   localStorage.setItem("check-out",JSON.stringify(data))
-  router.push("/product/checkout");
+  // router.push("/product/checkout");
 };
 onMounted(() => {
   store.loadProducts();

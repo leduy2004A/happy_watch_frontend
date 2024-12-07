@@ -148,3 +148,6 @@ export const sanPhamDangKhuyenMai =async ()=>{
 export const layChiTietSanPhamTuIdCTSP = async (idctsp) =>{
    return await api.get(`/api/carts/chi-tiet-san-pham/${idctsp}`)
 }
+export const layThuongHieuKemSoLuong = async () =>{
+   return await api.get(`api/thuong-hieu/so-luong`)
+}

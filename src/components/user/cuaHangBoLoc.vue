@@ -30,75 +30,163 @@
     <!-- Categories -->
     <Card class="mb-4">
       <template #header>
-        <div class="flex justify-content-between align-items-center p-3">
+        <div class="flex justify-content-between align-items-center p-3 cursor-pointer"
+             @click="toggleCategorySection">
           <span class="text-lg font-semibold">DANH MỤC</span>
-          <i class="pi pi-chevron-down text-600"></i>
+          <i class="pi" :class="[isCategoryExpanded ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
         </div>
       </template>
       <template #content>
+        <Collapse :modelValue="isCategoryExpanded">
+          <ul class="list-none p-0 m-0">
+            <li v-for="category in productCategories" 
+                :key="category.value"
+                @click="toggleFilter(category.value)"
+                class="category-item p-3 flex justify-content-between align-items-center cursor-pointer"
+                :class="{'selected': activeFilters.includes(category.value)}"
+            >
+              <span :class="{'font-medium': activeFilters.includes(category.value)}">
+                {{ category.text }}
+              </span>
+              <Badge :value="category.count" 
+                     :severity="activeFilters.includes(category.value) ? 'info' : 'secondary'"
+              />
+            </li>
+          </ul>
+        </Collapse>
+      </template>
+    </Card>
+
+    <!-- Brands -->
+    <Card class="mb-4">
+    <template #header>
+      <div class="flex justify-content-between align-items-center p-3 cursor-pointer"
+           @click="toggleBrandSection">
+        <span class="text-lg font-semibold">THƯƠNG HIỆU</span>
+        <i class="pi" :class="[isBrandExpanded ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+      </div>
+    </template>
+    <template #content>
+      <div class="brand-content" :class="{ 'expanded': isBrandExpanded }">
         <ul class="list-none p-0 m-0">
-          <li v-for="category in categories" 
-              :key="category.value"
-              @click="toggleFilter(category.value)"
+          <li v-for="brand in brands" 
+              :key="brand.value"
+              @click="toggleFilter(brand.value)"
               class="category-item p-3 flex justify-content-between align-items-center cursor-pointer"
-              :class="{'selected': activeFilters.includes(category.value)}"
+              :class="{'selected': activeFilters.includes(brand.value)}"
           >
-            <span :class="{'font-medium': activeFilters.includes(category.value)}">
-              {{ category.text }}
+            <span :class="{'font-medium': activeFilters.includes(brand.value)}">
+              {{ brand.text }}
             </span>
-            <Badge :value="category.count" 
-                   :severity="activeFilters.includes(category.value) ? 'info' : 'secondary'"
+            <Badge :value="brand.count" 
+                   :severity="activeFilters.includes(brand.value) ? 'info' : 'secondary'"
             />
           </li>
         </ul>
-      </template>
-    </Card>
+      </div>
+    </template>
+  </Card>
+
 
     <!-- Price Filter -->
     <Card>
       <template #header>
-        <div class="flex justify-content-between align-items-center p-3">
+        <div class="flex justify-content-between align-items-center p-3 cursor-pointer"
+             @click="togglePriceSection">
           <span class="text-lg font-semibold">LỌC GIÁ</span>
-          <i class="pi pi-chevron-down text-600"></i>
+          <i class="pi" :class="[isPriceExpanded ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
         </div>
       </template>
       <template #content>
-        <div class="p-3">
-          <Slider v-model="priceRange" 
-                  :min="minPrice" 
-                  :max="maxPrice" 
-                  :step="1000"
-                  range
-                  class="mt-4"
-          />
-          <div class="flex justify-content-between mt-3">
-            <span class="text-sm text-600">{{ formatPrice(priceRange[0]) }}đ</span>
-            <span class="text-sm text-600">{{ formatPrice(priceRange[1]) }}đ</span>
+        <Collapse :modelValue="isPriceExpanded">
+          <div class="p-3">
+            <Slider v-model="priceRange" 
+                    :min="minPrice" 
+                    :max="maxPrice" 
+                    :step="1000"
+                    range
+                    class="mt-4"
+            />
+            <div class="flex justify-content-between mt-3">
+              <span class="text-sm text-600">{{ formatPrice(priceRange[0]) }}đ</span>
+              <span class="text-sm text-600">{{ formatPrice(priceRange[1]) }}đ</span>
+            </div>
           </div>
-        </div>
+        </Collapse>
       </template>
     </Card>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { sanPhamCuaHangStore } from '@/store/sanPhamCuaHangStore';
+import { layThuongHieuKemSoLuong } from '@/axios/sanpham';
+const isCategoryExpanded = ref(true);
+const isBrandExpanded = ref(false);
+const isPriceExpanded = ref(true);
 
-const activeFilters = ref(['Đồng hồ cặp đôi']);
-const categories = ref([
+const toggleCategorySection = () => {
+  isCategoryExpanded.value = !isCategoryExpanded.value;
+};
+
+const toggleBrandSection =async () => {
+  isBrandExpanded.value = !isBrandExpanded.value;
+  if(isBrandExpanded.value === true)
+  {
+    const result = await layThuongHieuKemSoLuong()
+    if(result.status === 200)
+    {
+      const brand = result.data.map((item)=>({
+         value: item.tenThuongHieu, text: item.tenThuongHieu, count: item.soLuong
+      }))
+      brands.value = brand
+    }
+  }
+};
+
+const togglePriceSection = () => {
+  isPriceExpanded.value = !isPriceExpanded.value;
+};
+
+
+const formatPrice = (value) => {
+  return new Intl.NumberFormat('vi-VN').format(value);
+};
+
+
+
+const store = sanPhamCuaHangStore();
+const { activeFilters } = storeToRefs(store);
+
+// Các ref khác giữ nguyên
+const productCategories = ref([
+  // { value: 'Đồng hồ cặp đôi', text: 'ĐỒNG HỒ CẶP ĐÔI', count: 5 },
+  { value: 'Nam', text: 'ĐỒNG HỒ NAM' },
+  { value: 'Nữ', text: 'ĐỒNG HỒ NỮ'},
+  // { value: 'SALE', text: 'SALE', count: 1 },
+  // { value: 'Đồng hồ haiz class', text: 'Đồng hồ haiz class', count: 1 }
+]);
+
+const brands = ref([
   { value: 'CASIO', text: 'CASIO', count: 2 },
   { value: 'CITIZEN', text: 'CITIZEN', count: 1 },
-  { value: 'Đồng hồ cặp đôi', text: 'ĐỒNG HỒ CẶP ĐÔI', count: 5 },
-  { value: 'Đồng hồ nam', text: 'ĐỒNG HỒ NAM', count: 3 },
-  { value: 'Đồng hồ nữ', text: 'ĐỒNG HỒ NỮ', count: 2 },
   { value: 'ROLEX', text: 'ROLEX', count: 1 },
-  { value: 'SALE', text: 'SALE', count: 1 },
-  { value: 'Sản phẩm hot', text: 'SẢN PHẨM HOT', count: 1 }
 ]);
 
 const minPrice = ref(639000);
 const maxPrice = ref(739370000);
 const priceRange = ref([639000, 739370000]);
+
+// Watch các thay đổi của bộ lọc
+watch(activeFilters, (newFilters) => {
+  store.setFilters(newFilters);
+}, { deep: true });
+
+watch(priceRange, (newRange) => {
+  store.setPriceRange(newRange);
+}, { deep: true });
 
 const toggleFilter = (filter) => {
   if (activeFilters.value.includes(filter)) {
@@ -113,13 +201,10 @@ const removeFilter = (filter) => {
 };
 
 const resetFilters = () => {
-  activeFilters.value = [];
+  store.resetFilters();
   priceRange.value = [minPrice.value, maxPrice.value];
 };
 
-const formatPrice = (value) => {
-  return new Intl.NumberFormat('vi-VN').format(value);
-};
 </script>
 
 <style scoped>
@@ -134,6 +219,37 @@ const formatPrice = (value) => {
 
 .category-item.selected {
   background-color: var(--primary-50);
+}
+
+/* Thêm animation co dãn cho phần thương hiệu */
+:deep(.p-collapse-content) {
+  transition: all 0.3s ease-in-out;
+}
+.brand-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.brand-content.expanded {
+  max-height: 500px; /* Điều chỉnh giá trị này tùy theo số lượng thương hiệu */
+}
+
+:deep(.p-collapse-content-wrapper) {
+  overflow: hidden;
+}
+
+/* Style cho phần thương hiệu khi co dãn */
+:deep(.p-collapse-content-enter-from),
+:deep(.p-collapse-content-leave-to) {
+  max-height: 0;
+  opacity: 0;
+}
+
+:deep(.p-collapse-content-enter-to),
+:deep(.p-collapse-content-leave-from) {
+  max-height: 1000px;
+  opacity: 1;
 }
 
 .custom-chip {
@@ -151,12 +267,30 @@ const formatPrice = (value) => {
   border-bottom: 1px solid var(--surface-200);
 }
 
+/* Style mới cho thanh trượt giá */
 :deep(.p-slider) {
-  background: var(--surface-200);
+  background: #e9ecef;
+  height: 4px;
 }
 
 :deep(.p-slider .p-slider-range) {
-  background: var(--primary-color);
+  background: linear-gradient(to right, #4CAF50, #2196F3);
+  height: 4px;
+}
+
+:deep(.p-slider .p-slider-handle) {
+  background: #ffffff;
+  border: 2px solid #2196F3;
+  border-radius: 50%;
+  height: 16px;
+  width: 16px;
+  margin-top: -6px;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+:deep(.p-slider .p-slider-handle:hover) {
+  background: #2196F3;
+  border-color: #2196F3;
 }
 
 :deep(.p-badge) {
@@ -170,5 +304,10 @@ const formatPrice = (value) => {
 
 :deep(.p-chip .p-chip-remove-icon) {
   margin-left: 0.5rem;
+}
+
+/* Animation cho việc mở rộng/thu gọn các section */
+.p-collapse-content-wrapper {
+  transition: max-height 0.3s ease-out;
 }
 </style>

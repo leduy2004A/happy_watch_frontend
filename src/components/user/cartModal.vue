@@ -7,7 +7,7 @@
             <img :src="item.image" :alt="item.name" class="cart-item-image" />
           </div>
           <div class="col-6">
-            <div class="font-bold">{{ item.name }}</div>
+            <div class="font-bold">{{ item.name }} – {{ item.gioiTinh }} – {{ item.loaiKinh }} – {{ item.chatLieuVo }} – {{ item.loaiMay }} – {{ item.chatLieuDay }}</div>
             <div class="text-sm">{{ item.quantity }} × {{ formatPrice(item.price) }}</div>
           </div>
           <div class="col-2 flex align-items-center justify-content-end">
@@ -37,6 +37,7 @@
           label="Xem giỏ hàng" 
           outlined 
           class="p-button-outlined"
+          @click="cart.loadFromLocalStorage()"
         />
       </router-link>
       
@@ -49,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/store/cartStore';
 
 const cart = useCartStore();
@@ -82,6 +83,9 @@ function formatPrice(value) {
 function removeItem(id) {
   cart.removeFromCart(id);
 }
+onMounted(async ()=>{
+  await cart.loadFromLocalStorage()
+})
 </script>
 
 <style scoped>

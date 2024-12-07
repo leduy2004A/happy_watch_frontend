@@ -1,7 +1,7 @@
 <!-- views/UserManagement.vue -->
 <template>
   <BaseCrud
-    title="Quản lý thương hiệu"
+    title="Quản lý khách hàng"
     :items="data"
     :table-headers="headers"
     dialog-width="1200px"

@@ -18,7 +18,7 @@ export const useVoucherStore = defineStore('voucher', {
     modalPGG: false,
     modalSuaPGG: false,
     types: ['Tất cả', 'Cá nhân', 'Toàn bộ'],
-    statuses: ['Tất cả', 'Đang diễn ra', 'Kết thúc', 'Chưa bắt đầu']
+    statuses: ['Tất cả', 'Đang diễn ra', 'Đã kết thúc', 'Chưa bắt đầu']
   }),
 
   getters: {
@@ -28,13 +28,13 @@ export const useVoucherStore = defineStore('voucher', {
 
     filteredVouchers: (state) => {
       let filtered = [...state.vouchers]
-
+      console.log(filtered)
       if (state.selectedType && state.selectedType !== 'Tất cả') {
         filtered = filtered.filter(v => v.loaiApDung === (state.selectedType === 'Toàn bộ' ? 'TOAN_BO' : 'CA_NHAN'))
       }
 
       if (state.selectedStatus && state.selectedStatus !== 'Tất cả') {
-        filtered = filtered.filter(v => v.status === state.selectedStatus)
+        filtered = filtered.filter(v => v.trangThai === state.selectedStatus)
       }
 
       if (state.dateFilter.startDate && state.dateFilter.endDate) {

@@ -1,6 +1,6 @@
 <!-- views/UserManagement.vue -->
 <template>
-    <BaseCrud title="Quản lý thương hiệu" :items="data" :table-headers="headers">
+    <BaseCrud title="Quản lý hình dáng" :items="data" :table-headers="headers">
       <!-- :default-item="defaultItem" -->
       <!-- Custom dialog content -->
       <template #dialog-content="{ editedItem }">
@@ -8,7 +8,7 @@
           <v-col cols="12" sm="12">
             <v-text-field
               v-model="editedItem.ten"
-              label="Tên thương hiệu"
+              label="Tên hình dáng"
               variant="outlined"
               density="compact"
             ></v-text-field>

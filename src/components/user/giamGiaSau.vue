@@ -49,7 +49,7 @@
                 </template>
 
                 <template #title>
-                  <div class="text-lg truncate pt-4">{{ product.name }}</div>
+                  <div class="text-lg truncate pt-4">{{ product.name }} – {{ product.gioiTinh }} – {{ product.loaiKinh }} – {{ product.chatLieuVo }} – {{ product.loaiMay }} – {{ product.chatLieuDay }}</div>
                 </template>
 
                 <template #content>
@@ -209,16 +209,21 @@ onMounted(async ()=>{
   if (result.status === 200) {
     products.value = result.data.map((item) => ({
       id: item.id,
-      name: item.ten,
-      oldPrice: item.gia,
-      price: item.giaSauGiam,
-      discount: calculateDiscount(item.gia, item.giaSauGiam),
-      image: item.hinhAnhDauTien,
-      image2: item.hinhAnhThuHai,
-      secondImage: item.hinhAnhThuHai,
-      soLuong: item.soLuong,
-      canNang: item.canNang,
-      code: item.ma,
+          name: item.ten,
+          oldPrice: item.gia,
+          price: item.giaSauGiam,
+          discount: calculateDiscount(item.gia, item.giaSauGiam),
+          image: item.hinhAnhDauTien,
+          image2: item.hinhAnhThuHai,
+          secondImage: item.hinhAnhThuHai,
+          soLuong: item.soLuong,
+          canNang: item.canNang,
+          gioiTinh:item.gioiTinh,
+          loaiKinh:item.loaiKinh,
+          chatLieuVo:item.chatLieuVo,
+          loaiMay:item.loaiMay,
+          chatLieuDay:item.chatLieuDay,
+          code: item.ma 
     }));
   
   }
@@ -304,7 +309,7 @@ onMounted(async ()=>{
   align-items: center;
   justify-content: center;
   background: #f4f4f4;
-  height: 250px;
+  height: 200px;
 }
 
 .card-image img {

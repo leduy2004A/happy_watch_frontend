@@ -1,142 +1,108 @@
-import { defineStore } from 'pinia'
-import { layChiTietSanPhamTuIdCTSP } from '@/axios/sanpham'
-
-export const useCartStore = defineStore('cart', {
+import { defineStore } from "pinia";
+import { layChiTietSanPhamTuIdCTSP } from "@/axios/sanpham";
+export const useCartStore = defineStore("cart", {
   state: () => ({
-    items: JSON.parse(localStorage.getItem('cart-items')) || []
+    items: JSON.parse(localStorage.getItem("cart-items")) || [],
   }),
-  
+
   getters: {
     cartItemCount: (state) => state.items.length,
-    
+
     cartTotal: (state) => {
-      return state.items.reduce((total, item) => total + (item.price * item.quantity), 0)
+      return state.items.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
     },
 
     isInCart: (state) => (productId) => {
-      return state.items.some(item => item.id === productId)
-    }
+      return state.items.some((item) => item.id === productId);
+    },
   },
-  
+
   actions: {
-    async syncCartItemWithDB(itemId) {
-      try {
-        const updatedProduct = await layChiTietSanPhamTuIdCTSP(itemId)
-        const cartItem = this.items.find(item => item.id === itemId)
-        if (cartItem && updatedProduct) {
-          cartItem.price = updatedProduct.price
-          cartItem.name = updatedProduct.name
-          cartItem.image = updatedProduct.image
-          cartItem.canNang = updatedProduct.canNang * cartItem.quantity
-          cartItem.code = updatedProduct.code
-          await this.saveToLocalStorage()
-        }
-        return updatedProduct
-      } catch (error) {
-        console.error('Error syncing with DB:', error)
-        return null
+    addToCart(product) {
+      const existingItem = this.items.find((item) => item.id === product.id);
+      if (existingItem) {
+        existingItem.quantity++;
+        existingItem.canNang = product.canNang * existingItem.quantity; // Sử dụng cân nặng gốc
+      } else {
+        this.items.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          canNangGoc: product.canNang, // Lưu cân nặng gốc
+          canNang: product.canNang,
+          code: product.code,
+          quantity: 1,
+        });
       }
+      this.saveToLocalStorage();
+      this.loadFromLocalStorage();
     },
 
-    async syncAllCartItems() {
-      try {
-        const promises = this.items.map(item => this.syncCartItemWithDB(item.id))
-        await Promise.all(promises)
-      } catch (error) {
-        console.error('Error syncing all items:', error)
-      }
-    },
-
-    async addToCart(product) {
-      try {
-        // Lấy thông tin mới nhất từ DB trước khi thêm vào giỏ
-        const updatedProduct = await layChiTietSanPhamTuIdCTSP(product.id)
-        if (!updatedProduct) return
-
-        const existingItem = this.items.find(item => item.id === updatedProduct.id)
-        if (existingItem) {
-          existingItem.quantity++
-          existingItem.price = updatedProduct.price
-          existingItem.canNang = existingItem.quantity * updatedProduct.canNang
-          existingItem.name = updatedProduct.name
-          existingItem.image = updatedProduct.image
-          existingItem.code = updatedProduct.code
+    updateQuantity(itemId, quantity) {
+      const item = this.items.find((item) => item.id === itemId);
+      if (item) {
+        if (quantity > 0) {
+          item.quantity = quantity;
+          item.canNang = item.canNangGoc * quantity; // Tính lại cân nặng dựa trên cân nặng gốc
         } else {
-          this.items.push({
-            id: updatedProduct.id,
-            name: updatedProduct.name,
-            price: updatedProduct.price,
-            image: updatedProduct.image,
-            canNang: updatedProduct.canNang,
-            code: updatedProduct.code,
-            quantity: 1
-          })
+          this.removeFromCart(itemId);
         }
-        await this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Error adding to cart:', error)
-      }
-    },
-    
-    async removeFromCart(itemId) {
-      try {
-        this.items = this.items.filter(item => item.id !== itemId)
-        await this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Error removing from cart:', error)
-      }
-    },
-    
-    async updateQuantity(itemId, quantity) {
-      try {
-        // Sync với DB trước khi cập nhật số lượng
-        const updatedProduct = await this.syncCartItemWithDB(itemId)
-        if (!updatedProduct) return
-
-        const item = this.items.find(item => item.id === itemId)
-        if (item) {
-          if (quantity > 0) {
-            item.quantity = quantity
-            item.canNang = quantity * updatedProduct.canNang
-          } else {
-            await this.removeFromCart(itemId)
-            return
-          }
-          await this.saveToLocalStorage()
-        }
-      } catch (error) {
-        console.error('Error updating quantity:', error)
-      }
-    },
-
-    async clearCart() {
-      try {
-        this.items = []
-        await this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Error clearing cart:', error)
-      }
-    },
-
-    async saveToLocalStorage() {
-      try {
-        localStorage.setItem('cart-items', JSON.stringify(this.items))
-      } catch (error) {
-        console.error('Error saving to localStorage:', error)
+        this.saveToLocalStorage();
       }
     },
 
     async loadFromLocalStorage() {
-      try {
-        const savedItems = localStorage.getItem('cart-items')
-        if (savedItems) {
-          this.items = JSON.parse(savedItems)
-          // Sync tất cả items với DB khi load từ localStorage
-          await this.syncAllCartItems()
-        }
-      } catch (error) {
-        console.error('Error loading from localStorage:', error)
+      let savedItems = localStorage.getItem("cart-items");
+      if (savedItems) {
+        const result = await Promise.all(
+          this.items.map(async (item) => {
+            const response = await layChiTietSanPhamTuIdCTSP(item.id);
+            console.log(response)
+            return {
+              id: response.data.id,
+              name: response.data.ten,
+
+
+     
+       
+              gioiTinh:response.data.gioiTinh,
+              loaiKinh:response.data.loaiKinh,
+              chatLieuVo:response.data.chatLieuVo,
+              loaiMay:response.data.loaiMay,
+              chatLieuDay:response.data.chatLieuDay,
+
+
+              price: response.data.giaSauGiam,
+              image: response.data.hinhAnhDauTien,
+              canNangGoc: response.data.canNang, // Lưu cân nặng gốc
+              canNang: response.data.canNang * item.quantity,
+              code: item.ma,
+              quantity: item.quantity,
+            };
+          })
+        );
+        localStorage.setItem("cart-items", JSON.stringify(result));
+        savedItems = localStorage.getItem("cart-items");
+        this.items = JSON.parse(savedItems);
       }
-    }
-  }
-})
+    },
+
+    removeFromCart(itemId) {
+      this.items = this.items.filter((item) => item.id !== itemId);
+      this.saveToLocalStorage();
+    },
+
+    clearCart() {
+      this.items = [];
+      this.saveToLocalStorage();
+    },
+
+    saveToLocalStorage() {
+      localStorage.setItem("cart-items", JSON.stringify(this.items));
+    },
+  },
+});

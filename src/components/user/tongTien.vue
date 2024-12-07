@@ -121,6 +121,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import useEmitter from '@/useEmitter';
+import { layChiTietSanPhamTuIdCTSP } from '@/axios/sanpham';
 const emitter = useEmitter()
 import { useOrderStore } from '@/store/tienStore';
 import dialogMaGiamGia from './dialogMaGiamGia.vue';
@@ -153,26 +154,44 @@ const chonMaGiamGia = ()=>{
 const calculateTotal = () => {
   return product.price + product.shippingFee - product.discount;
 };
-const checkOutCart = ()=>{
-  const data =JSON.parse(localStorage.getItem("check-out")) 
+const checkOutCart = async () => {
+  const data = JSON.parse(localStorage.getItem("check-out")); 
 
+  const result = await Promise.all(
+    data.map(async (item) => {
+      const response = await layChiTietSanPhamTuIdCTSP(item.id);
+      const canNangGoc = response.data.canNang;
+      return {
+        // {{ product.name }} – {{ product.gioiTinh }} – {{ product.loaiKinh }} – {{ product.chatLieuVo }} – {{ product.loaiMay }} – {{ product.chatLieuDay }}
+        id: response.data.id,
+        name: response.data.ten + '-'+response.data.gioiTinh + '-'+response.data.loaiKinh + '-'+ response.data.chatLieuVo + '-'+response.data.loaiMay +'-'+response.data.chatLieuDay,
+        price: response.data.giaSauGiam,
+        image: response.data.hinhAnhDauTien,
+        canNangGoc: canNangGoc,
+        canNang: canNangGoc,
+        code: item.ma,
+        quantity: item.quantity,
+      };
+    })
+  );
   
-  const dataPickList = data.map(product => ({
-  productGoc: product,
-  soLuongChon: product.quantity,
-  tongCanNang: product.quantity * product.canNang  // Tính toán tongCanNang
-}));
+  localStorage.setItem("check-out", JSON.stringify(result));
+  
+  const dataPickList = result.map(product => ({
+    productGoc: product,
+    soLuongChon: product.quantity,
+    tongCanNang: product.quantity * product.canNangGoc  // Sử dụng canNangGoc để tính
+  }));
 
   const tongCanNangList = dataPickList.reduce((total, item) => {
-    return total + item.tongCanNang
-  }, 0)
+    return total + item.tongCanNang;
+  }, 0);
   
-  console.log(tongCanNangList)
-  checkoutStore.tongCanNang = tongCanNangList
+  console.log(tongCanNangList);
+  checkoutStore.tongCanNang = tongCanNangList;
 
-  checkoutStore.addProduct(dataPickList)
-  
-}
+  checkoutStore.addProduct(dataPickList);
+};
 onMounted(()=>{
   emitter.on("dataShip", async (data) => {
     await checkoutStore.calculateShippingFee(data.district, data.ward,checkoutStore.tongCanNang)

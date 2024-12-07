@@ -124,7 +124,10 @@
               filterDisplay="menu"
               :globalFilterFields="['name', 'email']"
             >
-              <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+              <Column
+                selectionMode="multiple"
+                headerStyle="width: 3rem"
+              ></Column>
               <Column
                 v-for="col in headers"
                 :key="col.key"
@@ -228,21 +231,21 @@ import { addKhuyenMai } from "@/axios/khuyenmai";
 import { useToast } from "vue-toastification";
 import { laySanPhamKemSoLuong, layTatCaChiTietTheoSP } from "@/axios/sanpham";
 import { updateKhuyenMaiSanPham } from "@/axios/khuyenmai";
-import { useVoucherStore } from '@/store/voucherSanPhamStore'
+import { useVoucherStore } from "@/store/voucherSanPhamStore";
 import moment from "moment";
-const voucherStore = useVoucherStore()
+const voucherStore = useVoucherStore();
 const toast = useToast();
 const emitter = useEmitter();
-const idSanPhams = ref([])
-const ididCTSanPhams = ref([])
-const idKhuyenMai = ref(0)
-const optionsSelect = ['Phần trăm','Số tiền']
-const valueSelect = ref('Phần trăm')
+const idSanPhams = ref([]);
+const ididCTSanPhams = ref([]);
+const idKhuyenMai = ref(0);
+const optionsSelect = ["Phần trăm", "Số tiền"];
+const valueSelect = ref("Phần trăm");
 const dataProps = defineProps({
   modal: Boolean,
-  dataKM:Object
+  dataKM: Object,
 });
-const dataChiTietSanPham = ref([])
+const dataChiTietSanPham = ref([]);
 // Dialog visibility
 const dialogVisible = ref(dataProps.modal);
 watch(
@@ -254,14 +257,16 @@ watch(
 watch(
   () => dataProps.dataKM,
   (newVal) => {
-    voucher.code = newVal.ma
-    voucher.value = newVal.phanTramGiamGia
-    voucher.startDate =new Date(newVal.ngayBatDau) 
-    voucher.endDate = new Date(newVal.ngayKetThuc)
-    idSanPhams.value = newVal.idSanPhams
-    ididCTSanPhams.value = newVal.idCTSanPhams
-    idKhuyenMai.value = newVal.id
-    selected.value = customers.value.filter(item => idSanPhams.value.includes(item.id));
+    voucher.code = newVal.ma;
+    voucher.value = newVal.phanTramGiamGia;
+    voucher.startDate = new Date(newVal.ngayBatDau);
+    voucher.endDate = new Date(newVal.ngayKetThuc);
+    idSanPhams.value = newVal.idSanPhams;
+    ididCTSanPhams.value = newVal.idCTSanPhams;
+    idKhuyenMai.value = newVal.id;
+    selected.value = customers.value.filter((item) =>
+      idSanPhams.value.includes(item.id)
+    );
   }
 );
 
@@ -304,14 +309,18 @@ const headers = [
   { title: "Số lượng", key: "soLuong" },
   // { title: 'Ngày sinh', key: 'birthDate' }
 ];
-const dataSanPham = ref([])
+const dataSanPham = ref([]);
 watch(
   () => selected.value,
   async (newVal) => {
     // Dùng Promise.all để đợi tất cả Promise hoàn thành
-     dataSanPham.value = await Promise.all(newVal.map(async item => (await layTatCaChiTietTheoSP(item.id)).data));
+    dataSanPham.value = await Promise.all(
+      newVal.map(async (item) => (await layTatCaChiTietTheoSP(item.id)).data)
+    );
     dataChiTietSanPham.value = dataSanPham.value.flat(); // Hoặc sử dụng kết quả nếu cần
-    selectedSanPham.value = dataChiTietSanPham.value.filter(item => ididCTSanPhams.value.includes(item.id));
+    selectedSanPham.value = dataChiTietSanPham.value.filter((item) =>
+      ididCTSanPhams.value.includes(item.id)
+    );
   }
 );
 
@@ -338,7 +347,6 @@ const filteredCustomers = computed(() => {
   });
 });
 
-
 const handleSearch = () => {
   currentPage.value = 1; // Reset to first page when searching
 };
@@ -346,27 +354,33 @@ const handleSearch = () => {
 const addNew = async () => {
   const selectedUserIds = selectedSanPham.value.map((SanPham) => SanPham.id);
   // selected.value = customers.value.filter(item => idSanPhams.value.includes(item.id));
-  console.log(selectedUserIds)
-    const dataAdd = {
-      id:idKhuyenMai.value,
-      ma: voucher.code,
-      // moTa: "Khuyến mãi giảm giá dịp cuối năm",
-      loaiKhuyenMai: "phan tram",
-      phanTramGiamGia: voucher.value,
-      soTienGiam: voucher.maxValue,
-      ngayBatDau:  moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
-      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
-      // dieuKien: "Áp dụng cho đơn hàng trên 500,000 VNĐ",
-      // trangThai: "Đang diễn ra",
-      idChiTietSanPham: selectedUserIds,
-    };
-    const result = await updateKhuyenMaiSanPham(idKhuyenMai.value,dataAdd);
-    if (result.status === 200) {
-      toast.success("Sửa khuyến mãi thành công");
-      dialogVisible.value = false
-      voucherStore.fetchVouchers()
-    }
-  
+  console.log(selectedUserIds);
+  const dataAdd = {
+    id: idKhuyenMai.value,
+    ma: voucher.code,
+    // moTa: "Khuyến mãi giảm giá dịp cuối năm",
+    loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
+    phanTramGiamGia: voucher.value,
+    soTienGiam: voucher.maxValue,
+    ngayBatDau: moment(
+      voucher.startDate,
+      "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
+    ).format("YYYY-MM-DDTHH:mm:ss"),
+    ngayKetThuc: moment(
+      voucher.endDate,
+      "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
+    ).format("YYYY-MM-DDTHH:mm:ss"),
+    // dieuKien: "Áp dụng cho đơn hàng trên 500,000 VNĐ",
+    // trangThai: "Đang diễn ra",
+    idChiTietSanPham: selectedUserIds,
+  };
+  const result = await updateKhuyenMaiSanPham(idKhuyenMai.value, dataAdd);
+  if (result.status === 200) {
+    toast.success("Sửa khuyến mãi thành công");
+    dialogVisible.value = false;
+    closeDialog();
+    voucherStore.fetchVouchers();
+  }
 };
 
 // Fetch data

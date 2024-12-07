@@ -344,6 +344,7 @@ const addNew = async () => {
   const result = await addKhuyenMaiSanPham(dataAdd);
   if (result.status === 200) {
     toast.success("Thêm khuyến mãi thành công");
+    closeDialog()
     voucherStore.fetchVouchers();
   }
 };

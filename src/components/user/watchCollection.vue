@@ -84,8 +84,8 @@
                   class="text-center cursor-pointer"
                   @click="navigateToProduct(watch.id)"
                 >
-                  <div class="text-subtitle-1 text-truncate mb-2">
-                    {{ watch.name }}
+                  <div class="text-subtitle-1 mb-2">
+                    {{ watch.name }} – {{ watch.gioiTinh }} – {{ watch.loaiKinh }} – {{ watch.chatLieuVo }} – {{ watch.loaiMay }} – {{ watch.chatLieuDay }}
                   </div>
                   <div class="d-flex justify-center align-center">
                     <span
@@ -176,9 +176,9 @@
                 class="text-center cursor-pointer"
                 @click="navigateToProduct(watch.id)"
               >
-                <div class="text-subtitle-1 text-truncate mb-2">
-                  {{ watch.name }}
-                </div>
+              <div class="text-subtitle-1 mb-2">
+                    {{ watch.name }} – {{ watch.gioiTinh }} – {{ watch.loaiKinh }} – {{ watch.chatLieuVo }} – {{ watch.loaiMay }} – {{ watch.chatLieuDay }}
+                  </div>
                 <div class="d-flex justify-center align-center">
                   <span
                     class="text-grey-darken-1 text-decoration-line-through me-2"
@@ -323,33 +323,43 @@ onMounted(async () => {
   if (result.status === 200) {
     mensWatches.value = result.data.map((item) => ({
       id: item.id,
-      name: item.ten,
-      oldPrice: item.gia,
-      price: item.giaSauGiam,
-      discount: calculateDiscount(item.gia, item.giaSauGiam),
-      image: item.hinhAnhDauTien,
-      image2: item.hinhAnhThuHai,
-      secondImage: item.hinhAnhThuHai,
-      soLuong: item.soLuong,
-      canNang: item.canNang,
-      code: item.ma,
+          name: item.ten,
+          oldPrice: item.gia,
+          price: item.giaSauGiam,
+          discount: calculateDiscount(item.gia, item.giaSauGiam),
+          image: item.hinhAnhDauTien,
+          image2: item.hinhAnhThuHai,
+          secondImage: item.hinhAnhThuHai,
+          soLuong: item.soLuong,
+          canNang: item.canNang,
+          gioiTinh:item.gioiTinh,
+          loaiKinh:item.loaiKinh,
+          chatLieuVo:item.chatLieuVo,
+          loaiMay:item.loaiMay,
+          chatLieuDay:item.chatLieuDay,
+          code: item.ma 
     }));
-  
+  console.log(mensWatches.value)
   }
   if (resultNu.status === 200) {
     console.log(resultNu.data);
     womensWatches.value = resultNu.data.map((item) => ({
       id: item.id,
-      name: item.ten,
-      oldPrice: item.gia,
-      price: item.giaSauGiam,
-      discount: calculateDiscount(item.gia, item.giaSauGiam),
-      image: item.hinhAnhDauTien,
-      image2: item.hinhAnhThuHai,
-      secondImage: item.hinhAnhThuHai,
-      soLuong: item.soLuong,
-      canNang: item.canNang,
-      code: item.ma,
+          name: item.ten,
+          oldPrice: item.gia,
+          price: item.giaSauGiam,
+          discount: calculateDiscount(item.gia, item.giaSauGiam),
+          image: item.hinhAnhDauTien,
+          image2: item.hinhAnhThuHai,
+          secondImage: item.hinhAnhThuHai,
+          soLuong: item.soLuong,
+          canNang: item.canNang,
+          gioiTinh:item.gioiTinh,
+          loaiKinh:item.loaiKinh,
+          chatLieuVo:item.chatLieuVo,
+          loaiMay:item.loaiMay,
+          chatLieuDay:item.chatLieuDay,
+          code: item.ma 
     }));
   }
 });
