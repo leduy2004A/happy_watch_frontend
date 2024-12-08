@@ -44,7 +44,7 @@
 
       <Column header="Số lượng" class="text-center">
         <template #body="slotProps">
-          <div class="flex align-items-center justify-content-center">
+          <div class="flex align-items-center">
             <Button 
               icon="pi pi-minus" 
               @click="store.decreaseQuantity(slotProps.data.chiTietSanPhamId)"
@@ -62,7 +62,7 @@
         </template>
       </Column>
 
-      <Column field="giaTungSanPham" header="Đơn giá" class="text-right">
+      <Column field="giaTungSanPham" header="Đơn giá">
         <template #body="slotProps">
           {{ formatPrice(slotProps.data.giaTungSanPham) }}
         </template>
@@ -129,7 +129,7 @@
 
           <div class="flex justify-content-between mb-2">
             <span>Tổng tiền hoá đơn</span>
-            <span>{{ formatPrice(store.tongTienHoaDon) }}</span>
+            <span>{{ formatPrice(store.tongTienSauKhuyenMai) }}</span>
           </div>
 
           <div class="flex justify-content-between mb-2">
@@ -139,7 +139,7 @@
           
           <div class="flex justify-content-between mb-2">
             <span>Giá trị hoàn trả</span>
-            <span>{{ formatPrice(store.giaTriHoanTra) }}</span>
+            <span>{{ formatPrice(store.giaTriHoanTraMoi) || store.giaTriHoanTraMoi }}</span>
           </div>
           <Button 
             label="TRẢ HÀNG" 

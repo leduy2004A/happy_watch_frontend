@@ -9,14 +9,16 @@ export const useReturnProductStore = defineStore("returnProduct", {
   state: () => ({
     products: [],
     returnInfo: {
-      customerName: "Nguyễn Thị Thùy Dương",
-      receiver: "Địa chỉ 12",
-      address: "aaaaa, Xã Mường Giàng, Huyện Quỳnh Nhai, Sơn La",
+      customerName: "",
+      receiver: "",
+      address: "",
     },
     discount: 13750,
     khuyenMai:"",
     giaTriHoanTra:0,
+    giaTriHoanTraMoi:"",
     tongTienHoaDon:0,
+    tongTienSauKhuyenMai:0,
     searchQuery: "",
     selectAll: false,
     diaChi: {},
@@ -136,6 +138,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
         {
           this.khuyenMai = dataTraHang.data.khuyenMai
           this.giaTriHoanTra = dataTraHang.data.giaTriHoanTra
+          this.giaTriHoanTraMoi = dataTraHang.data.giaTriHoanTraMoi
         }
     },
     async fetchDataStoreByMa(ma) {
@@ -150,6 +153,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
             note: "",
           }));
           this.tongTienHoaDon = result.data.tongTienHoaDon
+          this.tongTienSauKhuyenMai = result.data.tongTienSauKhuyenMai
         }
       } catch (e) {
         toast.error(e);

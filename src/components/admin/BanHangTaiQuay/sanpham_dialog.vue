@@ -31,6 +31,7 @@
                 class="filter-select"
               ></v-select>
             </v-col>
+ 
           </v-row>
           
           <v-row class="mt-4">
@@ -53,6 +54,7 @@
               </div>
             </v-col>
           </v-row>
+          <Button label="Xoá bộ lọc" class="ml-3" @click="productStore.deleteBoLoc()"/>
         </v-card>
       </v-col>
 
@@ -83,7 +85,7 @@
                     </template>
                   </v-img>
                 </td>
-                <td>{{ item.tenSanPham + ' - ' + item.maSanPham }}</td>
+                <td class="product-name-column">{{ item.tenSanPham + ' - ' + item.maSanPham }}</td>
                 <td>{{ item.xuatXu }}</td>
                 <td>{{ item.tenMauSac }}</td>
                 <td>{{ item.hinhDang }}</td>
@@ -188,7 +190,12 @@ const selectProduct = (product) => {
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-
+.product-name-column {
+  min-width: 250px; /* Điều chỉnh độ rộng tối thiểu */
+  max-width: 400px; /* Điều chỉnh độ rộng tối đa */
+  white-space: normal; /* Cho phép text xuống dòng */
+  word-wrap: break-word; /* Ngắt từ khi cần thiết */
+}
 .filter-select {
   border-radius: 6px;
 }

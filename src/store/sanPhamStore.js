@@ -107,9 +107,22 @@ export const useProductStore = defineStore('product', {
         this.filters[6].items.unshift('Tất cả')
         this.filters[7].items = data[7]
         this.filters[7].items.unshift('Tất cả')
+       
       } catch (error) {
         console.error('Error fetching products:', error)
       }
+    },
+    deleteBoLoc() {
+      // Reset giá trị value của mỗi filter về "Tất cả"
+      this.filters.forEach(filter => {
+        filter.value = 'Tất cả'
+      })
+      
+      // Reset khoảng giá về mặc định
+      this.priceRange = [100000, 3200000]
+      
+      // Reset search query
+      this.searchQuery = ''
     },
     updateFilterItems() {
       this.filters = this.filters.map(filter => {
