@@ -16,18 +16,15 @@
           <!-- Các nút chức năng -->
           <v-row  class="button-group mt-4">
             <v-col >
-              <v-btn color="grey darken-1" block class="mb-2">Xem Showroom Còn Hàng</v-btn>
-              <v-btn color="red darken-2" block class="mb-2">Thêm Vào Giỏ Hàng</v-btn>
-              <v-btn color="blue darken-1" block class="mb-2">Trả Góp Qua Thẻ (Visa, Master, JCB)</v-btn>
-              <v-btn color="blue darken-3" block class="mb-2">Mua Trả Góp - Duyệt Hồ Sơ Trong 3 Phút</v-btn>
+              <v-btn color="red darken-2" block class="mb-2" @click="addToCart(useChiTietStore.chiTietSanPham)" >Thêm Vào Giỏ Hàng</v-btn>
+              <v-btn color="blue darken-1" block class="mb-2" @click="muaNgay(useChiTietStore.chiTietSanPham)">Mua Ngay</v-btn>
             </v-col>
           </v-row>
           
           <!-- Thông tin bổ sung -->
           <v-row class="text-center mt-4">
             <v-col>
-              <p class="payment-info">Có thanh toán: Trả góp khi mua Online (Qua thẻ tín dụng)</p>
-              <p class="hotline">Gọi đặt mua: <strong>1900.6777</strong> (8:00 - 1:30)</p>
+              <p class="hotline">Gọi đặt mua: <strong>0355512589</strong> (SD-56 support)</p>
             </v-col>
           </v-row>
         </v-container>
@@ -38,13 +35,37 @@
   <script setup>
 import phanLoaiMau from './phanLoaiMau.vue';
 import { useChiTietSanPhamStore } from '@/store/chiTietSanPhamStore';
+import { useCartStore } from "@/store/cartStore";
+import useEmitter from '@/useEmitter';
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const emitter = useEmitter()
 const useChiTietStore = useChiTietSanPhamStore()
+const cart = useCartStore()
 const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
   }).format(price)
 }
+const addToCart = (product) => {
+  emitter.emit("openModalCart", true);
+  cart.addToCart(product);
+};
+const muaNgay = (product) => {
+  const data = [{
+    
+    id: product.id,
+    name:  product.name + '–'+  product.gioiTinh+ '–' +  product.loaiKinh + '–'+ product.chatLieuVo + '-'+ product.loaiMay + '–' +  product.chatLieuDay ,
+    price: product.price,
+    image: product.image,
+    canNang: product.canNang,
+    code: product.code,
+    quantity: 1,
+  }];
+  localStorage.setItem("check-out",JSON.stringify(data))
+  router.push("/product/checkout");
+};
   </script>
   
   <style scoped>

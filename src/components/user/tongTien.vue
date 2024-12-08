@@ -33,14 +33,14 @@
         </v-col>
         <v-col>
           <div class="text-subtitle-1">{{ product.productGoc.name }}</div>
-          <v-chip
+          <!-- <v-chip
             color="orange"
             text-color="white"
             size="small"
             class="mt-1"
           >
             size: {{ product.productGoc.size }}
-          </v-chip>
+          </v-chip> -->
           <div class="text-red font-weight-medium mt-1">
             {{ formatPrice(product.productGoc.price) }} đ
           </div>
@@ -169,7 +169,7 @@ const checkOutCart = async () => {
         image: response.data.hinhAnhDauTien,
         canNangGoc: canNangGoc,
         canNang: canNangGoc,
-        code: item.ma,
+        code: response.data.ma,
         quantity: item.quantity,
       };
     })

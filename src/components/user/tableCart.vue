@@ -21,7 +21,7 @@
       </v-col>
       <v-col cols="4" class="d-flex align-center">
         <img :src="item.image" width="80" class="mr-3 product-image" />
-        <div class="product-name">{{ item.name }}</div>
+        <div class="product-name">{{ item.name }} – {{ item.gioiTinh }} – {{ item.loaiKinh }} – {{ item.chatLieuVo }} – {{ item.loaiMay }} – {{ item.chatLieuDay }}</div>
       </v-col>
       <v-col cols="2" class="product-price">{{ formatPrice(item.price) }}</v-col>
       <v-col cols="3" class="text-center">

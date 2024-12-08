@@ -87,7 +87,34 @@
     </template>
   </Card>
 
-
+  <Card class="mb-4">
+    <template #header>
+      <div class="flex justify-content-between align-items-center p-3 cursor-pointer"
+           @click="toggleLoaiMaySection">
+        <span class="text-lg font-semibold">LOẠI MÁY</span>
+        <i class="pi" :class="[isLoaiMayExpanded ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+      </div>
+    </template>
+    <template #content>
+      <div class="brand-content" :class="{ 'expanded': isLoaiMayExpanded }">
+        <ul class="list-none p-0 m-0">
+          <li v-for="brand in loaiMay" 
+              :key="brand.value"
+              @click="toggleFilter(brand.value)"
+              class="category-item p-3 flex justify-content-between align-items-center cursor-pointer"
+              :class="{'selected': activeFilters.includes(brand.value)}"
+          >
+            <span :class="{'font-medium': activeFilters.includes(brand.value)}">
+              {{ brand.text }}
+            </span>
+            <Badge :value="brand.count" 
+                   :severity="activeFilters.includes(brand.value) ? 'info' : 'secondary'"
+            />
+          </li>
+        </ul>
+      </div>
+    </template>
+  </Card>
     <!-- Price Filter -->
     <Card>
       <template #header>
@@ -122,9 +149,10 @@
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { sanPhamCuaHangStore } from '@/store/sanPhamCuaHangStore';
-import { layThuongHieuKemSoLuong } from '@/axios/sanpham';
+import { layLoaiMayKemSoLuong, layThuongHieuKemSoLuong } from '@/axios/sanpham';
 const isCategoryExpanded = ref(true);
 const isBrandExpanded = ref(false);
+const isLoaiMayExpanded = ref(false);
 const isPriceExpanded = ref(true);
 
 const toggleCategorySection = () => {
@@ -145,7 +173,20 @@ const toggleBrandSection =async () => {
     }
   }
 };
-
+const toggleLoaiMaySection =async () => {
+  isLoaiMayExpanded.value = !isLoaiMayExpanded.value;
+  if(isLoaiMayExpanded.value === true)
+  {
+    const result = await layLoaiMayKemSoLuong()
+    if(result.status === 200)
+    {
+      const brand = result.data.map((item)=>({
+         value: item.tenLoaiMay, text: item.tenLoaiMay, count: item.soLuong
+      }))
+      loaiMay.value = brand
+    }
+  }
+};
 const togglePriceSection = () => {
   isPriceExpanded.value = !isPriceExpanded.value;
 };
@@ -170,6 +211,11 @@ const productCategories = ref([
 ]);
 
 const brands = ref([
+  { value: 'CASIO', text: 'CASIO', count: 2 },
+  { value: 'CITIZEN', text: 'CITIZEN', count: 1 },
+  { value: 'ROLEX', text: 'ROLEX', count: 1 },
+]);
+const loaiMay = ref([
   { value: 'CASIO', text: 'CASIO', count: 2 },
   { value: 'CITIZEN', text: 'CITIZEN', count: 1 },
   { value: 'ROLEX', text: 'ROLEX', count: 1 },

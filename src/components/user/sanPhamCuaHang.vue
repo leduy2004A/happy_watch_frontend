@@ -200,7 +200,7 @@ const muaNgay = (product) => {
     quantity: 1,
   }];
   localStorage.setItem("check-out",JSON.stringify(data))
-  // router.push("/product/checkout");
+  router.push("/product/checkout");
 };
 onMounted(() => {
   store.loadProducts();

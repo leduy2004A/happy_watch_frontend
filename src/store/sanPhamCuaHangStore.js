@@ -24,7 +24,7 @@ export const sanPhamCuaHangStore = defineStore("sanPhamCuaHangStore", {
         const matchesFilter =
           state.activeFilters.length === 0 ||
           state.activeFilters.includes(product.thuongHieu) || 
-          state.activeFilters.includes(product.gioiTinh);
+          state.activeFilters.includes(product.gioiTinh) || state.activeFilters.includes(product.loaiMay);
     
         // Lọc theo khoảng giá
         const matchesPrice =

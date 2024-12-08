@@ -44,6 +44,7 @@
                     variant="outlined"
                     size="large"
                     class="text-none"
+                    @click="loc(category)"
                   >
                     Xem thêm
                   </v-btn>
@@ -67,6 +68,10 @@
   </template>
   
   <script setup>
+  import { useRouter } from 'vue-router';
+  const router = useRouter()
+  import { sanPhamCuaHangStore } from '@/store/sanPhamCuaHangStore';
+  const store = sanPhamCuaHangStore()
   const categories = [
     {
       title: 'Nam',
@@ -76,15 +81,19 @@
       title: 'Nữ',
       image: 'https://channel.mediacdn.vn/2019/9/25/photo-1-1569390566273627570347.jpg'
     },
-    // {
-    //   title: 'SANG TRỌNG',
-    //   image: 'https://bandonghocu.com/wp-content/uploads/2021/05/dong-ho-franck-muller-vanguard-v32-sc-at-f0-mau-den-dinh-kim-cuong-1.jpg'
-    // },
-    // {
-    //   title: 'KIM CƯƠNG',
-    //   image: 'https://cdn.tgdd.vn/News/1474099/top-10-mau-dong-ho-kim-cuong-dat-nhat-the-gioi-5-800x450.jpg'
-    // }
+    {
+      title: 'Rolex',
+      image: 'https://bandonghocu.com/wp-content/uploads/2021/05/dong-ho-franck-muller-vanguard-v32-sc-at-f0-mau-den-dinh-kim-cuong-1.jpg'
+    },
+    {
+      title: 'Automatic',
+      image: 'https://cdn.tgdd.vn/News/1474099/top-10-mau-dong-ho-kim-cuong-dat-nhat-the-gioi-5-800x450.jpg'
+    }
   ]
+  const loc = (cate)=>{
+    router.push("/product/cua-hang")
+    store.setFilters([cate.title])
+  }
   </script>
   
   <style scoped>

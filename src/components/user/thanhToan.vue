@@ -112,6 +112,8 @@ import { useCheckOutStore } from "@/store/checkOutStore";
 import { useToast } from "vue-toastification";
 import Sweetalert2 from "sweetalert2";
 import { layDiaChiDauTienCuaKhachHangToken } from "@/axios/khachhang";
+import { useCartStore } from "@/store/cartStore";
+const cart = useCartStore()
 const toast = useToast();
 const checkOutStore = useCheckOutStore();
 import useEmitter from "@/useEmitter";
@@ -172,9 +174,11 @@ async function submitForm() {
               }?soTien=${checkOutStore.tinhTongTien()}`
             );
             toast.success("Đặt hàng thành công");
+            localStorage.setItem("cart-items",JSON.stringify([]))
+            cart.items = []
           }
         } catch (e) {
-          toast.error("Kiểm tra lại các trường !");
+          toast.error("Có lỗi xảy ra");
         }
       } else {
         const selectedProvince = store.provinces.find(
@@ -204,6 +208,10 @@ async function submitForm() {
             dienThoai: store.formData.phone,
             loaiHoaDon: "Trực tuyến",
             phiShip: checkOutStore.shippingFee,
+
+            khuyenMaiHoaDon: {
+              id: checkOutStore.idDiscount,
+            },
           },
           chiTietHoaDon,
         };
