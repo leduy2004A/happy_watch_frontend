@@ -60,6 +60,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '@/store/invoiceStore'
+import { useKhachHangStore } from '@/store/khachHangStore';
+const khachHangStore = useKhachHangStore()
 import useEmitter from '@/useEmitter'
 const hoa_don_id = ref(0)
 const emitter = useEmitter()

@@ -3,7 +3,7 @@
     <h4 class="my-4">Phiếu giảm giá</h4>
     
     <div class="grid mb-4">
-      <div class="col-12">
+      <div class="col-10">
         <span class="p-input-icon-left w-full">
           <InputText 
             v-model="voucherStore.search" 
@@ -12,7 +12,10 @@
           />
         </span>
       </div>
-
+      <div class="col-2">
+        <Button label="Xoá bộ lọc" class="w-full" @click="voucherStore.xoaBoLoc()"></Button>
+       
+      </div>
       <div class="col-12 md:col-3">
         <Calendar 
           v-model="voucherStore.dateFilter.startDate"
@@ -33,16 +36,16 @@
         />
       </div>
 
-      <div class="col-12 md:col-2">
+      <!-- <div class="col-12 md:col-2">
         <Dropdown
           v-model="voucherStore.selectedType"
           :options="voucherStore.types"
           placeholder="Kiểu"
           class="w-full"
         />
-      </div>
+      </div> -->
 
-      <div class="col-12 md:col-2">
+      <div class="col-12 md:col-4">
         <Dropdown
           v-model="voucherStore.selectedStatus"
           :options="voucherStore.statuses"
@@ -86,7 +89,7 @@
     </Column> -->
     <Column field="discountType" header="Loại" sortable>
       <template #body="slotProps">
-        {{ slotProps.data.soTienGiam === 0 ? 
+        {{ slotProps.data.soTienGiam === null ? 
           slotProps.data.phanTramGiamGia + '%' : 
           voucherStore.formatPrice(slotProps.data.soTienGiam) }}
       </template>

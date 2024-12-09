@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia';
-import { getHoaDonTheoMa } from '@/axios/quanlihoadon';
-import router from '@/router/router';
+import { defineStore } from "pinia";
+import { getHoaDonTheoMa } from "@/axios/quanlihoadon";
+import router from "@/router/router";
 
-export const quanLyCacNut = defineStore('quanLyCacNut', {
+export const quanLyCacNut = defineStore("quanLyCacNut", {
   state: () => ({
     nutDaXacNhan: true,
     nutHuyDon: true,
@@ -13,7 +13,7 @@ export const quanLyCacNut = defineStore('quanLyCacNut', {
     nutThemSanPham: true,
     nutCongSanPham: true,
     nutTruSanPham: true,
-    nutHuySanPhamTrongHoaDon: true
+    nutHuySanPhamTrongHoaDon: true,
   }),
 
   actions: {
@@ -34,9 +34,53 @@ export const quanLyCacNut = defineStore('quanLyCacNut', {
     async layTrangThai() {
       // Reset trạng thái các nút trước khi kiểm tra
       this.resetTrangThaiNut();
-      
+
       const result = await getHoaDonTheoMa(router.currentRoute.value.params.ma);
-      if (result.data.trangThai === 'Đã Hủy') {
+      if (result.data.trangThai === "Đã Hủy") {
+        this.nutDaXacNhan = false;
+        this.nutHuyDon = false;
+        this.nutChiTiet = false;
+        this.nutQuayLaiTrangTruocDo = false;
+        this.nutCapNhat = false;
+        this.nutThanhToan = false;
+        this.nutThemSanPham = false;
+        this.nutCongSanPham = false;
+        this.nutTruSanPham = false;
+        this.nutHuySanPhamTrongHoaDon = false;
+      } else if (result.data.trangThai === "Đang giao hàng") {
+        this.nutDaXacNhan = true;
+        this.nutHuyDon = false;
+        this.nutChiTiet = false;
+        this.nutQuayLaiTrangTruocDo = true;
+        this.nutCapNhat = false;
+        this.nutThanhToan = false;
+        this.nutThemSanPham = false;
+        this.nutCongSanPham = false;
+        this.nutTruSanPham = false;
+        this.nutHuySanPhamTrongHoaDon = false;
+      } else if (result.data.trangThai === "Đã giao") {
+        this.nutDaXacNhan = true;
+        this.nutHuyDon = false;
+        this.nutChiTiet = false;
+        this.nutQuayLaiTrangTruocDo = true;
+        this.nutCapNhat = false;
+        this.nutThanhToan = true;
+        this.nutThemSanPham = false;
+        this.nutCongSanPham = false;
+        this.nutTruSanPham = false;
+        this.nutHuySanPhamTrongHoaDon = false;
+      } else if (result.data.trangThai === "Hoàn thành") {
+        this.nutDaXacNhan = true;
+        this.nutHuyDon = false;
+        this.nutChiTiet = false;
+        this.nutQuayLaiTrangTruocDo = false;
+        this.nutCapNhat = false;
+        this.nutThanhToan = false;
+        this.nutThemSanPham = false;
+        this.nutCongSanPham = false;
+        this.nutTruSanPham = false;
+        this.nutHuySanPhamTrongHoaDon = false;
+      } else if (result.data.trangThai === "Đã Hoàn Trả Hàng") {
         this.nutDaXacNhan = false;
         this.nutHuyDon = false;
         this.nutChiTiet = false;
@@ -48,47 +92,8 @@ export const quanLyCacNut = defineStore('quanLyCacNut', {
         this.nutTruSanPham = false;
         this.nutHuySanPhamTrongHoaDon = false;
       }
-      else if (result.data.trangThai === 'Đang giao hàng')
-        {
-            this.nutDaXacNhan = true;
-            this.nutHuyDon = false;
-            this.nutChiTiet = false;
-            this.nutQuayLaiTrangTruocDo = true;
-            this.nutCapNhat = false;
-            this.nutThanhToan = false;
-            this.nutThemSanPham = false;
-            this.nutCongSanPham = false;
-            this.nutTruSanPham = false;
-            this.nutHuySanPhamTrongHoaDon = false;
-        }
-        else if (result.data.trangThai === 'Đã giao')
-            {
-                this.nutDaXacNhan = true;
-                this.nutHuyDon = false;
-                this.nutChiTiet = false;
-                this.nutQuayLaiTrangTruocDo = true;
-                this.nutCapNhat = false;
-                this.nutThanhToan = true;
-                this.nutThemSanPham = false;
-                this.nutCongSanPham = false;
-                this.nutTruSanPham = false;
-                this.nutHuySanPhamTrongHoaDon = false;
-            }
-            else if (result.data.trangThai === 'Hoàn thành')
-                {
-                    this.nutDaXacNhan = true;
-                    this.nutHuyDon = false;
-                    this.nutChiTiet = false;
-                    this.nutQuayLaiTrangTruocDo = false;
-                    this.nutCapNhat = false;
-                    this.nutThanhToan = false;
-                    this.nutThemSanPham = false;
-                    this.nutCongSanPham = false;
-                    this.nutTruSanPham = false;
-                    this.nutHuySanPhamTrongHoaDon = false;
-                }
-    }
+    },
   },
 
-  getters: {}
+  getters: {},
 });

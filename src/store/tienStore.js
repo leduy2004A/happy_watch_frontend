@@ -61,7 +61,8 @@ export const useOrderStore = defineStore('order', {
 
     customerInfo: (state) => {
       return state.diachi?.nguoiDung?.ten || 'Vui lòng chọn khách hàng'
-    }
+    },
+
   },
 
   actions: {

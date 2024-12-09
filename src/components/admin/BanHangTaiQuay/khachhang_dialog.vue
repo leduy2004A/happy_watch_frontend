@@ -38,11 +38,11 @@
             <td>{{ item.ten }}</td>
             <td>{{ item.dienThoai }}</td>
             <td>{{ item.gioiTinh }}</td>
-            <td>
+            <!-- <td>
               <v-chip :color="getColor(item.trangThai)" dark>
                 {{ item.trangThai }}
               </v-chip>
-            </td>
+            </td> -->
             <td>
               <v-btn color="orange" text @click="selectCustomer(item)">CHỌN</v-btn>
             </td>
@@ -77,7 +77,7 @@
     { title: "Họ tên", key: "hoTen" },
     { title: "Số điện thoại", key: "soDienThoai" },
     { title: "Giới tính", key: "gioiTinh" },
-    { title: "Trạng thái", key: "trangThai" },
+    // { title: "Trạng thái", key: "trangThai" },
     { title: "Thao tác", key: "actions", sortable: false },
   ];
   

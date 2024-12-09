@@ -68,7 +68,7 @@ export const useAddressStore = defineStore('address', {
     async updateAddressFromProps(diachi) {
       try {
         if (diachi) {
-          const { tinhThanhPho, dienThoai, quanHuyen, xaPhuongThiTran, nguoiDung } = diachi
+          const { tinhThanhPho, dienThoai, quanHuyen, xaPhuongThiTran, nguoiDung,diaChiCuThe } = diachi
 
           await this.fetchProvinces()
           
@@ -100,6 +100,7 @@ export const useAddressStore = defineStore('address', {
 
           this.formData.phone = dienThoai ?? ""
           this.formData.ten = nguoiDung?.ten ?? ""
+          this.formData.detailAddress = diaChiCuThe ?? ""
         }
       } catch (error) {
         console.error('Error updating address:', error)

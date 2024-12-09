@@ -1,8 +1,6 @@
 <template>
   <v-card class="payment-card" elevation="2">
-    <v-card-title class="text-center">
-      THANH TOÁN
-    </v-card-title>
+    <v-card-title class="text-center"> THANH TOÁN </v-card-title>
     <v-card-text>
       <div class="d-flex justify-space-between mb-4">
         <span>Tổng tiền hàng</span>
@@ -26,7 +24,7 @@
         dense
       ></v-text-field>
       <v-text-field
-      v-if="paymentMethod === 'Chuyển khoản'"
+        v-if="paymentMethod === 'Chuyển khoản'"
         label="Mã Giao Dịch"
         ref="inputField"
         outlined
@@ -73,63 +71,61 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch } from 'vue';
-import { thanhtoan } from '@/axios/thanhtoan';
-import { useOrderStore } from '@/store/tienStore';
-import { useAddressStore } from '@/store/diaChiStore';
-import { useToast } from 'vue-toastification';
-const toast = useToast()
+import { ref, computed, nextTick, watch } from "vue";
+import { thanhtoan } from "@/axios/thanhtoan";
+import { useOrderStore } from "@/store/tienStore";
+import { useAddressStore } from "@/store/diaChiStore";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const tienStore = useOrderStore();
 const diaChiStore = useAddressStore();
 const inputField = ref(null);
-const unseenButon = ref(true)
+const unseenButon = ref(true);
 const props = defineProps({
-  hoaDonId: Number
+  hoaDonId: Number,
 });
-const maGiaoDich = ref("")
+const maGiaoDich = ref("");
 const totalAmount = ref(2127500);
-const paymentMethod = ref('Tiền mặt');
+const paymentMethod = ref("Tiền mặt");
 const customerPayment = ref(0);
-const rawValue = ref('');
+const rawValue = ref("");
 const transactions = ref([]);
-totalAmount.value = tienStore.totalAmountValue
+totalAmount.value = tienStore.totalAmountValue;
 const remainingAmount = computed(() => {
   return Math.max(totalAmount.value - customerPayment.value, 0);
 });
-watch(rawValue,(newVal,oldVal)=>{
-  if(newVal)
-  {
-    tienStore.setTienKhachTra(parseCurrencyToNumber(newVal))
+watch(rawValue, (newVal, oldVal) => {
+  if (newVal) {
+    tienStore.setTienKhachTra(parseCurrencyToNumber(newVal));
   }
-})
-watch(transactions.value,(newVal,oldVal)=>{
-  console.log(newVal)
-  if(newVal)
-  {
-    unseenButon.value = false
+});
+watch(transactions.value, (newVal, oldVal) => {
+  console.log(newVal);
+  if (newVal) {
+    unseenButon.value = false;
   }
-})
+});
 const formatCurrency = (value) => {
-  if (!value && value !== 0) return '';
-  return new Intl.NumberFormat('vi-VN', { 
-    style: 'currency', 
-    currency: 'VND',
+  if (!value && value !== 0) return "";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(value);
 };
 const parseCurrencyToNumber = (rawValue) => {
   // Loại bỏ tất cả các ký tự không phải số (bao gồm dấu phân cách hàng nghìn)
-  const numericString = rawValue.replace(/[^\d]/g, '');
-  
+  const numericString = rawValue.replace(/[^\d]/g, "");
+
   // Chuyển đổi chuỗi đã làm sạch thành số
   const numberValue = parseInt(numericString, 10) || 0;
-  
+
   return numberValue;
 };
 const handleKeyDown = (event) => {
   // Cho phép các phím điều hướng, xóa, số
-  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+  const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
   if (!allowedKeys.includes(event.key) && !/^\d$/.test(event.key)) {
     event.preventDefault();
   }
@@ -138,55 +134,72 @@ const handleKeyDown = (event) => {
 const handleInput = (event) => {
   // Lấy vị trí con trỏ hiện tại
   const cursorPosition = event.target.selectionStart;
-  
+
   // Chỉ giữ lại số
-  let value = event.target.value.replace(/[^\d]/g, '');
-  
+  let value = event.target.value.replace(/[^\d]/g, "");
+
   // Chuyển thành số
   const numericValue = parseInt(value) || 0;
   customerPayment.value = numericValue;
-  
+
   // Cập nhật giá trị hiển thị
   rawValue.value = formatCurrency(numericValue);
-  
+
   // Đặt lại vị trí con trỏ sau khi cập nhật giá trị
   nextTick(() => {
-    if (inputField.value.$el.querySelector('input')) {
-      const input = inputField.value.$el.querySelector('input');
-      const newPosition = Math.max(0, Math.min(cursorPosition, rawValue.value.length));
+    if (inputField.value.$el.querySelector("input")) {
+      const input = inputField.value.$el.querySelector("input");
+      const newPosition = Math.max(
+        0,
+        Math.min(cursorPosition, rawValue.value.length)
+      );
       input.setSelectionRange(newPosition, newPosition);
     }
   });
 };
 
 const confirmPayment = async () => {
+  const selectedProvince = diaChiStore.provinces.find(
+    (p) => p.value === diaChiStore.formData.province
+  );
+  const selectedDistrict = diaChiStore.districts.find(
+    (d) => d.value === diaChiStore.formData.district
+  );
+  const selectedWard = diaChiStore.wards.find(
+    (w) => w.value === diaChiStore.formData.ward
+  );
   const dataPayment = {
     tienKhachDua: customerPayment.value,
     phuongThuc: paymentMethod.value,
     hoaDonId: props.hoaDonId,
     tenKhachHang: diaChiStore.formData.ten,
     gia: tienStore.totalAmountValue,
-    maGiaoDich:maGiaoDich.value,
-    maKhuyenMaiHoaDon:tienStore.discountCode
+    maGiaoDich: maGiaoDich.value,
+    maKhuyenMaiHoaDon: tienStore.discountCode,
+
+    tenNguoiNhan: diaChiStore.formData.ten,
+    province: selectedProvince?.text || diaChiStore.formData.province,
+    district: selectedDistrict?.text || diaChiStore.formData.district,
+    ward: selectedWard?.text || diaChiStore.formData.ward,
+    diaChiCuThe: diaChiStore.formData.detailAddress,
+    dienThoai: diaChiStore.formData.phone,
+    phiShip:tienStore.shippingFee,
   };
   console.log(dataPayment.gia);
-  try{
-    const resultPayment =  await thanhtoan(dataPayment);
-    if(resultPayment.status == 200)
-    {
-      toast.success("Thanh toán thành công")
+  try {
+    const resultPayment = await thanhtoan(dataPayment);
+    if (resultPayment.status == 200) {
+      toast.success("Thanh toán thành công");
       transactions.value.push(resultPayment.data.thanhToan);
     }
-
-  }catch(error){
-    console.log(error)
-   const errorMessage = error.response?.data || "Có lỗi xảy ra khi thanh toán";
+  } catch (error) {
+    console.log(error);
+    const errorMessage = error.response?.data || "Có lỗi xảy ra khi thanh toán";
     toast.error(errorMessage);
   }
- 
 };
 </script>
-  
+
 <style scoped>
 .payment-card {
   position: relative;
