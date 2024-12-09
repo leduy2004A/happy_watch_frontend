@@ -4,16 +4,21 @@
     <h4 class="my-4">Phiếu giảm giá</h4>
     
     <div class="grid mb-4">
-      <div class="col-12">
+      <div class="col-10">
         <span class="p-input-icon-left w-full">
           <InputText 
             v-model="voucherStore.search" 
             placeholder="Tìm phiếu giảm giá theo mã hoặc tên"
             class="w-full"
           />
+          
         </span>
+       
       </div>
-
+      <div class="col-2">
+        <Button label="Xoá bộ lọc" class="w-full" @click="voucherStore.xoaBoLoc()"></Button>
+       
+      </div>
       <div class="col-12 md:col-3">
         <Calendar 
           v-model="voucherStore.dateFilter.startDate"
@@ -85,14 +90,21 @@
       </Column>
       <Column field="discountType" header="Loại" sortable>
         <template #body="slotProps">
-          {{ slotProps.data.soTienGiam === 0 ? 
+          {{ slotProps.data.soTienGiam === null ? 
             slotProps.data.phanTramGiamGia + '%' : 
             voucherStore.formatPrice(slotProps.data.soTienGiam) }}
         </template>
       </Column>
       <Column field="soLuong" header="Số lượng" sortable></Column>
-      <Column field="ngayBatDau" header="Ngày bắt đầu" sortable></Column>
-      <Column field="ngayKetThuc" header="Ngày kết thúc" sortable></Column>
+      <Column field="ngayBatDau" header="Ngày bắt đầu" sortable>
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.ngayBatDau) }}
+        </template>
+      </Column>
+      <Column field="ngayKetThuc" header="Ngày kết thúc" sortable>
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.ngayKetThuc) }}
+        </template></Column>
       <Column field="trangThai" header="Trạng thái" sortable>
         <template #body="slotProps">
           <Tag 
@@ -163,6 +175,7 @@ const createNew = () => {
 }
 
 const viewVoucher = (voucher) => {
+  console.log(voucher)
   voucherStore.modalSuaPGG = true
   voucherStore.dataKM = voucher
 }
@@ -182,7 +195,27 @@ const handleConfirmStatusChange = async () => {
     voucherStore.displayStatusDialog = false
   }
 }
-
+function formattedTime(dateTime) {
+  const date = new Date(dateTime);
+  const formattedTime = date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // Sử dụng định dạng 24 giờ
+  });
+  return formattedTime
+}
+function formatDate(dateTime) {
+  console.log(dateTime);
+  const date = new Date(dateTime);
+  const formattedDate = date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  const time = formattedTime(dateTime)
+  return `${formattedDate} ${time}`;
+}
 onMounted(async () => {
   emitter.on("close_dialog", value => {
     voucherStore.modalPGG = value

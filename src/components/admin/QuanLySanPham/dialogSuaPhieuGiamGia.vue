@@ -175,7 +175,7 @@
             </DataTable>
 
             <Button 
-              label="THÊM MỚI" 
+              label="Sửa Phiếu" 
               class="mt-3"
               @click="addNew"
             />
@@ -224,12 +224,12 @@ const dataProps = defineProps({
   modal: Boolean,
   dataKM:Object
 });
-function parseCustomDate(dateString) {
-  const [datePart, timePart] = dateString.split(" ");
-  const [day, month, year] = datePart.split("-").map(Number);
-  const [hours, minutes, seconds] = timePart.split(":").map(Number);
-  return new Date(year, month - 1, day, hours, minutes, seconds);
-}
+// function parseCustomDate(dateString) {
+//   const [datePart, timePart] = dateString.split(" ");
+//   const [day, month, year] = datePart.split("-").map(Number);
+//   const [hours, minutes, seconds] = timePart.split(":").map(Number);
+//   return new Date(year, month - 1, day, hours, minutes, seconds);
+// }
 
 // Dialog visibility
 const dialogVisible = ref(dataProps.modal);
@@ -246,11 +246,11 @@ watch(
     voucher.code = newVal.ma;
     voucher.name = newVal.ten
     voucher.value = newVal.phanTramGiamGia;
-    voucher.maxValue = newVal.soTienGiam
+    voucher.maxValue = newVal.soTienGiam || 0
     voucher.quantity = newVal.soLuong
     voucher.condition = newVal.khuyenMaiTuGia
-    voucher.startDate = parseCustomDate(newVal.ngayBatDau)
-    voucher.endDate = parseCustomDate(newVal.ngayKetThuc)
+    voucher.startDate =new Date(newVal.ngayBatDau)
+    voucher.endDate = new Date(newVal.ngayKetThuc)
     voucher.type = newVal.loaiApDung === 'Toàn bộ'? 'private' : 'public'
     idVoucher.value = newVal.id
   }
@@ -335,12 +335,14 @@ const addNew = async () => {
       ten: voucher.name,
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
-      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayBatDau: moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      ngayKetThuc: moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
       soLuong: voucher.quantity,
       khuyenMaiTuGia: voucher.condition,
       loaiApDung: "TOAN_BO",
     };
+    console.log(dataAdd)
     const result = await updateKhuyenMai(dataAdd);
     if (result.status === 200) {
       voucherStore.fetchVouchers()
@@ -357,9 +359,10 @@ const addNew = async () => {
       ten: voucher.name,
       phanTramGiamGia: voucher.value,
       soTienGiam: voucher.maxValue,
-      ngayBatDau: moment(voucher.startDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
-      ngayKetThuc: moment(voucher.endDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss'),
+      ngayBatDau: moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      ngayKetThuc: moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss.SSS'),
       soLuong: voucher.quantity,
+      loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
       khuyenMaiTuGia: voucher.condition,
       loaiApDung: "CA_NHAN",
       userIds: selectedUserIds,

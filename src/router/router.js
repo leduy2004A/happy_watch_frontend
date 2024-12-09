@@ -37,7 +37,7 @@ import maGiamGia from "@/components/user/profile/maGiamGia.vue";
 import profile from "@/components/user/profile/profile.vue";
 import dangNhapDangKi from "@/components/dangNhapDangKi.vue";
 import thongke from "@/components/admin/ThongKe/thongke.vue";
-
+import thongTinCaNhan from "@/components/admin/QuanLySanPham/thongTinCaNhan.vue";
 
 const routes = [
   {
@@ -148,6 +148,11 @@ const routes = [
       {
         path: "thong-ke",
         component: thongke,
+        meta: { keepAlive: true },
+      },
+      {
+        path: "thong-tin-ca-nhan",
+        component: thongTinCaNhan,
         meta: { keepAlive: true },
       },
     ],

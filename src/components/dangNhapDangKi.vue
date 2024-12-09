@@ -49,7 +49,7 @@
             <label for="password">Xác nhận mật khẩu</label>
             <Password
               id="password"
-              v-model="form.password"
+              v-model="form.confirm_password"
               :feedback="!isLogin"
               :toggleMask="true"
               placeholder="Nhập mật khẩu"
@@ -91,7 +91,9 @@ const form = reactive({
   fullname: "",
   email: "",
   password: "",
+  confirm_password: "",
   username: "",
+  gioiTinh:"Nam"
 });
 
 const handleSubmit = async () => {
@@ -108,7 +110,7 @@ const handleSubmit = async () => {
       if (result.status === 200) {
         // Lưu token vào localStorage
         localStorage.setItem("token", result.data.access_token);
-        
+
         try {
           const resultUser = await layThongTinNguoiDung();
           if (resultUser.status === 200) {
@@ -117,27 +119,70 @@ const handleSubmit = async () => {
 
             // Lấy vai trò từ thông tin người dùng
             const userRole = resultUser.data.vaiTro.tenVaiTro; // hoặc path phù hợp với API của bạn
-            
+
             // Điều hướng dựa trên vai trò
-            switch(userRole) {
-              case 'Admin':
-                router.push('/admin/sell');
+            switch (userRole) {
+              case "Admin":
+                router.push("/admin/sell");
                 break;
-              case 'Khách hàng':
-                router.push('/product/');
+              case "Khách hàng":
+                router.push("/product/");
                 break;
               default:
-                router.push('/product/');
+                router.push("/product/");
                 break;
             }
-
-        
           }
         } catch (e) {
           toast.error("Lấy thông tin người dùng thất bại");
         }
+      }
+    } catch (error) {
+      console.error("Đăng nhập thất bại:", error);
+      toast.error("Đăng nhập thất bại" || error.response.data.message);
+    }
+  } else {
+    const dataRegister = {
+      username: form.username,
+      password: form.password,
+      ten: form.fullname,
 
-        console.log("Đăng nhập thành công!");
+      email: "lekhoa2007@gmail.com",
+
+      confirm_password: form.confirm_password,
+      gioiTinh: form.gioiTinh,
+    };
+    try {
+      const result = await dangKi(dataRegister);
+      if (result.status === 200) {
+        // Lưu token vào localStorage
+        localStorage.setItem("token", result.data.access_token);
+
+        try {
+          const resultUser = await layThongTinNguoiDung();
+          if (resultUser.status === 200) {
+            localStorage.setItem("user", JSON.stringify(resultUser.data));
+            toast.success("Đăng kí thành công");
+
+            // Lấy vai trò từ thông tin người dùng
+            const userRole = resultUser.data.vaiTro.tenVaiTro; // hoặc path phù hợp với API của bạn
+
+            // Điều hướng dựa trên vai trò
+            switch (userRole) {
+              case "Admin":
+                router.push("/admin/sell");
+                break;
+              case "Khách hàng":
+                router.push("/product/");
+                break;
+              default:
+                router.push("/product/");
+                break;
+            }
+          }
+        } catch (e) {
+          toast.error("Lấy thông tin người dùng thất bại");
+        }
       }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);

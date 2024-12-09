@@ -53,7 +53,7 @@
             class="w-100"
           >
           <template #option="slotProps">
-    <div class="d-flex align-center py-2" style="width: 100%;">
+    <div class="d-flex align-center py-2" style="width: 100%;"  @click="selectProduct(slotProps.option)">
       <img 
         :src="slotProps.option.hinhAnhChiTiet" 
         class="mr-4" 
@@ -173,7 +173,7 @@ const modalCart = ref(false);
 const drawer = ref(false);
 const accountMenu = ref(false);
 const showSearch = ref(false);
-const selectedProduct = ref(null);
+const selectedProduct = ref('');
 const filteredProducts = ref([]);
 
 const menuItems = ref([
@@ -197,7 +197,6 @@ const formatPrice = (price) => {
 };
 
 const searchProducts = async (event) => {
-  console.log(event)
   try {
     const searchTerm = event.query; // Lấy từ khóa tìm kiếm
     const allProducts = (await layTatCaCTSP()).data;
@@ -214,15 +213,19 @@ const searchProducts = async (event) => {
     filteredProducts.value = [];
   }
 };
+const selectProduct = (item)=>{
+      router.push(`/product/detail/${item.id}`);
+    showSearch.value = false;
+    selectedProduct.value = item.sanPham + '–'+  item.gioiTinh+ '–' +  item.loaiKinh + '–'+ item.chatLieuVo + '-'+ item.loaiMay + '–' +  item.chatLieuDay;
+    console.log(selectedProduct.value)
+  // console.log(item)
+}
+// watch(selectedProduct, (newValue) => {
+//   if (newValue) {
 
-watch(selectedProduct, (newValue) => {
-  if (newValue) {
-    // router.push(`/product/${newValue.id}`);
-    // showSearch.value = false;
-    // selectedProduct.value = null;
-    console.log(newValue)
-  }
-});
+//     console.log(newValue)
+//   }
+// });
 
 onMounted(async () => {
  

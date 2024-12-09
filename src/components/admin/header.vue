@@ -15,6 +15,7 @@
           </v-avatar>
           
           <Menu ref="menu" :model="items" :popup="true" class="my-4">
+            
           </Menu>
         </div>
       </template>
@@ -24,7 +25,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import Menu from 'primevue/menu'
+import { useRouter } from 'vue-router';
+const router = useRouter()
 
 const menu = ref()
 const items = ref([
@@ -33,10 +35,11 @@ const items = ref([
     icon: 'pi pi-user',
     command: () => {
       // handle profile click
+      router.push('/admin/thong-tin-ca-nhan')
     }
   },
   {
-    label: 'Settings',
+    label: 'Đổi mật khẩu',
     icon: 'pi pi-cog',
     command: () => {
       // handle settings click  
@@ -49,7 +52,9 @@ const items = ref([
     label: 'Logout',
     icon: 'pi pi-power-off',
     command: () => {
-      // handle logout click
+      localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/';
     }
   }
 ])
