@@ -10,9 +10,10 @@
   
   <div class="khachhang" v-if="hoaDonStore.hoaDonId !=0">
     <h2 class="card-title">Tên khách hàng</h2>
-    <v-chip>{{ store.customerInfo }}</v-chip>
+    <v-chip>{{store.diachi.ten || store.customerInfo }}</v-chip>
+    <!-- <v-chip>{{  store.diachi.ten }}</v-chip> -->
     <div class="switch-group">
-      <v-switch v-model="store.isDelivery" label="Giao hàng" inset color="orange"></v-switch>
+      <v-switch v-model="store.isDelivery" label="Giao hàng" inset color="orange" :disabled="store.isDisable"></v-switch>
     </div>
   </div>
   

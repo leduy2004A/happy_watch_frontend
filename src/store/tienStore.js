@@ -13,6 +13,7 @@ export const useOrderStore = defineStore('order', {
     discountAmount: 0,
     amountPaid: 0,
     isDelivery: false,
+    isDisable:false,
     diachi: {},
     dataTongTien: {},
     hoaDonId: 0,
@@ -91,9 +92,11 @@ export const useOrderStore = defineStore('order', {
             this.discountCode = 0,
             this.discountAmount = 0,
             this.orderAmount = 0,
+            this.dataTongTien.tongTienSauKhuyenMai = 0,
             this.amountPaid = 0,
             this.tienThua = 0,
             this.tienKhachTra = 0
+            this.totalAmountValue
         }
       
     },
@@ -134,6 +137,7 @@ export const useOrderStore = defineStore('order', {
       this.discountCode = data.maKhuyenMaiTotNhat
       this.orderAmount = data.tongTienHoaDon
       this.discountAmount = data.giaGiamTotNhat
+      this.totalAmountValue
     },
 
     setHoaDonId(id) {

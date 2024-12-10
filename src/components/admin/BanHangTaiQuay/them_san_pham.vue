@@ -70,7 +70,7 @@ import { useKhachHangStore } from "@/store/khachHangStore";
 import { getdiachiTheoKhachHang } from "@/axios/diachi";
 import { useAddressStore } from "@/store/diaChiStore";
 import { useOrderStore } from "@/store/tienStore";
-const orderStore = useOrderStore()
+const orderStore = useOrderStore();
 const addressStore = useAddressStore();
 const khachHangStore = useKhachHangStore();
 const route = useRoute();
@@ -107,25 +107,54 @@ const loadProducts = async (tabId) => {
         );
         if (resultData.status === 200) {
           khachHangStore.idNguoiDung = result.data.nguoiDung?.id;
+          console.log(result.data.nguoiDung.ten ?? "");
+          const nguoiDung = {
+            ten: result.data.nguoiDung.ten || "",
+          };
+          orderStore.diachi = nguoiDung;
+          console.log(orderStore.diachi);
           // toast.success("Đã thêm khách hàng");
           // emitter.emit("diachivakhachhang", resultData.data);
         } else {
           toast.success("Lỗi chọn khách hàng");
         }
       }
+      if (result.data.nguoiDung === null) {
+        const nguoiDung = {
+            ten:  "Vui lòng chọn khách hàng",
+          };
+          orderStore.diachi = nguoiDung;
+      }
+      if(result.data.trangThai === 'Paid')
+      {
+        orderStore.isDisable = true;
+      }
+      else{
+        orderStore.isDisable = false;
+      }
       const diaChiData = {
-        tinhThanhPho: result.data?.tinhThanhPho || '',
-        quanHuyen: result.data?.quanHuyen || '',
-        xaPhuongThiTran: result.data?.xaPhuongThiTran || '',
-        dienThoai: result.data?.dienThoai || '',
+        tinhThanhPho: result.data?.tinhThanhPho || "",
+        quanHuyen: result.data?.quanHuyen || "",
+        xaPhuongThiTran: result.data?.xaPhuongThiTran || "",
+        dienThoai: result.data?.dienThoai || "",
         nguoiDung: {
-          ten: result.data?.tenNguoiNhan || ''
+          ten: result.data?.tenNguoiNhan || "",
         },
-        diaChiCuThe: result.data?.diaChiCuThe || ''
+        diaChiCuThe: result.data?.diaChiCuThe || "",
       };
-      orderStore.isDelivery = true
-      console.log(diaChiData);
-      await addressStore.updateAddressFromProps(diaChiData);
+      if (
+        diaChiData.tinhThanhPho === "" &&
+        diaChiData.diaChiCuThe === "" &&
+        diaChiData.quanHuyen === "" &&
+        diaChiData.xaPhuongThiTran === ""
+      ) {
+        orderStore.isDelivery = false;
+      } else {
+        orderStore.isDelivery = true;
+        console.log(diaChiData);
+        await addressStore.updateAddressFromProps(diaChiData);
+      }
+
       lstSanPham.value = result.data.chiTietHoaDons;
 
       console.log(lstSanPham.value);
@@ -138,7 +167,9 @@ const loadProducts = async (tabId) => {
       lstSanPham.value = [];
     }
   } catch (error) {
-    console.error("Đã xảy ra lỗi khi lấy sản phẩm:", error);
+    orderStore.isDelivery = false
+    orderStore.isDisable = true
+    orderStore.resetSetForm()
     lstSanPham.value = [];
   }
 };
