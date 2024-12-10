@@ -191,6 +191,7 @@ const confirmPayment = async () => {
     if (resultPayment.status == 200) {
       toast.success("Thanh toán thành công");
       transactions.value.push(resultPayment.data.thanhToan);
+      tienStore.isDisable = true
     }
   } catch (error) {
     console.log(error);
