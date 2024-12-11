@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <h4 class="my-4">Phiếu giảm giá</h4>
+    <h4 class="my-4">Phiếu giảm giá sản phẩm</h4>
     
     <div class="grid mb-4">
       <div class="col-10">

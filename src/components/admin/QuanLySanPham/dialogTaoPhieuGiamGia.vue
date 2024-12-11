@@ -223,7 +223,20 @@ const voucher = reactive({
   endDate: new Date(),
   type: "public",
 });
-
+watch(()=> valueSelect.value, (newVal)=>{
+  console.log(newVal)
+  if(newVal === 'Phần trăm'){
+    voucher.maxValue = 0
+  }
+  else if(newVal === 'Số tiền')
+  {
+    voucher.value = 0
+  }
+  else{
+    voucher.maxValue = 0
+    voucher.value = 0
+  }
+})
 // Table data
 const search = ref("");
 const selected = ref([]);
@@ -309,12 +322,17 @@ const addNew = async () => {
       loaiApDung: "TOAN_BO",
       // userIds: [1, 2, 3],
     };
-    const result = await addKhuyenMai(dataAdd);
+    try{
+          const result = await addKhuyenMai(dataAdd);
     if (result.status === 201) {
       voucherStore.fetchVouchers();
       closeDialog();
       toast.success("Thêm khuyến mãi thành công");
     }
+    }catch(e){
+      toast.error( e.response.data.message);
+    }
+
   } else {
     console.log(selected.value);
     const selectedUserIds = selected.value.map((customer) => customer.id);
@@ -336,7 +354,8 @@ const addNew = async () => {
       loaiApDung: "CA_NHAN",
       userIds: selectedUserIds,
     };
-    const result = await addKhuyenMai(dataAdd);
+    try{
+          const result = await addKhuyenMai(dataAdd);
     if (result.status === 201) {
       voucherStore.fetchVouchers();
       toast.success("Thêm khuyến mãi thành công");
@@ -353,6 +372,10 @@ const addNew = async () => {
         toast.error("Có lỗi xảy ra khi gửi mail");
       }
     }
+    }catch(e){
+      toast.error( e.response.data.message);
+    }
+
   }
 };
 

@@ -309,7 +309,7 @@ onMounted(async ()=>{
   align-items: center;
   justify-content: center;
   background: #f4f4f4;
-  height: 200px;
+  height: 220px;
 }
 
 .card-image img {

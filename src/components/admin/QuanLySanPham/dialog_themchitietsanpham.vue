@@ -9,7 +9,7 @@
           <v-form ref="form" v-model="valid">
             <v-row>
 
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" v-if="store.isClose">
                 <div class="position-relative">
                   <v-text-field
                 v-model="store.product.ma"
@@ -26,19 +26,24 @@
 
 
               <v-col cols="12" md="6">
-                <div class="position-relative">
-                  <v-text-field
-                v-model="store.product.kichThuoc"
-                label="Kích Thước"
-                required
-                variant="outlined"
-                class="mb-4"
-                density="comfortable"
-                :rules="[(v) => !!v || 'Kích thước là bắt buộc']"
-                @input="store.filterSuggestions"
-              ></v-text-field>
-                </div>
-              </v-col>
+  <div class="position-relative">
+    <v-text-field
+      v-model="store.product.kichThuoc"
+      label="Kích Thước"
+      required
+      variant="outlined"
+      class="mb-4"
+      density="comfortable"
+      :rules="[
+        (v) => !!v || 'Kích thước là bắt buộc',
+        (v) => !isNaN(v) || 'Chỉ được nhập số'
+      ]"
+      @input="store.filterSuggestions"
+      suffix="MM"
+      type="number"
+    ></v-text-field>
+  </div>
+</v-col>
 
               <v-col cols="12" md="6">
                 <div class="position-relative">
@@ -49,8 +54,13 @@
                 variant="outlined"
                 class="mb-4"
                 density="comfortable"
-                :rules="[(v) => !!v || 'Chống nước là bắt buộc']"
+                :rules="[
+        (v) => !!v || 'Chống nước là bắt buộc, nhập 0 nếu không có chống nước',
+        (v) => !isNaN(v) || 'Chỉ được nhập số'
+      ]"
                 @input="store.filterSuggestions"
+                suffix="ATM"
+                type="number"
               ></v-text-field>
                 </div>
               </v-col>
@@ -73,14 +83,14 @@
               <v-col cols="12" md="6">
                 <div class="position-relative">
                   <v-text-field
-                v-model="store.product.gia"
+                v-model="formattedPrice"
                 label="Giá"
                 required
                 variant="outlined"
                 class="mb-4"
                 density="comfortable"
                 :rules="[(v) => !!v || 'Giá là bắt buộc']"
-                @input="store.filterSuggestions"
+      
               ></v-text-field>
                 </div>
               </v-col>
@@ -345,7 +355,7 @@
 
 <script setup>
 import { useCTSPStore } from '@/store/quanLyChiTietSanPhamStore'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch,computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import useEmitter from '@/useEmitter'
 import { useRoute } from 'vue-router'
@@ -384,16 +394,32 @@ const addNewItem = async (field) => {
     toast.success(`Thêm ${field === 'category' ? 'giới tính' : 'thương hiệu'} mới thành công`)
   }
 }
-
+const formattedPrice = computed({
+  get: () => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(store.product.gia || 0)
+  },
+  set: (value) => {
+    store.product.gia = Number(value.replace(/[^\d]/g, ''))
+    store.filterSuggestions()
+  }
+})
 const saveProduct = async () => {
-  const result = await store.saveProduct(route.params.id)
+  try{
+    const result = await store.saveProduct(route.params.id)
   console.log(result)
   if (result.status === 200) {
     dialog.value = false
     emitter.emit('closeModalThemSanPham', false)
     await useQuanLyCTSPMAIN.fetchProducts(route.params.id)
-    toast.success('Thêm sản phẩm thành công')
+    toast.success('Sản phẩm đã được cập nhật thêm')
   }
+  }catch(e){
+    toast.error( e.response.data.message);
+  }
+  
 }
 
 const close = () => {

@@ -284,6 +284,20 @@ watch(
     dataChiTietSanPham.value = dataSanPham.flat(); // Hoặc sử dụng kết quả nếu cần
   }
 );
+watch(()=> valueSelect.value, (newVal)=>{
+  console.log(newVal)
+  if(newVal === 'Phần trăm'){
+    voucher.maxValue = 0
+  }
+  else if(newVal === 'Số tiền')
+  {
+    voucher.value = 0
+  }
+  else{
+    voucher.maxValue = 0
+    voucher.value = 0
+  }
+})
 const headers = [
   { title: "Tên", key: "ten" },
   { title: "Số lượng", key: "soLuong" },
@@ -341,12 +355,18 @@ const addNew = async () => {
     // trangThai: "Đang diễn ra",
     idChiTietSanPham: selectedUserIds,
   };
-  const result = await addKhuyenMaiSanPham(dataAdd);
+  try{
+      const result = await addKhuyenMaiSanPham(dataAdd);
   if (result.status === 200) {
     toast.success("Thêm khuyến mãi thành công");
     closeDialog()
     voucherStore.fetchVouchers();
   }
+  }catch(e){
+    console.log(e)
+    toast.error( e.response.data);
+  }
+
 };
 
 // Fetch data

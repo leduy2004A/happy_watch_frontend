@@ -121,15 +121,13 @@ const loadProducts = async (tabId) => {
       }
       if (result.data.nguoiDung === null) {
         const nguoiDung = {
-            ten:  "Vui lòng chọn khách hàng",
-          };
-          orderStore.diachi = nguoiDung;
+          ten: "Vui lòng chọn khách hàng",
+        };
+        orderStore.diachi = nguoiDung;
       }
-      if(result.data.trangThai === 'Paid')
-      {
+      if (result.data.trangThai === "Paid") {
         orderStore.isDisable = true;
-      }
-      else{
+      } else {
         orderStore.isDisable = false;
       }
       const diaChiData = {
@@ -167,9 +165,13 @@ const loadProducts = async (tabId) => {
       lstSanPham.value = [];
     }
   } catch (error) {
-    orderStore.isDelivery = false
-    orderStore.isDisable = true
-    orderStore.resetSetForm()
+    orderStore.isDelivery = false;
+    orderStore.isDisable = true;
+    orderStore.resetSetForm();
+    const nguoiDung = {
+      ten: "Vui lòng chọn khách hàng",
+    };
+    orderStore.diachi = nguoiDung;
     lstSanPham.value = [];
   }
 };
@@ -208,11 +210,18 @@ onMounted(() => {
     dataAdd.value.hoaDonId = tab.value || route.query.id;
     dataAdd.value.soLuong = data.soLuong;
     console.log(dataAdd.value);
-    const dataResult = await addSanPhamVaoHoaDon(dataAdd.value);
+    
+    try{
+        const dataResult = await addSanPhamVaoHoaDon(dataAdd.value);
     if (dataResult.status === 200) {
       toast.success("Thêm sản phẩm thành công");
       emitter.emit("closeChonSanPham", false);
     }
+
+    }catch(e){
+      toast.error( e.response.data.message);
+    }
+  
     // Reload products after adding new product
     await loadProducts(tab.value);
   });

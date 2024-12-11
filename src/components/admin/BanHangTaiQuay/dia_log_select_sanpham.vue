@@ -93,9 +93,9 @@
                 >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
-                <span class="ml-4 text-red">
+                <!-- <span class="ml-4 text-red"> -->
                   <!-- {{ product.stock }} -->
-                   sản phẩm có sẵn</span>
+                   <!-- sản phẩm có sẵn</span> -->
               </div>
             </div>
           </v-col>
@@ -204,7 +204,8 @@ const confirmSelection =async () => {
     dataAdd.value.chiTietSanPhamId = product.value.chiTietSanPhamId
     dataAdd.value.gia = product.value.giaSauGiam
     dataAdd.value.soLuong = quantity.value
-    const dataResult = await addSanPhamVaoHoaDon(dataAdd.value)
+    try{
+          const dataResult = await addSanPhamVaoHoaDon(dataAdd.value)
     if(dataResult.status === 200)
     {
       toast.success("Thêm sản phẩm thành công")
@@ -212,6 +213,10 @@ const confirmSelection =async () => {
       summaryStore.fetchOrderData(route.params.ma)
       emitter.emit("closeChonSanPham",false)
     }
+    }catch(e){
+     toast.error( e.response.data.message)
+    }
+
   }
   else{
    

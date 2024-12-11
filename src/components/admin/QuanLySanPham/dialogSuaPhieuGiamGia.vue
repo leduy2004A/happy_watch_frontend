@@ -25,6 +25,7 @@
                   id="code"
                   v-model="voucher.code" 
                   class="w-full"
+                  :disabled="true"
                 />
               </div>
 
@@ -219,6 +220,20 @@ const voucher = reactive({
   endDate: new Date(),
   type: "public",
 });
+watch(()=> valueSelect.value, (newVal)=>{
+  console.log(newVal)
+  if(newVal === 'Phần trăm'){
+    voucher.maxValue = 0
+  }
+  else if(newVal === 'Số tiền')
+  {
+    voucher.value = 0
+  }
+  else{
+    voucher.maxValue = 0
+    voucher.value = 0
+  }
+})
 const idVoucher = ref(0)
 const dataProps = defineProps({
   modal: Boolean,
@@ -251,8 +266,11 @@ watch(
     voucher.condition = newVal.khuyenMaiTuGia
     voucher.startDate =new Date(newVal.ngayBatDau)
     voucher.endDate = new Date(newVal.ngayKetThuc)
-    voucher.type = newVal.loaiApDung === 'Toàn bộ'? 'private' : 'public'
+    valueSelect.value = newVal.loaiKhuyenMai === 'so tien' ? 'Số tiền':'Phần trăm' 
+    voucher.type = newVal.loaiApDung === 'Toàn bộ'? 'public':'private'
     idVoucher.value = newVal.id
+    selected.value = customers.value.filter(item => newVal.userIds.includes(item.id));
+
   }
 );
 const closeDialog = () => {
@@ -351,39 +369,39 @@ const addNew = async () => {
     }
   } else {
     console.log(selected.value);
-    const selectedUserIds = selected.value.map((customer) => customer.id);
-    const emailList = selected.value.map((customer) => customer.email);
-    const dataAdd = {
-      id:Number.parseInt(idVoucher.value),
-      ma: voucher.code,
-      ten: voucher.name,
-      phanTramGiamGia: voucher.value,
-      soTienGiam: voucher.maxValue,
-      ngayBatDau : moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-      ngayKetThuc : moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss'),
-      soLuong: voucher.quantity,
-      loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
-      khuyenMaiTuGia: voucher.condition,
-      loaiApDung: "CA_NHAN",
-      userIds: selectedUserIds,
-    };
-    const result = await updateKhuyenMai(dataAdd);
-    if (result.status === 200) {
-      voucherStore.fetchVouchers()
-      toast.success("Thêm khuyến mãi thành công");
-      closeDialog()
-      try {
-        const promises = emailList.map((email) => sendMail(dataAdd, email));
-        const results = await Promise.all(promises);
+    // const selectedUserIds = selected.value.map((customer) => customer.id);
+    // const emailList = selected.value.map((customer) => customer.email);
+    // const dataAdd = {
+    //   id:Number.parseInt(idVoucher.value),
+    //   ma: voucher.code,
+    //   ten: voucher.name,
+    //   phanTramGiamGia: voucher.value,
+    //   soTienGiam: voucher.maxValue,
+    //   ngayBatDau : moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+    //   ngayKetThuc : moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+    //   soLuong: voucher.quantity,
+    //   loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
+    //   khuyenMaiTuGia: voucher.condition,
+    //   loaiApDung: "CA_NHAN",
+    //   userIds: selectedUserIds,
+    // };
+    // const result = await updateKhuyenMai(dataAdd);
+    // if (result.status === 200) {
+    //   voucherStore.fetchVouchers()
+    //   toast.success("Thêm khuyến mãi thành công");
+    //   closeDialog()
+    //   try {
+    //     const promises = emailList.map((email) => sendMail(dataAdd, email));
+    //     const results = await Promise.all(promises);
 
-        // Kiểm tra nếu tất cả email đều gửi thành công
-        if (results.every((result) => result.status === 200)) {
-          toast.success("Gửi mail thành công");
-        }
-      } catch (error) {
-        toast.error("Có lỗi xảy ra khi gửi mail");
-      }
-    }
+    //     // Kiểm tra nếu tất cả email đều gửi thành công
+    //     if (results.every((result) => result.status === 200)) {
+    //       toast.success("Gửi mail thành công");
+    //     }
+    //   } catch (error) {
+    //     toast.error("Có lỗi xảy ra khi gửi mail");
+    //   }
+    // }
   }
 };
 

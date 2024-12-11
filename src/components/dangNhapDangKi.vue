@@ -138,8 +138,7 @@ const handleSubmit = async () => {
         }
       }
     } catch (error) {
-      console.error("Đăng nhập thất bại:", error);
-      toast.error("Đăng nhập thất bại" || error.response.data.message);
+      toast.error(error.response.data.message);
     }
   } else {
     const dataRegister = {
@@ -147,7 +146,7 @@ const handleSubmit = async () => {
       password: form.password,
       ten: form.fullname,
 
-      email: "lekhoa2007@gmail.com",
+      email: "leduy4520@gmail.com",
 
       confirm_password: form.confirm_password,
       gioiTinh: form.gioiTinh,
@@ -186,7 +185,7 @@ const handleSubmit = async () => {
       }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
-      toast.error("Đăng nhập thất bại" || error.response.data.message);
+      toast.error( error.response.data.message);
     }
   }
 };

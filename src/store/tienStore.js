@@ -85,9 +85,9 @@ export const useOrderStore = defineStore('order', {
         }
     },
     resetSetForm(){
-      const sanPhamProduct = useProductStore()
-      if(sanPhamProduct.products.length === 0)
-        {
+      // const sanPhamProduct = useProductStore()
+      // if(sanPhamProduct.products.length === 0)
+      //   {
             this.shippingFee = 0,
             this.discountCode = 0,
             this.discountAmount = 0,
@@ -97,7 +97,7 @@ export const useOrderStore = defineStore('order', {
             this.tienThua = 0,
             this.tienKhachTra = 0
             this.totalAmountValue
-        }
+        // }
       
     },
     resetFeeShip(){

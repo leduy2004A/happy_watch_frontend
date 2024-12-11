@@ -127,7 +127,7 @@
     >
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-        <span>Bạn có chắc muốn thay đổi trạng thái thành "Đã kết thúc"?</span>
+        <span>Bạn có chắc muốn thay đổi trạng thái của chi tiết sản phẩm này?</span>
       </div>
       <template #footer>
         <Button 
@@ -179,12 +179,16 @@ onMounted(async () => {
 
 const editItem = (item) => {
   store.openModalCTSP = true
+  ctspStore.isClose = false
   ctspStore.fetchProductDetails(item.id)
   console.log(item)
 }
 
 const open = () => {
   store.setOpenModal(true)
+  ctspStore.idCTSP = 0
+  ctspStore.product.ma = ""
+  ctspStore.isClose = true
   emitter.on("closeModalCTSP", value => {
     store.setOpenModal(value)
   })

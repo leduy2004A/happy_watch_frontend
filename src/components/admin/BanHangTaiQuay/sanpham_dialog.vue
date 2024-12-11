@@ -86,6 +86,7 @@
                   </v-img>
                 </td>
                 <td class="product-name-column">{{ item.tenSanPham + ' - ' + item.maSanPham }}</td>
+                <td>{{ item.soLuong }}</td>
                 <td>{{ item.xuatXu }}</td>
                 <td>{{ item.tenMauSac }}</td>
                 <td>{{ item.hinhDang }}</td>
@@ -135,6 +136,7 @@ const route = useRoute()
 const headers = [
   { title: 'Ảnh', key: 'hinhAnh', align: 'center' },
   { title: 'Tên', key: 'tenSanPham', align: 'start' },
+  { title: 'Số lượng', key: 'soLuong', align: 'start' },
   { title: 'Thương Hiệu', key: 'tenThuongHieu', align: 'start' },
   { title: 'Màu sắc', key: 'tenMauSac', align: 'start' },
   { title: 'Hình dáng', key: 'hinhDang', align: 'start' },

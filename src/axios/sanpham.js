@@ -157,3 +157,6 @@ export const layLoaiMayKemSoLuong = async () =>{
 export const layTatCaCTSP = async () =>{
    return await api.get(`api/chi-tiet-san-pham/all`)
 }
+export const layMoTaCTSP = async (idctsp)=>{
+   return await api.get(`api/chi-tiet-san-pham/mota/${idctsp}`)
+}

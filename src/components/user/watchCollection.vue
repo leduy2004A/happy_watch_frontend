@@ -199,7 +199,7 @@
     <v-dialog v-model="showQuickView" max-width="800px">
       <v-card v-if="selectedProduct">
         <v-card-title class="text-h5 pa-4">
-          {{ selectedProduct.name }}
+          {{ selectedProduct.name }} – {{ selectedProduct.gioiTinh }} – {{ selectedProduct.loaiKinh }} – {{ selectedProduct.chatLieuVo }} – {{ selectedProduct.loaiMay }} – {{ selectedProduct.chatLieuDay }}
           <v-btn
             icon="mdi-close"
             variant="text"

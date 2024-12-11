@@ -21,7 +21,7 @@
             <div class="grid">
               <div class="col-12">
                 <label for="code">Mã phiếu giảm giá</label>
-                <InputText id="code" v-model="voucher.code" class="w-full" />
+                <InputText id="code" v-model="voucher.code" class="w-full" :disabled="true" />
               </div>
               <div class="col-12">
                 <SelectButton v-model="valueSelect" :options="optionsSelect" />
@@ -262,6 +262,7 @@ watch(
     voucher.startDate = new Date(newVal.ngayBatDau);
     voucher.endDate = new Date(newVal.ngayKetThuc);
     idSanPhams.value = newVal.idSanPhams;
+    valueSelect.value = newVal.loaiKhuyenMai === 'so tien' ? 'Số tiền':'Phần trăm' 
     ididCTSanPhams.value = newVal.idCTSanPhams;
     idKhuyenMai.value = newVal.id;
     selected.value = customers.value.filter((item) =>
@@ -294,7 +295,20 @@ const voucher = reactive({
   endDate: "",
   type: "public",
 });
-
+watch(()=> valueSelect.value, (newVal)=>{
+  console.log(newVal)
+  if(newVal === 'Phần trăm'){
+    voucher.maxValue = 0
+  }
+  else if(newVal === 'Số tiền')
+  {
+    voucher.value = 0
+  }
+  else{
+    voucher.maxValue = 0
+    voucher.value = 0
+  }
+})
 // Table data
 const search = ref("");
 const selected = ref([]);

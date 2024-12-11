@@ -21,7 +21,7 @@
         <Column
           field="label"
           header="Thông số"
-          style="width: 40%"
+          style="width: 50%"
         >
           <template #body="slotProps">
             <div class="spec-label">
@@ -34,7 +34,7 @@
         <Column
           field="value"
           header="Giá trị"
-          style="width: 60%"
+          style="width: 50%"
         >
           <template #body="slotProps">
             <div class="spec-value">
@@ -94,9 +94,9 @@ const filteredSpecifications = computed(() => {
 
 const specsSummary = computed(() => [
   {
-    icon: 'pi pi-shield',
-    title: 'Bảo hành',
-    value: useChiTietStore.chiTietSanPham.baoHanh
+    icon: 'pi pi-cog',
+    title: 'Loại máy',
+    value: useChiTietStore.chiTietSanPham.loaiMay
   },
   {
     icon: 'pi pi-globe',

@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { layDanhSachSanPhamTheoMaHoaDon } from "@/axios/quanlihoadon";
 import { thongTinGiaoHang } from "@/axios/quanlihoadon";
 import { useToast } from "vue-toastification";
+import Sweetalert2 from "sweetalert2";
 import { traHang,thongTinTraHang } from "@/axios/quanlihoadon";
 const toast = useToast();
 export const useReturnProductStore = defineStore("returnProduct", {
@@ -104,7 +105,17 @@ export const useReturnProductStore = defineStore("returnProduct", {
         chiTietTraHangList: chiTietTraHangList,
       };
       
-      try {
+      Sweetalert2.fire({
+        title: "Bạn có muốn xác nhận đơn hàng không?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Không !`,
+      }).then(async (result) => {
+
+        if(result.isConfirmed)
+          {
+                  try {
         const result = await traHang(data);
         console.log(result)
         if (result.status === 200) {
@@ -122,6 +133,10 @@ export const useReturnProductStore = defineStore("returnProduct", {
           toast.error(error.message || "Có lỗi xảy ra");
         }
       }
+          }
+      })
+
+
     },
    async fetchThongTinTraHang() {
       const dataSanPhamChon = this.selectedProducts

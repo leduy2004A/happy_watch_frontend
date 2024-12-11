@@ -61,6 +61,8 @@
 import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '@/store/invoiceStore'
 import { useKhachHangStore } from '@/store/khachHangStore';
+import { useOrderStore } from '@/store/tienStore';
+const orderStore = useOrderStore()
 const khachHangStore = useKhachHangStore()
 import useEmitter from '@/useEmitter'
 const hoa_don_id = ref(0)
@@ -99,11 +101,14 @@ const handleRemoveInvoice = async () => {
     const result = await invoiceStore.removeInvoice(selectedTab.value)
     if (result) {
       selectedTab.value = result // Cập nhật giá trị cho selectedTab
+
       emitter.emit("addTab", result.id)
     } else {
       selectedTab.value = null
+    
     }
     emitter.emit("getTab", invoiceStore.getAllTabs)
+
   } catch (error) {
     console.error('Error removing invoice:', error)
   }

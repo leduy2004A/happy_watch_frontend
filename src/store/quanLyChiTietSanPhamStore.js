@@ -74,7 +74,8 @@ export const useCTSPStore = defineStore("CTSPStore ", {
     filteredProducts: [],
     showSuggestions: false,
     selectedProduct:null,
-    idCTSP:0
+    idCTSP:0,
+    isClose:false
   }),
 
   getters: {

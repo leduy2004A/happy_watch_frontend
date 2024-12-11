@@ -40,13 +40,13 @@
   
   const slides = reactive([
     {
-      title: 'Bộ Sưu Tập Mới',
-      subtitle: 'ĐỒNG HỒ DÂY DA',
+      title: 'Đẳng Cấp Và Thời Thượng Gọi Tên',
+      subtitle: 'Happy Watch',
       image: 'https://png.pngtree.com/thumb_back/fw800/back_our/20190620/ourmid/pngtree-classic-quartz-watch-big-black-banner-image_166389.jpg'
     },
     {
-      title: 'Bộ Sưu Tập Mới',
-      subtitle: 'ĐỒNG HỒ DÂY DA',
+      title: 'Cập Nhật Sản Phẩm Mới Liên Tục',
+      subtitle: 'Nhấn Vào Mua Ngay !!!',
       image: 'https://media.licdn.com/dms/image/v2/C5112AQEfptQtGhQJzg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1520153250066?e=2147483647&v=beta&t=1R2ByfjdBQtLMYU6RUFqREn9z57HxAgAdKPjdOLOX50'
     }
     // Add more slides as needed

@@ -1,9 +1,9 @@
 <template>
   <div v-for="(product, index) in cartStore.products" :key="index" class="product">
     <img class="product-image" :src="product.hinhAnh" alt="product" />
-
+    
     <div class="product-info">
-      <h3 class="product-name">{{ product.tenSanPham }}</h3>
+      <h3 class="product-name">{{ product.tenSanPham }}– {{ product.gioiTinh }} – {{ product.loaiKinhSanPham }} – {{ product.chatLieuVoSanPham }} – {{ product.loaiMaySanPham }} – {{ product.chatLieuDaySanPham }}</h3>
       <p class="old-price">
         <s>{{ cartStore.parseMoney(product.giaSanPham) }}</s>
       </p>
