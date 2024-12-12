@@ -107,7 +107,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
       };
       
       Sweetalert2.fire({
-        title: "Bạn có muốn xác nhận đơn hàng không?",
+        title: "Xác nhận trả hàng?",
         showDenyButton: true,
         showCancelButton: false,
         confirmButtonText: "Xác nhận",
