@@ -88,47 +88,47 @@ const routes = [
       {
         path: "product-danhsach/:id",
         component: DanhSachChiTietSanPham,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "thuong-hieu",
         component: thuongHieu,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "mau-sac",
         component: mauSac,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "hinh-dang",
         component: hinhDang,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "loai-may",
         component: loaiMay,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "chat-lieu-vo",
         component: chatLieuVo,
-        meta: { keepAlive: true },
+        meta: { keepAlive: false },
       },
       {
         path: "chat-lieu-day",
         component: chatLieuDay,
-        meta: { keepAlive: true },
+        meta: { keepAlive: false },
       },
       {
         path: "loai-kinh",
         component: loaiKinh,
-        meta: { keepAlive: true },
+        meta: { keepAlive: false },
       },
       {
         path: "khach-hang",
         component: khachHang,
-        meta: { keepAlive: true },
+        meta: { keepAlive: false },
       },
       {
         path: "voucher",

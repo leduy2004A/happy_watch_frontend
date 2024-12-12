@@ -70,7 +70,7 @@ export const quanLyCacNut = defineStore("quanLyCacNut", {
         this.nutTruSanPham = false;
         this.nutHuySanPhamTrongHoaDon = false;
       } else if (result.data.trangThai === "Hoàn thành") {
-        this.nutDaXacNhan = true;
+        this.nutDaXacNhan = false;
         this.nutHuyDon = false;
         this.nutChiTiet = false;
         this.nutQuayLaiTrangTruocDo = false;

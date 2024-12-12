@@ -155,8 +155,9 @@
         const resultUpdate = await updateKhachHang(data);
         if (resultUpdate.status === 200) {
           toast.success("Đã update thành công");
-          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("user", JSON.stringify(resultUpdate.data));
         }
+        console.log(resultUpdate)
       } catch (e) {
         toast.error("Có lỗi xảy ra");
       }}

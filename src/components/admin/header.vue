@@ -10,7 +10,7 @@
           <v-avatar @click="toggleMenu" style="cursor: pointer">
             <v-img
               alt="John"
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
+              :src="avatar"
             ></v-img>
           </v-avatar>
           
@@ -24,10 +24,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 const router = useRouter()
-
+const avatar = ref("")
 const menu = ref()
 const items = ref([
   {
@@ -58,7 +58,12 @@ const items = ref([
     }
   }
 ])
+onMounted(async () => {
 
+
+   avatar.value =JSON.parse(localStorage.getItem("user")).avatar
+
+});
 const toggleMenu = (event) => {
   menu.value.toggle(event)
 }

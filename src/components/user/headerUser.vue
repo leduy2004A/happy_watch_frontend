@@ -52,27 +52,41 @@
             placeholder="Nhập tên sản phẩm..."
             class="w-100"
           >
-          <template #option="slotProps">
-    <div class="d-flex align-center py-2" style="width: 100%;"  @click="selectProduct(slotProps.option)">
-      <img 
-        :src="slotProps.option.hinhAnhChiTiet" 
-        class="mr-4" 
-        width="50" 
-        height="50" 
-        style="flex-shrink: 0; object-fit: cover;"
-      />
-      <div style="flex: 1; min-width: 0;">
-        <div style="word-wrap: break-word; white-space: normal; line-height: 1.4; margin-bottom: 4px;">
-          {{ slotProps.option.sanPham }} – {{ slotProps.option.gioiTinh }} – 
-          {{ slotProps.option.loaiKinh }} – {{ slotProps.option.chatLieuVo }} – 
-          {{ slotProps.option.loaiMay }} – {{ slotProps.option.chatLieuDay }}
-        </div>
-        <small style="display: block; color: #666;">
-          {{ formatPrice(slotProps.option.gia) }} VNĐ
-        </small>
-      </div>
-    </div>
-  </template>
+            <template #option="slotProps">
+              <div
+                class="d-flex align-center py-2"
+                style="width: 100%"
+                @click="selectProduct(slotProps.option)"
+              >
+                <img
+                  :src="slotProps.option.hinhAnhChiTiet"
+                  class="mr-4"
+                  width="50"
+                  height="50"
+                  style="flex-shrink: 0; object-fit: cover"
+                />
+                <div style="flex: 1; min-width: 0">
+                  <div
+                    style="
+                      word-wrap: break-word;
+                      white-space: normal;
+                      line-height: 1.4;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    {{ slotProps.option.sanPham }} –
+                    {{ slotProps.option.gioiTinh }} –
+                    {{ slotProps.option.loaiKinh }} –
+                    {{ slotProps.option.chatLieuVo }} –
+                    {{ slotProps.option.loaiMay }} –
+                    {{ slotProps.option.chatLieuDay }}
+                  </div>
+                  <small style="display: block; color: #666">
+                    {{ formatPrice(slotProps.option.gia) }} VNĐ
+                  </small>
+                </div>
+              </div>
+            </template>
           </AutoComplete>
         </v-card>
       </v-menu>
@@ -87,7 +101,14 @@
       >
         <template v-slot:activator="{ props }">
           <v-btn icon class="mr-2" v-bind="props">
-            <v-icon>mdi-account</v-icon>
+            <v-icon>
+              <v-avatar>
+                <v-img
+                  alt="John"
+                  :src="avatar"
+                ></v-img>
+              </v-avatar>
+            </v-icon>
           </v-btn>
         </template>
 
@@ -161,7 +182,7 @@
 
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 import { useCartStore } from "@/store/cartStore";
 import cartOverLay from "./cartOverLay.vue";
 import useEmitter from "@/useEmitter";
@@ -173,9 +194,9 @@ const modalCart = ref(false);
 const drawer = ref(false);
 const accountMenu = ref(false);
 const showSearch = ref(false);
-const selectedProduct = ref('');
+const selectedProduct = ref("");
 const filteredProducts = ref([]);
-
+const avatar = ref('')
 const menuItems = ref([
   { title: "TRANG CHỦ", path: "/product/" },
   { title: "GIỚI THIỆU", path: "/gioi-thieu" },
@@ -189,37 +210,49 @@ const openModalCart = () => {
 };
 
 const isAuthenticated = ref(false);
-const Tet = ()=>{
-  console.log("Duy")
-}
+const Tet = () => {
+  console.log("Duy");
+};
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('vi-VN').format(price);
+  return new Intl.NumberFormat("vi-VN").format(price);
 };
 
 const searchProducts = async (event) => {
   try {
     const searchTerm = event.query; // Lấy từ khóa tìm kiếm
     const allProducts = (await layTatCaCTSP()).data;
-    filteredProducts.value = allProducts.filter(product => 
-      product.sanPham.toLowerCase().includes(searchTerm.toLowerCase())
-      // || product.gioiTinh.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.loaiKinh.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.loaiMay.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.chatLieuVo.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.chatLieuDay.toLowerCase().includes(searchTerm.toLowerCase())
+    filteredProducts.value = allProducts.filter(
+      (product) =>
+        product.sanPham.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // || product.gioiTinh.toLowerCase().includes(searchTerm.toLowerCase())
+        product.loaiKinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.loaiMay.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.chatLieuVo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.chatLieuDay.toLowerCase().includes(searchTerm.toLowerCase())
     );
   } catch (error) {
-    console.error('Error searching products:', error);
+    console.error("Error searching products:", error);
     filteredProducts.value = [];
   }
 };
-const selectProduct = (item)=>{
-      router.push(`/product/detail/${item.id}`);
-    showSearch.value = false;
-    selectedProduct.value = item.sanPham + '–'+  item.gioiTinh+ '–' +  item.loaiKinh + '–'+ item.chatLieuVo + '-'+ item.loaiMay + '–' +  item.chatLieuDay;
-    console.log(selectedProduct.value)
+const selectProduct = (item) => {
+  router.push(`/product/detail/${item.id}`);
+  showSearch.value = false;
+  selectedProduct.value =
+    item.sanPham +
+    "–" +
+    item.gioiTinh +
+    "–" +
+    item.loaiKinh +
+    "–" +
+    item.chatLieuVo +
+    "-" +
+    item.loaiMay +
+    "–" +
+    item.chatLieuDay;
+  console.log(selectedProduct.value);
   // console.log(item)
-}
+};
 // watch(selectedProduct, (newValue) => {
 //   if (newValue) {
 
@@ -228,10 +261,9 @@ const selectProduct = (item)=>{
 // });
 
 onMounted(async () => {
- 
   const token = localStorage.getItem("token");
   isAuthenticated.value = !!token;
-  
+   avatar.value =JSON.parse(localStorage.getItem("user")).avatar
   emitter.on("closeCartModal", (val) => {
     modalCart.value = val;
   });
@@ -242,10 +274,10 @@ const redirectToLogin = () => {
 };
 
 const handleLogout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
   isAuthenticated.value = false;
-  window.location.href = '/product/cua-hang';
+  window.location.href = "/product/cua-hang";
 };
 </script>
 

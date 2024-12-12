@@ -2,6 +2,8 @@
 import { defineStore } from 'pinia'
 import { getTinhThanh, getQuanHuyen, getPhuongXa } from "@/axios/diachi"
 import { xacNhanDonHang,xacNhanDonHangMuaTaiQuay } from "@/axios/hoadon"
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 import { useOrderStore } from './tienStore'
 export const useAddressStore = defineStore('address', {
   state: () => ({
@@ -168,7 +170,7 @@ export const useAddressStore = defineStore('address', {
           } 
         } catch (error) {
           console.error('Error confirming order:', error)
-          throw error
+          toast.error("Không có hoá đơn nào được chọn !")
         }
       },
 

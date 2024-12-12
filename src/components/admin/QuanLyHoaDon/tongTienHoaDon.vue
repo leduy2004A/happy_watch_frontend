@@ -7,10 +7,6 @@
           <div class="text-subtitle-1 text-grey-darken-1 mr-4">Phiếu giảm giá:</div>
           <div class="text-subtitle-1">{{ store.voucher || 'kkkjkjk' }}</div>
         </div>
-        <div class="d-flex align-center">
-          <div class="text-subtitle-1 text-grey-darken-1 mr-4">Giảm giá từ cửa hàng:</div>
-          <div class="text-subtitle-1">{{ store.storeDiscount }}%</div>
-        </div>
       </v-col>
 
       <!-- Cột bên phải -->

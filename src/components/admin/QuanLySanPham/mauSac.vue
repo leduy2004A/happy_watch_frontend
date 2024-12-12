@@ -91,7 +91,7 @@
       if(result.status === 200)
       {
         data.value[index] = { ...item, id: data.value[index].id };
-        toast.success("Sửa thương hiệu thành công")
+        toast.success("Sửa màu sắc thành công")
       }else {
         toast.error("Có lỗi xảy ra");
       }

@@ -37,13 +37,14 @@
           label="Xem giỏ hàng" 
           outlined 
           class="p-button-outlined"
-          @click="cart.loadFromLocalStorage()"
+          @click="viewGioHang()"
         />
       </router-link>
       
       <Button 
         label="Thanh toán" 
         severity="danger"
+        @click="checkOutCart()"
       />
     </div>
   </div>
@@ -52,7 +53,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/store/cartStore';
-
+import { useRouter } from 'vue-router';
+import useEmitter from '@/useEmitter';
+const emitter = useEmitter()
+const router = useRouter()
 const cart = useCartStore();
 const cartItems = ref([
   {
@@ -82,6 +86,16 @@ function formatPrice(value) {
 
 function removeItem(id) {
   cart.removeFromCart(id);
+}
+const checkOutCart = ()=>{
+
+  localStorage.setItem("check-out",localStorage.getItem("cart-items"))
+  emitter.emit("closeCartModal", false);
+  router.push("/product/checkout")
+}
+const viewGioHang = ()=>{
+  cart.loadFromLocalStorage()
+  emitter.emit("closeCartModal", false);
 }
 onMounted(async ()=>{
   await cart.loadFromLocalStorage()

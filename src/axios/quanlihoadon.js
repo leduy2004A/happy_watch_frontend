@@ -15,7 +15,7 @@ export const layPhiHoaDon = async (maHoaDon) =>{
     return await api.get(`api/hoadon/thong-tin?maHoaDon=${maHoaDon}`)
 }
 export const congSlSanPham = async (idCTHD) =>{
-    return await api.put(`api/chitiethoadon/congsl?idCTHD=${idCTHD}`)
+    return await api.put(`api/chitiethoadon/congsl-moi?idCTHD=${idCTHD}`)
 }
 
 export const layHoaDonTheoNguoiDung = async()=>{

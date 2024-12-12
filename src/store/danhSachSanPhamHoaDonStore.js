@@ -7,6 +7,8 @@ import { congSlSanPham } from '@/axios/quanlihoadon'
  import { useOrderSummaryStore } from '@/store/orderSumaryStore'
  import { useLoading } from "vue-loading-overlay";
  import { xoaSanPhamTrongHoaDon } from '@/axios/hoadon'
+ import { useToast } from 'vue-toastification'
+ const toast = useToast()
 import router from '@/router/router'
 const $loading = useLoading({
   loader: "bars",
@@ -73,20 +75,21 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
       const index = this.products.findIndex(p => p.chiTietSanPhamId === product.chiTietSanPhamId);
       
       if (index !== -1) {
-        this.products[index].soLuong++;
+        
     
         // Bắt đầu hiển thị loading overlay
         const loadingInstance = $loading.show();
     
         try {
-          console.log(product);
           const data = await congSlSanPham(product.chiTietHoaDonId);
           if(data.status === 200)
             {
+              this.products[index].soLuong++;
               await storeSummary.fetchOrderData(router.currentRoute.value.params.ma);
+              toast.success("Thêm số lượng thành công")
             }
         } catch (error) {
-          console.error("Error increasing quantity:", error);
+          toast.error(error.response.data.message)
         } finally {
           // Tắt loading overlay sau khi hoàn thành
           loadingInstance.hide();
@@ -98,7 +101,7 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
       const index = this.products.findIndex(p => p.chiTietSanPhamId === product.chiTietSanPhamId);
       
       if (index !== -1 && this.products[index].soLuong > 1) {
-        this.products[index].soLuong--;
+       
     
         // Bắt đầu hiển thị loading overlay
         const loadingInstance = $loading.show();
@@ -107,11 +110,13 @@ export const danhSachSanPhamHoaDonStore = defineStore('SanPhamHoaDonStore', {
           const result = await truSoLuongSanPham(product.chiTietHoaDonId);
           if (result.status === 200) {
             // Đợi fetchOrderData hoàn tất trước khi tắt loading
-          
+            
+            this.products[index].soLuong--;
             await storeSummary.fetchOrderData(router.currentRoute.value.params.ma);
+            toast.success("Đã giảm số lượng")
           }
         } catch (error) {
-          console.error("Error decreasing quantity:", error);
+          toast.error(error.response.data.message)
         } finally {
           // Tắt loading overlay sau khi hoàn thành tất cả xử lý
           loadingInstance.hide();

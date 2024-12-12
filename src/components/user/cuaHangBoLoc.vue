@@ -127,7 +127,7 @@
       <template #content>
         <Collapse :modelValue="isPriceExpanded">
           <div class="p-3">
-            <Slider v-model="priceRange" 
+            <Slider v-model="store.priceRange" 
                     :min="minPrice" 
                     :max="maxPrice" 
                     :step="1000"
@@ -135,8 +135,8 @@
                     class="mt-4"
             />
             <div class="flex justify-content-between mt-3">
-              <span class="text-sm text-600">{{ formatPrice(priceRange[0]) }}đ</span>
-              <span class="text-sm text-600">{{ formatPrice(priceRange[1]) }}đ</span>
+              <span class="text-sm text-600">{{ formatPrice(store.priceRange[0]) }}đ</span>
+              <span class="text-sm text-600">{{ formatPrice(store.priceRange[1]) }}đ</span>
             </div>
           </div>
         </Collapse>
@@ -221,8 +221,8 @@ const loaiMay = ref([
   { value: 'ROLEX', text: 'ROLEX', count: 1 },
 ]);
 
-const minPrice = ref(639000);
-const maxPrice = ref(739370000);
+const minPrice = ref(store.priceRange[0]);
+const maxPrice = ref(store.priceRange[1]);
 const priceRange = ref([639000, 739370000]);
 
 // Watch các thay đổi của bộ lọc
@@ -248,7 +248,7 @@ const removeFilter = (filter) => {
 
 const resetFilters = () => {
   store.resetFilters();
-  priceRange.value = [minPrice.value, maxPrice.value];
+  // priceRange.value = [minPrice.value, maxPrice.value];
 };
 
 </script>

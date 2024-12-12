@@ -2,8 +2,9 @@
   <div class="auth-container">
     <div class="auth-box">
       <div class="auth-header">
-        <img src="" alt="Logo" class="logo" />
-        <h2>{{ isLogin ? "Đăng nhập" : "Đăng ký" }}</h2>
+        <img src="https://png.pngtree.com/png-vector/20240328/ourlarge/pngtree-mechanical-pocket-watch-pattern-cartoon-style-png-image_12237907.png" alt="Logo" class="logo" />
+        <h2>Happy Watch</h2>
+        <h3>{{ isLogin ? "Đăng nhập" : "Đăng ký" }}</h3>
       </div>
 
       <div class="auth-form">
@@ -43,6 +44,7 @@
               :feedback="!isLogin"
               :toggleMask="true"
               placeholder="Nhập mật khẩu"
+              class="style-pass"
             />
           </div>
           <div class="p-field" v-if="!isLogin">
@@ -53,6 +55,7 @@
               :feedback="!isLogin"
               :toggleMask="true"
               placeholder="Nhập mật khẩu"
+               
             />
           </div>
           <Button
@@ -234,7 +237,23 @@ const genderOptions = ["Nam", "Nữ"];
 .p-field {
   margin-bottom: 1.5rem;
 }
-
+/* .p-password {
+    display: inline-flex;
+    position: relative;
+    width: 100%;
+} */
+/* .p-password-input{
+  width: 100%;
+}
+.p-password {
+  width: 100%;
+} */
+ /* .p-inputwrapper{
+  width: 100%;
+ }
+ .p-inputtext {
+  width: 100% !important;
+ } */
 .p-field label {
   display: block;
   margin-bottom: 0.5rem;

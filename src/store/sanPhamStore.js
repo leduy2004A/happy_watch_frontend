@@ -6,7 +6,7 @@ export const useProductStore = defineStore('product', {
   state: () => ({
     products: [],
     searchQuery: '',
-    priceRange: [100000, 3200000],
+    priceRange: [0, 13200000],
     filters: [
       { 
         label: 'Thương hiệu', 

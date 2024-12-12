@@ -278,8 +278,8 @@ const selectProduct = (product) => {
     height: 60px;
   }
 }
-table > tbody > tr > td:nth-child(12), 
-  table > thead > tr > th:nth-child(12) {
+table > tbody > tr > td:nth-child(13), 
+  table > thead > tr > th:nth-child(13) {
     position: sticky !important; 
     position: -webkit-sticky !important; 
     right: 0; 
@@ -287,7 +287,7 @@ table > tbody > tr > td:nth-child(12),
     background: white;
   }
 
-  table > thead > tr > th:nth-child(12) {
+  table > thead > tr > th:nth-child(13) {
     z-index: 9999;
   }
   table > tbody > tr > td:nth-child(1), 

@@ -160,3 +160,6 @@ export const layTatCaCTSP = async () =>{
 export const layMoTaCTSP = async (idctsp)=>{
    return await api.get(`api/chi-tiet-san-pham/mota/${idctsp}`)
 }
+export const xoaDiaChi = async (idDiaChi) =>{
+   return await api.delete(`/api/khach-hang/delete/${idDiaChi}`)
+}

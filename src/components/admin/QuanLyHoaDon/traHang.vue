@@ -195,8 +195,8 @@
             <span>{{ formatPrice(store.tongTienSauKhuyenMai) }}</span>
           </div>
           <div class="flex justify-content-between mb-2">
-            <span>Tổng tiền sau khuyến mãi</span>
-            <span>{{ formatPrice(store.tongTienHoaDon) }}</span>
+            <span>Tổng giá sau trả hàng</span>
+            <span>{{ formatPrice(store.tongGiaSauTraHang) }}</span>
           </div>
           <div class="flex justify-content-between mb-2">
             <span>Khuyến mãi</span>

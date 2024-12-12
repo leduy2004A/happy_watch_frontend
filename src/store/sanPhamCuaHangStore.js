@@ -12,7 +12,7 @@ export const sanPhamCuaHangStore = defineStore("sanPhamCuaHangStore", {
     totalItems: 0,
     // Thêm các state cho bộ lọc
     activeFilters: [],
-    priceRange: [0, Infinity],
+    priceRange: [0, 200000000],
     originalProducts: [], // Lưu trữ danh sách sản phẩm gốc
   }),
 
@@ -68,10 +68,11 @@ export const sanPhamCuaHangStore = defineStore("sanPhamCuaHangStore", {
       this.currentPage = 1; // Reset về trang 1
     },
 
-    resetFilters() {
+    async resetFilters() {
       this.activeFilters = [];
-      this.priceRange = [0, Infinity];
+      this.priceRange = [0, 200000000];
       this.currentPage = 1;
+      // await this.loadProducts()
     },
 
     // Sửa lại action loadProducts

@@ -36,7 +36,8 @@
       density="comfortable"
       :rules="[
         (v) => !!v || 'Kích thước là bắt buộc',
-        (v) => !isNaN(v) || 'Chỉ được nhập số'
+        (v) => !isNaN(v) || 'Chỉ được nhập số',
+        (v) => v >= 0 || 'Chỉ được nhập số không âm'
       ]"
       @input="store.filterSuggestions"
       suffix="MM"
@@ -56,7 +57,8 @@
                 density="comfortable"
                 :rules="[
         (v) => !!v || 'Chống nước là bắt buộc, nhập 0 nếu không có chống nước',
-        (v) => !isNaN(v) || 'Chỉ được nhập số'
+        (v) => !isNaN(v) || 'Chỉ được nhập số',
+        (v) => v >= 0 || 'Chỉ được nhập số không âm'
       ]"
                 @input="store.filterSuggestions"
                 suffix="ATM"
@@ -105,7 +107,9 @@
                 class="mb-4"
                 density="comfortable"
                 type="number"
-                :rules="[(v) => !!v || 'Số lượng là bắt buộc']"
+                :rules="[(v) => !!v || 'Số lượng là bắt buộc',
+                  (v) => v >= 0 || 'Chỉ được nhập số không âm'
+                ]"
                 @input="store.filterSuggestions"
               ></v-text-field>
                 </div>
@@ -120,8 +124,11 @@
                 class="mb-4"
                 density="comfortable"
                 type="number"
-                :rules="[(v) => !!v || 'Cân nặng là bắt buộc']"
+                :rules="[(v) => !!v || 'Cân nặng là bắt buộc',
+                  (v) => v >= 0 || 'Chỉ được nhập số không âm'
+                ]"
                 @input="store.filterSuggestions"
+                suffix="g"
               ></v-text-field>
                 </div>
               </v-col>

@@ -40,11 +40,13 @@
       <v-col cols="2">
         <v-btn
           color="warning"
-          variant="text"
+
+  
+          variant="outlined"
           class="px-2"
-          @click="selectAddress(address)"
+          @click="deleteAdress(address)"
         >
-          CHỌN
+          Xoá địa chỉ
         </v-btn>
       </v-col>
     </v-row>
@@ -178,6 +180,8 @@ import { useKhachHangStore } from "@/store/khachHangStore";
 import { useDiaChiNguoiDungStore } from "@/store/diaChiNguoiDungStore";
 import { useAddressStore } from "@/store/diaChiStore";
 import { themDiaChiKhachHang } from "@/axios/khachhang";
+import Sweetalert2 from "sweetalert2";
+import { xoaDiaChi } from "@/axios/sanpham";
 import useEmitter from "@/useEmitter";
 const khachHangStore = useDiaChiNguoiDungStore();
 const addressStore = useAddressStore();
@@ -257,7 +261,32 @@ const openAddDialog = () => {
   dialog.value = true;
 };
 
+const deleteAdress = async (add)=>{
+  Sweetalert2.fire({
+        title: "Bạn có muốn xoá địa chỉ này không?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Không !`,
+      }).then(async (result) => {
+        if(result.isConfirmed)
+        {
+            try{
+    const resultDelete = await xoaDiaChi(add.id)
+    if(resultDelete.status === 200)
+    {
+      toast.success("Đã xoá địa chỉ")
+      await khachHangStore.fetchDataDiaChiNguoiDung();
+      await store.fetchProvinces()
+    }
+  }catch(e){
+    toast.error("Lỗi xoá địa chỉ")
+  }
+        }
+      })
 
+  
+}
 const selectAddress = async (address) => {
   console.log(address);
   // Gán các thông tin cơ bản

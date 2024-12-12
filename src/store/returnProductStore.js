@@ -19,6 +19,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
     giaTriHoanTra:0,
     giaTriHoanTraMoi:"",
     tongTienHoaDon:0,
+    tongGiaSauTraHang:0,
     tongTienSauKhuyenMai:0,
     searchQuery: "",
     selectAll: false,
@@ -154,6 +155,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
           this.khuyenMai = dataTraHang.data.khuyenMai
           this.giaTriHoanTra = dataTraHang.data.giaTriHoanTra
           this.giaTriHoanTraMoi = dataTraHang.data.giaTriHoanTraMoi
+          this.tongGiaSauTraHang = dataTraHang.data.tongGiaSauTraHang
         }
     },
     async fetchDataStoreByMa(ma) {

@@ -155,9 +155,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed,watch } from 'vue'
 import useEmitter from '@/useEmitter'
-
+import { useRoute } from 'vue-router';
+const route = useRoute()
 const emitter = useEmitter()
 
 const props = defineProps({
@@ -279,7 +280,19 @@ function handleUpdateEditedItem(value) {
   editedItem.value = value
   console.log('Updated edited item:', editedItem.value)
 }
-
+watch(
+  () => route.path,
+  () => {
+    // Reset các state cần thiết
+    searchQuery.value = ''
+    currentPage.value = 1
+    dialog.value = false
+    deleteDialog.value = false
+    editedIndex.value = -1
+    editedItem.value = { ...props.defaultItem }
+    itemToDelete.value = null
+  }
+)
 function openDialog(item = null) {
   if (item) {
     editedIndex.value = props.items.findIndex(i => i.id === item.id)

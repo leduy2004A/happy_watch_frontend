@@ -20,10 +20,10 @@ export const getSanPhamTheoHoaDon = async(data)=>{
     return await api.get(`api/hoadon/all-sp?idHD=${data}`)
 }
 export const addSoLuongSanPham = async (data)=>{
-    return await api.put(`api/chitiethoadon/congsl?idCTHD=${data}`)
+    return await api.put(`api/chitiethoadon/congsl-moi?idCTHD=${data}`)
 }
 export const truSoLuongSanPham = async (data)=>{
-    return await api.put(`api/chitiethoadon/trusl?idCTHD=${data}`)
+    return await api.put(`api/chitiethoadon/trusl-moi?idCTHD=${data}`)
 }
 export const hienThiHoaDonChoThanhToan = async()=>{
     return await api.get("api/hoadon/cho-thanh-toan")

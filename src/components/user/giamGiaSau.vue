@@ -40,6 +40,7 @@
                       height="250"
                       imageClass="w-full h-full object-cover"
                       class="card-image"
+                      @click="denCTSP(product.id)"
                     >
                       <template #indicator>
                         <ProgressSpinner />
@@ -122,12 +123,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { sanPhamDangKhuyenMai } from '@/axios/sanpham';
-import { useRouter } from "vue-router";
 import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
 import { useCartStore } from "@/store/cartStore";
 import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
 import { sanPhamNam, sanPhamNu } from "@/axios/sanpham";
+import { useRouter } from 'vue-router';
 const checkOutStore = useCheckOutStore();
 // const router = useRouter()
 const emitter = useEmitter();
@@ -149,7 +150,9 @@ const chunkedProducts = computed(() => {
   return chunks
 })
 
-
+const denCTSP = (productId)=>{
+  router.push(`/product/detail/${productId}`);
+}
 const navigateToProduct = (productId) => {
   router.push(`/product/detail/${productId}`);
 };
