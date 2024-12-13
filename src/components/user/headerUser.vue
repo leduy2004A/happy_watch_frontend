@@ -4,9 +4,9 @@
     <v-app-bar-title class="d-flex align-center">
       <router-link to="/" class="d-flex align-center text-decoration-none">
         <img
-          src="https://thumuadonghohieu.com/wp-content/uploads/2019/03/Logo-Rolex.jpg"
+          src="https://png.pngtree.com/png-vector/20240328/ourlarge/pngtree-mechanical-pocket-watch-pattern-cartoon-style-png-image_12237907.png"
           alt="Mona Watches Shop"
-          width="120"
+          width="89"
           :contain="true"
         />
       </router-link>
@@ -201,8 +201,8 @@ const menuItems = ref([
   { title: "TRANG CHỦ", path: "/product/" },
   { title: "GIỚI THIỆU", path: "/gioi-thieu" },
   { title: "CỬA HÀNG", path: "/product/cua-hang" },
-  { title: "TIN TỨC", path: "/tin-tuc" },
-  { title: "LIÊN HỆ", path: "/lien-he" },
+  // { title: "TIN TỨC", path: "/tin-tuc" },
+  // { title: "LIÊN HỆ", path: "/lien-he" },
 ]);
 
 const openModalCart = () => {

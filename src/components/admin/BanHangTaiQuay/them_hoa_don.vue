@@ -62,6 +62,8 @@ import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '@/store/invoiceStore'
 import { useKhachHangStore } from '@/store/khachHangStore';
 import { useOrderStore } from '@/store/tienStore';
+import { useToast } from 'vue-toastification';
+const toast = useToast()
 const orderStore = useOrderStore()
 const khachHangStore = useKhachHangStore()
 import useEmitter from '@/useEmitter'
@@ -76,15 +78,18 @@ onMounted(async () => {
 })
 
 const handleTabClick = (tabId) => {
-  
+ 
   invoiceStore.setHoaDonId(tabId)
   emitter.emit("addTab", tabId)
 }
 
 const handleAddInvoice = async () => {
+
+      if(invoiceStore.tabs.length < 5)
+    {
   try {
     // invoiceStore.setHoaDonId(tabId)
-    
+
     console.log(hoa_don_id.value)
     const newInvoice = await invoiceStore.addNewInvoice()
     invoiceStore.hoaDonId = newInvoice.id
@@ -94,6 +99,10 @@ const handleAddInvoice = async () => {
   } catch (error) {
     console.error('Error adding invoice:', error)
   }
+    }else{
+      toast.error("Chỉ được tạo 5 hoá đơn")
+    }
+
 }
 
 const handleRemoveInvoice = async () => {

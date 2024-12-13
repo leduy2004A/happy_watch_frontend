@@ -67,7 +67,7 @@ const menuItems = [
   {
     title: 'Đổi mật khẩu',
     icon: 'mdi-key',
-    route: '/change-password'
+    route: '/profile/change-password'
   }
 ];
 onMounted(()=>{

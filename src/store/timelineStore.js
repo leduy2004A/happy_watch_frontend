@@ -101,8 +101,6 @@ export const useTimelineStore = defineStore('timeline', {
       try {
         this.loading = true;
         const response = await layTrangThaiHoadonTheoMa(orderId);
-        console.log("ồ hêy lona")
-        console.log(response)
         if (response.data) {
           this.nutTrangThai = response.data.trangThaiTiepTheo
           // Chuyển đổi dữ liệu API thành format timeline
@@ -117,6 +115,7 @@ export const useTimelineStore = defineStore('timeline', {
         }
       } catch (error) {
         console.error('Lỗi khi tải timeline:', error);
+        toast.error("Có lỗi xảy ra khi tải timeline")
         this.error = error;
       } finally {
         this.loading = false;

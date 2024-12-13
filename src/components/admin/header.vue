@@ -43,6 +43,7 @@ const items = ref([
     icon: 'pi pi-cog',
     command: () => {
       // handle settings click  
+      router.push('/admin/doi-mat-khau')
     }
   },
   {

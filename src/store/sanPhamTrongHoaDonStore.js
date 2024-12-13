@@ -48,6 +48,7 @@ export const useSanPhamTrongHoaDonStore = defineStore("cart", {
         this.products[index].soLuong++;
         await this.updateCart();
       } catch (error) {
+        toast.error(error.response.data.message)
         console.error("Lỗi khi tăng số lượng:", error);
       }
     },
@@ -60,6 +61,7 @@ export const useSanPhamTrongHoaDonStore = defineStore("cart", {
           await this.updateCart();
         }
       } catch (error) {
+        toast.error(error.response.data.message)
         console.error("Lỗi khi giảm số lượng:", error);
       }
     },

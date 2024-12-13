@@ -1,7 +1,8 @@
 // stores/paymentHistoryStore.js
 import { defineStore } from 'pinia'
 import { lichSuThanhToan } from "@/axios/hoadon"
-
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 export const usePaymentHistoryStore = defineStore('paymentHistory', {
   state: () => ({
     paymentData: [],
@@ -23,7 +24,8 @@ export const usePaymentHistoryStore = defineStore('paymentHistory', {
           this.paymentData = [response.data]
         }
       } catch (error) {
-        console.error('Error fetching payment history:', error)
+        this.paymentData = []
+        toast.warning("Hoá đơn này chưa thanh toán")
       }
     },
 

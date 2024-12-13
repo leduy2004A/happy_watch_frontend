@@ -11,10 +11,21 @@
 import thanhToan from './thanhToan.vue';
 import tongTien from './tongTien.vue';
 import { useRoute } from 'vue-router';
+import { huyHoaDonTheoMaHoaDon } from '@/axios/sanpham';
+import { useToast } from 'vue-toastification';
+const toast = useToast()
+import { onMounted } from 'vue';
 const route = useRoute()
-if (route.query.code === "00" && route.query.status === "CANCELLED") {
-    
+onMounted(async ()=>{
+    if (route.query.code === "00" && route.query.status === "CANCELLED") {
+    const result = await huyHoaDonTheoMaHoaDon(route.query.maHoaDon)
+    if(result.status === 200)
+    {
+        toast.success("Đã huỷ hoá đơn!")
+    }
 }
+})
+
 </script>
 <style scoped>
     .mainThanhToan{

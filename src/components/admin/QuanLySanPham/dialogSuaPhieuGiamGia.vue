@@ -53,7 +53,7 @@
               </div>
 
               <div class="col-12" v-if="valueSelect === 'Số tiền' ? true: false">
-                <label for="maxValue">Giá trị tối đa</label>
+                <label for="maxValue">Giá trị giảm</label>
                 <div class="p-inputgroup">
                   <InputNumber 
                     id="maxValue"
@@ -361,47 +361,57 @@ const addNew = async () => {
       loaiApDung: "TOAN_BO",
     };
     console.log(dataAdd)
-    const result = await updateKhuyenMai(dataAdd);
+    try{
+          const result = await updateKhuyenMai(dataAdd);
     if (result.status === 200) {
       voucherStore.fetchVouchers()
       closeDialog()
       toast.success("Thêm khuyến mãi thành công");
     }
-  } else {
-    console.log(selected.value);
-    // const selectedUserIds = selected.value.map((customer) => customer.id);
-    // const emailList = selected.value.map((customer) => customer.email);
-    // const dataAdd = {
-    //   id:Number.parseInt(idVoucher.value),
-    //   ma: voucher.code,
-    //   ten: voucher.name,
-    //   phanTramGiamGia: voucher.value,
-    //   soTienGiam: voucher.maxValue,
-    //   ngayBatDau : moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-    //   ngayKetThuc : moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss'),
-    //   soLuong: voucher.quantity,
-    //   loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
-    //   khuyenMaiTuGia: voucher.condition,
-    //   loaiApDung: "CA_NHAN",
-    //   userIds: selectedUserIds,
-    // };
-    // const result = await updateKhuyenMai(dataAdd);
-    // if (result.status === 200) {
-    //   voucherStore.fetchVouchers()
-    //   toast.success("Thêm khuyến mãi thành công");
-    //   closeDialog()
-    //   try {
-    //     const promises = emailList.map((email) => sendMail(dataAdd, email));
-    //     const results = await Promise.all(promises);
+    }catch(e){
+      toast.error(e.response.data.message)
+    }
 
-    //     // Kiểm tra nếu tất cả email đều gửi thành công
-    //     if (results.every((result) => result.status === 200)) {
-    //       toast.success("Gửi mail thành công");
-    //     }
-    //   } catch (error) {
-    //     toast.error("Có lỗi xảy ra khi gửi mail");
-    //   }
-    // }
+  } else {
+    const selectedUserIds = selected.value.map((customer) => customer.id);
+    const emailList = selected.value.map((customer) => customer.email);
+    const dataAdd = {
+      id:Number.parseInt(idVoucher.value),
+      ma: voucher.code,
+      ten: voucher.name,
+      phanTramGiamGia: voucher.value,
+      soTienGiam: voucher.maxValue,
+      ngayBatDau : moment(voucher.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+      ngayKetThuc : moment(voucher.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+      soLuong: voucher.quantity,
+      loaiKhuyenMai: valueSelect.value === "Phần trăm" ? "phan tram" : "so tien",
+      khuyenMaiTuGia: voucher.condition,
+      loaiApDung: "CA_NHAN",
+      userIds: selectedUserIds,
+    };
+    
+    try{
+      const result = await updateKhuyenMai(dataAdd);
+          if (result.status === 200) {
+      voucherStore.fetchVouchers()
+      toast.success("Thêm khuyến mãi thành công");
+      closeDialog()
+      try {
+        const promises = emailList.map((email) => sendMail(dataAdd, email));
+        const results = await Promise.all(promises);
+
+        // Kiểm tra nếu tất cả email đều gửi thành công
+        if (results.every((result) => result.status === 200)) {
+          toast.success("Gửi mail thành công");
+        }
+      } catch (error) {
+        toast.error("Có lỗi xảy ra khi gửi mail");
+      }
+    }
+    }catch(e){
+      toast.error(e.response.data.message)
+    }
+
   }
 };
 

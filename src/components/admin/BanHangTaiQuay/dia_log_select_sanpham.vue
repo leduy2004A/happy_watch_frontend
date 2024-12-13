@@ -119,6 +119,7 @@
 <script setup>
 import useEmitter from '@/useEmitter';
 import { onMounted, ref, watch } from 'vue';
+import { useProductStore } from '@/store/sanPhamStore'
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 const toast = useToast()
@@ -128,6 +129,7 @@ import { danhSachSanPhamHoaDonStore } from '@/store/danhSachSanPhamHoaDonStore';
 const danhSachSanPhamStore = danhSachSanPhamHoaDonStore()
  import { useOrderSummaryStore } from '@/store/orderSumaryStore'
 const summaryStore = useOrderSummaryStore()
+const productStore = useProductStore()
 const props = defineProps({
   dialog: Boolean,
   product: Object
@@ -197,7 +199,7 @@ const formatCurrency = (value) => {
 const confirmSelection =async () => {
  
   // Xử lý logic khi xác nhận chọn sản phẩm với số lượng
-  console.log('Số lượng đã chọn:', quantity.value)
+  
   if(route.query.id)
   {
     dataAdd.value.hoaDonId = route.query.id
@@ -209,8 +211,9 @@ const confirmSelection =async () => {
     if(dataResult.status === 200)
     {
       toast.success("Thêm sản phẩm thành công")
-      danhSachSanPhamStore.fetchProducts(route.params.ma)
-      summaryStore.fetchOrderData(route.params.ma)
+      await danhSachSanPhamStore.fetchProducts(route.params.ma)
+      await summaryStore.fetchOrderData(route.params.ma)
+      console.log(productStore.products)
       emitter.emit("closeChonSanPham",false)
     }
     }catch(e){

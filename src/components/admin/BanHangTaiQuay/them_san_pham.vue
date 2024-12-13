@@ -70,6 +70,7 @@ import { useKhachHangStore } from "@/store/khachHangStore";
 import { getdiachiTheoKhachHang } from "@/axios/diachi";
 import { useAddressStore } from "@/store/diaChiStore";
 import { useOrderStore } from "@/store/tienStore";
+import { useProductStore } from '@/store/sanPhamStore'
 const orderStore = useOrderStore();
 const addressStore = useAddressStore();
 const khachHangStore = useKhachHangStore();
@@ -84,7 +85,7 @@ const modalQr = ref(false);
 const lstSanPham = ref([]);
 const tongSanPhamTrongHoaDon = ref([]);
 const reloadKey = ref(0); // Added to force re-render
-
+const productStore = useProductStore()
 const dataAdd = ref({
   hoaDonId: 0,
   chiTietSanPhamId: 0,
@@ -215,6 +216,7 @@ onMounted(() => {
         const dataResult = await addSanPhamVaoHoaDon(dataAdd.value);
     if (dataResult.status === 200) {
       toast.success("Thêm sản phẩm thành công");
+      await productStore.fetchProducts()
       emitter.emit("closeChonSanPham", false);
     }
 

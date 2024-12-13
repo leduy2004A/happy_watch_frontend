@@ -13,7 +13,7 @@ export const taoLinkThanhToan = async (data) => {
   const orderData = {
     orderCode: generateRandomInt(10),
     amount: data.amount,
-    description: "Test thử", 
+    description: `Thanh toán đơn hàng`, 
     cancelUrl: `http://localhost:3000/product/checkout/?maHoaDon=${data.ma}`,
     returnUrl: `http://localhost:3000/product/success/${data.ma}?soTien=${data.amount}`
   };

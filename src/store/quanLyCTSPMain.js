@@ -1,12 +1,12 @@
 // stores/chiTietSanPhamStore.js
 import { defineStore } from 'pinia'
 import { layTatCaChiTietTheoSP } from '@/axios/sanpham'
-
+import {getComBoBoxThuongHieu,getComBoBoxMauSac,getComBoBoxHinhDang,getComBoBoxLoaiMay,getComBoBoxChatLieuVo,getComBoBoxChatLieuDay,getComBoBoxLoaiKinh } from '@/axios/combobox'
 export const quanLyCTSPMAIN = defineStore('quanLyCTSPMAIN', {
   state: () => ({
     products: [],
     search: '',
-    priceRange: [0, 2000000],
+    priceRange: [0, 100000000],
     openModalCTSP: false,
     filters: {
       mauSac: null,
@@ -17,18 +17,22 @@ export const quanLyCTSPMAIN = defineStore('quanLyCTSPMAIN', {
       xuatXu: null,
     },
     filterOptions: {
+      thuongHieu: { label: 'Thương hiệu', options: ['Tất cả', 'Đỏ', 'Xanh', 'Đen'] },
       mauSac: { label: 'Màu sắc', options: ['Tất cả', 'Đỏ', 'Xanh', 'Đen'] },
+      hinhDang: { label: 'Hình dáng', options: ['Tất cả', 'Automatic', 'Quartz', 'Chronograph'] },
       loaiMay: { label: 'Loại máy', options: ['Tất cả', 'Automatic', 'Quartz', 'Chronograph'] },
       chatLieuVo: { label: 'Chất liệu vỏ', options: ['Tất cả', 'Thép không gỉ', 'Nhôm', 'Nhựa'] },
       chatLieuDay: { label: 'Chất liệu dây', options: ['Tất cả', 'Da', 'Thép', 'Vải'] },
-      chongNuoc: { label: 'Chống nước', options: ['Tất cả', '3ATM', '5ATM'] },
-      xuatXu: { label: 'Xuất xứ', options: ['Tất cả', 'Nhật Bản', 'Thụy Sĩ', 'Hàn Quốc'] },
+      loaiKinh: { label: 'Loại kính', options: ['Tất cả', 'Da', 'Thép', 'Vải'] },
     }
   }),
   
   getters: {
     filteredProducts: (state) => {
       return state.products.filter(product => {
+        const searchLower = state.search.toLowerCase()
+        const matchesSearch = product.sanPham.toLowerCase().includes(searchLower) ||
+                            product.ma.toLowerCase().includes(searchLower)
         const matchesPrice = product.gia >= state.priceRange[0] &&
           product.gia <= state.priceRange[1]
 
@@ -36,7 +40,7 @@ export const quanLyCTSPMAIN = defineStore('quanLyCTSPMAIN', {
           return !value || value === 'Tất cả' || product[key] === value
         })
 
-        return matchesPrice && matchesFilters
+        return matchesPrice && matchesFilters && matchesSearch
       })
     }
   },
@@ -52,7 +56,30 @@ export const quanLyCTSPMAIN = defineStore('quanLyCTSPMAIN', {
     setOpenModal(value) {
       this.openModalCTSP = value
     },
-    
+    async getComBoBox(){
+      try {
+        const data = await Promise.all([(await getComBoBoxThuongHieu()).data, (await getComBoBoxMauSac()).data, (await getComBoBoxHinhDang()).data,(await getComBoBoxLoaiMay()).data,(await getComBoBoxChatLieuVo()).data,(await getComBoBoxChatLieuDay()).data,(await getComBoBoxLoaiKinh()).data ])
+        this.filterOptions.thuongHieu.options = data[0]
+        this.filterOptions.thuongHieu.options.unshift('Tất cả')
+        this.filterOptions.mauSac.options = data[1]
+        this.filterOptions.mauSac.options.unshift('Tất cả')
+        this.filterOptions.hinhDang.options= data[2]
+        this.filterOptions.hinhDang.options.unshift('Tất cả')
+        this.filterOptions.loaiMay.options = data[3]
+        this.filterOptions.loaiMay.options.unshift('Tất cả')
+        this.filterOptions.chatLieuVo.options = data[4]
+        this.filterOptions.chatLieuVo.options.unshift('Tất cả')
+        this.filterOptions.chatLieuDay.options = data[5]
+        this.filterOptions.chatLieuDay.options.unshift('Tất cả')
+        this.filterOptions.loaiKinh.options = data[6]
+        this.filterOptions.loaiKinh.options.unshift('Tất cả')
+        // this.filters[7].items = data[7]
+        // this.filters[7].items.unshift('Tất cả')
+       
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      }
+    },
     formatPrice(value) {
       return new Intl.NumberFormat('vi-VN', {
         style: 'currency',

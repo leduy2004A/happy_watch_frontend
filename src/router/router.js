@@ -38,7 +38,8 @@ import profile from "@/components/user/profile/profile.vue";
 import dangNhapDangKi from "@/components/dangNhapDangKi.vue";
 import thongke from "@/components/admin/ThongKe/thongke.vue";
 import thongTinCaNhan from "@/components/admin/QuanLySanPham/thongTinCaNhan.vue";
-
+import changePassword from "@/components/user/profile/changePassword.vue";
+import doiMatKhau from "@/components/admin/QuanLySanPham/doiMatKhau.vue";
 const routes = [
   {
     path: "/admin",
@@ -73,7 +74,7 @@ const routes = [
       {
         path: "bill-detail/:ma",
         component: chiTietHoaDon,
-        meta: { keepAlive: true }, 
+        meta: { keepAlive: false }, 
       },
       {
         path: "product-list",
@@ -153,8 +154,13 @@ const routes = [
       {
         path: "thong-tin-ca-nhan",
         component: thongTinCaNhan,
-        meta: { keepAlive: true },
+        meta: { keepAlive: false },
       },
+      {
+        path: "doi-mat-khau",
+        component: doiMatKhau,
+        meta: { keepAlive: false },
+      }
     ],
   },
   {
@@ -212,6 +218,11 @@ const routes = [
       {
         path: "ho-so",
         component: profile,
+      },
+      {
+        path: "change-password",
+        component: changePassword,
+        meta: { keepAlive: false },
       },
     ],
   },

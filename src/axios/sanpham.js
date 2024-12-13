@@ -163,3 +163,10 @@ export const layMoTaCTSP = async (idctsp)=>{
 export const xoaDiaChi = async (idDiaChi) =>{
    return await api.delete(`/api/khach-hang/delete/${idDiaChi}`)
 }
+export const changePassword = async(data) =>{
+   return await api.put(`/api/user/change-password`,data)
+}
+
+export const huyHoaDonTheoMaHoaDon = async(data)=>{
+   return await api.put(`api/hoadon/huy-hoa-don-ma/${data}`)
+}

@@ -46,7 +46,7 @@
                 class="col-12"
                 v-if="valueSelect === 'Số tiền' ? true : false"
               >
-                <label for="maxValue">Giá trị tối đa</label>
+                <label for="maxValue">Giá trị giảm</label>
                 <div class="p-inputgroup">
                   <InputNumber
                     id="maxValue"
@@ -213,7 +213,7 @@
                 </template>
               </Column>
             </DataTable>
-            <Button label="THÊM MỚI" class="mt-3" @click="addNew" />
+            <Button label="SỬA" class="mt-3" @click="addNew" />
           </template>
         </Card>
       </div>
@@ -382,13 +382,18 @@ const addNew = async () => {
     // trangThai: "Đang diễn ra",
     idChiTietSanPham: selectedUserIds,
   };
-  const result = await updateKhuyenMaiSanPham(idKhuyenMai.value, dataAdd);
+  try{
+      const result = await updateKhuyenMaiSanPham(idKhuyenMai.value, dataAdd);
   if (result.status === 200) {
     toast.success("Sửa khuyến mãi thành công");
     dialogVisible.value = false;
     closeDialog();
     voucherStore.fetchVouchers();
   }
+  }catch(e){
+    toast.error( e.response.data);
+  }
+
 };
 
 // Fetch data

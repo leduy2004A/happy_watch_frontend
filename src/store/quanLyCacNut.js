@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { getHoaDonTheoMa } from "@/axios/quanlihoadon";
 import router from "@/router/router";
-
+import { usePaymentHistoryStore } from "./paymentHistoryStore";
 export const quanLyCacNut = defineStore("quanLyCacNut", {
   state: () => ({
     nutDaXacNhan: true,
@@ -33,6 +33,7 @@ export const quanLyCacNut = defineStore("quanLyCacNut", {
 
     async layTrangThai() {
       // Reset trạng thái các nút trước khi kiểm tra
+      const storePayment = usePaymentHistoryStore()
       this.resetTrangThaiNut();
 
       const result = await getHoaDonTheoMa(router.currentRoute.value.params.ma);
@@ -92,6 +93,19 @@ export const quanLyCacNut = defineStore("quanLyCacNut", {
         this.nutTruSanPham = false;
         this.nutHuySanPhamTrongHoaDon = false;
       }
+      else if(storePayment.paymentData.length > 0)
+        {
+          this.nutDaXacNhan = true;
+          this.nutHuyDon = true;
+          this.nutChiTiet = true;
+          this.nutQuayLaiTrangTruocDo = false;
+          this.nutCapNhat = false;
+          this.nutThanhToan = false;
+          this.nutThemSanPham = false;
+          this.nutCongSanPham = false;
+          this.nutTruSanPham = false;
+          this.nutHuySanPhamTrongHoaDon = false;
+        }
     },
   },
 

@@ -42,7 +42,7 @@
                 </div>
   
                 <div class="col-6">
-                  <label for="maxValue">Giá trị tối đa</label>
+                  <label for="maxValue">Giá trị giảm</label>
                   <div class="p-inputgroup">
                     <InputNumber
                       id="maxValue"

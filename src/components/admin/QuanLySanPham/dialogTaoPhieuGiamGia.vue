@@ -44,7 +44,7 @@
               </div>
 
               <div class="col-12" v-if="valueSelect === 'Số tiền'?true:false">
-                <label for="maxValue">Giá trị tối đa</label>
+                <label for="maxValue">Giá trị giảm</label>
                 <div class="p-inputgroup">
                   <InputNumber
                     id="maxValue"

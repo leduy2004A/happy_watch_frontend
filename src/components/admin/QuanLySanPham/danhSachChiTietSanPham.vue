@@ -172,6 +172,7 @@ const filters = ref({
 
 onMounted(async () => {
   await store.fetchProducts(route.params.id)
+  await store.getComBoBox()
   emitter.on("closeModalThemSanPham", value => {
     store.setOpenModal(value)
   })

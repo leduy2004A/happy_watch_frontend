@@ -221,6 +221,26 @@ const genderOptions = ["Nam", "Nữ"];
   text-align: center;
   margin-bottom: 2rem;
 }
+:deep(.p-password) {
+  width: 100%;
+}
+
+:deep(.p-password input) {
+  width: 100%;
+  /* padding: 12px; */
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+:deep(.p-password input:focus) {
+  border-color: var(--v-primary-base);
+  box-shadow: 0 0 0 2px rgba(var(--v-primary-base), 0.1);
+}
+
+:deep(.p-password input:hover) {
+  border-color: var(--v-primary-base);
+}
 
 .logo {
   width: 120px;

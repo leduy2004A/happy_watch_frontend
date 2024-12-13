@@ -105,8 +105,8 @@ export const useProductStore = defineStore('product', {
         this.filters[5].items.unshift('Tất cả')
         this.filters[6].items = data[6]
         this.filters[6].items.unshift('Tất cả')
-        this.filters[7].items = data[7]
-        this.filters[7].items.unshift('Tất cả')
+        // this.filters[7].items = data[7]
+        // this.filters[7].items.unshift('Tất cả')
        
       } catch (error) {
         console.error('Error fetching products:', error)
