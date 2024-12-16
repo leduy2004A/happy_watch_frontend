@@ -20,14 +20,6 @@
           
         </div>
 
-        <button
-          v-if="showExport"
-          class="p-button p-button-outlined"
-          @click="handleExport"
-        >
-          <i class="pi pi-file-excel mr-2"></i>
-          Export Excel
-        </button>
 
         <button
           v-if="showAdd"

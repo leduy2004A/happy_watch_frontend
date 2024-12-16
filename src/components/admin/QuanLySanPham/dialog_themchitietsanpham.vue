@@ -1,10 +1,10 @@
 <template>
   <v-dialog v-model="dialog" max-width="1300px">
     <v-card>
-      <v-card-title class="text-h6 pa-4"> Thêm sản phẩm </v-card-title>
+      <v-card-title class="text-h6 pa-4"> Thêm chi tiết sản phẩm </v-card-title>
       <v-card-text>
         <v-container>
-          <h2 class="text-center mb-6">Thêm sản phẩm</h2>
+          <h2 class="text-center mb-6">Thêm chi tiết sản phẩm</h2>
 
           <v-form ref="form" v-model="valid">
             <v-row>
@@ -18,7 +18,7 @@
                 variant="outlined"
                 class="mb-4"
                 density="comfortable"
-                :rules="[(v) => !!v || 'Tên là bắt buộc']"
+                :rules="[(v) => !!v || 'Mã là bắt buộc']"
                 @input="store.filterSuggestions"
               ></v-text-field>
                 </div>
@@ -398,7 +398,7 @@ const onSearchUpdate = (text, field) => {
 const addNewItem = async (field) => {
   const result = await store.addNewItem(field)
   if (result?.status === 200) {
-    toast.success(`Thêm ${field === 'category' ? 'giới tính' : 'thương hiệu'} mới thành công`)
+    toast.success(`Thêm thuộc tính mới thành công`)
   }
 }
 const formattedPrice = computed({

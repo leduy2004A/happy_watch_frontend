@@ -23,7 +23,7 @@
         
         <v-col cols="12" sm="4">
           <div class="product-info">
-            <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.tenSanPham }}</h3>
+            <h3 class="text-subtitle-1 font-weight-medium mb-1">{{ product.tenSanPham }} - {{ product.gioiTinh }} - {{ product.loaiKinhSanPham }} - {{ product.chatLieuVoSanPham }} - {{ product.loaiMaySanPham }} - {{ product.chatLieuDaySanPham }}</h3>
             <div class="text-red-500 mb-1">{{ product.formattedPrice }}</div>
             <div class="text-body-2 text-grey">Dòng sản phẩm: {{ product.maSanPham }}</div>
             <div class="text-body-2 text-grey">Phân loại: {{ product.maSanPhamChiTiet }}</div>

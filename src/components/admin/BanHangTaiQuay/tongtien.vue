@@ -1,7 +1,7 @@
 <template>
   <div class="khachhang" v-if="hoaDonStore.hoaDonId !=0">
     <h2 class="card-title">Khách hàng</h2>
-    <v-btn prepend-icon="$vuetify" variant="outlined" @click="store.openModal()">
+    <v-btn prepend-icon="$vuetify" variant="outlined" @click="store.openModal()" v-if="store.isChonKhach">
       Chọn khách hàng
     </v-btn>
   </div>
@@ -100,9 +100,9 @@
 
       <hr />
 
-      <button class="confirm-button" @click="handleConfirmOrder">
+      <v-btn class="confirm-button" @click="handleConfirmOrder" :disabled="(!diaChiStore.valid) && store.isDelivery">
         Xác nhận đặt hàng
-      </button>
+      </v-btn>
     </div>
   </div>
 
@@ -118,6 +118,7 @@ import Sweetalert2 from "sweetalert2";
 import { useToast } from 'vue-toastification'
 import { onMounted } from 'vue'
 import { useOrderStore } from '@/store/tienStore'
+
 import dia_chi_khach_hang from './dia_chi_khach_hang.vue'
 import dialog_khachhang from './dialog_khachhang.vue'
 import dialog_thanhtoan from './dialog_thanhtoan.vue'

@@ -2,7 +2,7 @@
   <teleport to='body'>
      <v-dialog v-model="dialogVisible" max-width="1500" persistent :scrollable="true">
     <template v-slot:default>
-      <v-card title="Dialog" min-height="500" >
+      <v-card  min-height="500" >
         <v-card-text>
           <sanpham_dialog></sanpham_dialog>
         </v-card-text>

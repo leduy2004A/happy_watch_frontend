@@ -89,6 +89,8 @@ export const quanLyHoaDonStore = defineStore('QLHoaDon', {
               return invoice.trangThai === 'Hoàn thành';
             case 'confirmed':
               return invoice.trangThai === 'Đã xác nhận';
+              case 'returned':
+                return invoice.trangThai === 'Đã Hoàn Trả Hàng';
             default:
               return true;
           }

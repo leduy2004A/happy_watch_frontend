@@ -85,7 +85,7 @@
           <div class="d-flex justify-center align-center">
             <span
               class="text-grey-darken-1 text-decoration-line-through me-2"
-              v-if="product.oldPrice"
+              v-if="product.oldPrice === product.price ? false : true"
             >
               {{ store.formatPrice(product.oldPrice) }}
             </span>
@@ -131,7 +131,7 @@
                 <div class="d-flex align-center mb-2">
                   <span
                     class="text-grey-darken-1 text-decoration-line-through me-2"
-                    v-if="selectedProduct.oldPrice"
+                    v-if="selectedProduct.oldPrice === selectedProduct.price ? false : true"
                   >
                     {{ store.formatPrice(selectedProduct.oldPrice) }}
                   </span>

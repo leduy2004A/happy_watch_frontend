@@ -2,10 +2,10 @@
   <v-card>
     <v-card-title>Thông tin giao hàng</v-card-title>
     <v-card-text>
-      <v-form>
-        <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()">
+      <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()" v-if="store.isNutDiaChi">
           thêm địa chỉ
         </v-btn>
+      <v-form v-model="valid">
         <v-row>
           <v-col cols="12" md="6">
             <v-text-field
@@ -14,6 +14,7 @@
               outlined
               dense
               placeholder="Tên người nhận"
+              :rules="[(v) => !!v || 'Tên người nhận là bắt buộc']"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
@@ -23,6 +24,7 @@
               outlined
               dense
               placeholder="0473029182"
+              :rules="[(v) => !!v || 'Số điện thoại là bắt buộc']"
             ></v-text-field>
           </v-col>
 
@@ -35,6 +37,7 @@
               item-value="value"
               outlined
               dense
+              :rules="[(v) => !!v || 'Tỉnh/thành phố là bắt buộc']"
               @update:modelValue="store.handleProvinceChange"
             />
           </v-col>
@@ -47,6 +50,7 @@
               item-value="value"
               outlined
               dense
+              :rules="[(v) => !!v || 'Quận/huyện là bắt buộc']"
               @update:modelValue="store.handleDistrictChange"
             ></v-select>
           </v-col>
@@ -58,27 +62,39 @@
               item-title="text"
               item-value="value"
               outlined
+              :rules="[(v) => !!v || 'Xã/phường/thị trấn là bắt buộc']"
               dense
             ></v-select>
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="12">
             <v-text-field
               v-model="store.formData.detailAddress"
               label="Địa chỉ cụ thể"
               outlined
               dense
               placeholder="aaaaa"
+              :rules="[(v) => !!v || 'Địa chỉ cụ thể là bắt buộc']"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="12" v-if="store.isNutDiaChi === false">
+            <v-text-field
+              v-model="email"
+              label="Email"
+              outlined
+              dense
+              placeholder="aaaaa"
+              :rules="[(v) => !!v || 'email là bắt buộc để nhận thông tin đơn hàng']"
+            ></v-text-field>
+          </v-col>
+          <!-- <v-col cols="12" md="6">
             <v-text-field
               v-model="store.formData.note"
               label="Ghi chú"
               outlined
               dense
             ></v-text-field>
-          </v-col>
+          </v-col> -->
         </v-row>
         <v-row>
           <v-col cols="12" sm="6">
@@ -94,7 +110,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" @click="submitForm">Đặt hàng</v-btn>
+      <v-btn color="primary" @click="submitForm" :disabled="!valid">Đặt hàng</v-btn>
     </v-card-actions>
   </v-card>
   <diaLogDiaChiKhachHang :dialog="dialog"></diaLogDiaChiKhachHang>
@@ -112,6 +128,7 @@ import { useCheckOutStore } from "@/store/checkOutStore";
 import { useToast } from "vue-toastification";
 import Sweetalert2 from "sweetalert2";
 import { layDiaChiDauTienCuaKhachHangToken } from "@/axios/khachhang";
+import { addMail } from "@/axios/email";
 import { useCartStore } from "@/store/cartStore";
 const cart = useCartStore()
 const toast = useToast();
@@ -121,6 +138,7 @@ import { useRouter } from "vue-router";
 const emitter = useEmitter();
 const deliveryMethod = ref("cod");
 const store = useAddressStore();
+const email = ref('')
 const router = useRouter();
 async function submitForm() {
   Sweetalert2.fire({
@@ -167,7 +185,14 @@ async function submitForm() {
         };
         try {
           const result = await thanhToanMuaNgay(data);
+          console.log(result)
           if (result.status === 200) {
+            
+            if(store.isNutDiaChi !== true)
+            {
+              await addMail(email.value,result.data.maHoaDon)
+            }
+            
             router.push(
               `/product/success/${
                 result.data.maHoaDon
@@ -240,12 +265,17 @@ async function submitForm() {
     }
   });
 }
-
+const valid = ref(false)
 const dialog = ref(false);
 const openDiaChi = () => {
   dialog.value = true;
 };
 onMounted(async () => {
+  const token = localStorage.getItem("token")
+  if(token === null)
+  {
+    store.isNutDiaChi = false
+  }
   await store.fetchProvinces();
   emitter.on("closeDialogDiaChi", (data) => {
     dialog.value = data;

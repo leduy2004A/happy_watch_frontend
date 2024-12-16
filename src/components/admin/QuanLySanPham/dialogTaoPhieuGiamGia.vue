@@ -354,6 +354,7 @@ const addNew = async () => {
       loaiApDung: "CA_NHAN",
       userIds: selectedUserIds,
     };
+    console.log(dataAdd)
     try{
           const result = await addKhuyenMai(dataAdd);
     if (result.status === 201) {
@@ -361,6 +362,9 @@ const addNew = async () => {
       toast.success("Thêm khuyến mãi thành công");
       closeDialog();
       try {
+        dataAdd.ngayBatDau = moment(voucher.startDate).format('DD/MM/YYYY HH:mm:ss')
+        dataAdd.ngayKetThuc = moment(voucher.startDate).format('DD/MM/YYYY HH:mm:ss')
+        dataAdd.soTienGiam = dataAdd.soTienGiam !== 0 ? formatPrice(dataAdd.soTienGiam) : 0
         const promises = emailList.map((email) => sendMail(dataAdd, email));
         const results = await Promise.all(promises);
 
@@ -378,7 +382,12 @@ const addNew = async () => {
 
   }
 };
-
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};
 // Fetch data
 const fetchCustomers = async () => {
   try {

@@ -38,7 +38,7 @@
           <!-- Price -->
           <v-col cols="12">
             <div class="d-flex align-center">
-              <span class="text-decoration-line-through text-grey mr-2">
+              <span class="text-decoration-line-through text-grey mr-2" v-if="product.gia === product.giaSauGiam ? false : true">
                 {{ formatCurrency(product.gia) }}
               </span>
               <span class="text-red font-weight-bold text-h6">

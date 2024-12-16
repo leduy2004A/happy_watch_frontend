@@ -1,9 +1,9 @@
 <template>
   <div class="diachi2">
-    <v-form ref="formRef" v-model="store.valid">
-      <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()">
+    <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()">
         thêm địa chỉ
       </v-btn>
+    <v-form ref="formRef" v-model="store.valid">
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
@@ -12,6 +12,7 @@
             outlined
             dense
             placeholder="Tên người nhận"
+            :rules="[(v) => !!v || 'Tên người nhận là bắt buộc']"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -21,6 +22,7 @@
             outlined
             dense
             placeholder="0473029182"
+            :rules="[(v) => !!v || 'Số điện thoại']"
           ></v-text-field>
         </v-col>
 
@@ -33,6 +35,7 @@
             item-value="value"
             outlined
             dense
+            :rules="[(v) => !!v || 'Tỉnh/thành phố là bắt buộc']"
             @update:modelValue="store.handleProvinceChange"
           />
         </v-col>
@@ -45,6 +48,7 @@
             item-value="value"
             outlined
             dense
+             :rules="[(v) => !!v || 'Quận/huyện là bắt buộc']"
             @update:modelValue="store.handleDistrictChange"
           ></v-select>
         </v-col>
@@ -56,27 +60,29 @@
             item-title="text"
             item-value="value"
             outlined
+             :rules="[(v) => !!v || 'Xã/phường/thị trấn là bắt buộc']"
             dense
           ></v-select>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="12">
           <v-text-field
             v-model="store.formData.detailAddress"
             label="Địa chỉ cụ thể"
             outlined
             dense
+             :rules="[(v) => !!v || 'Địa chỉ cụ thể là bắt buộc']"
             placeholder="aaaaa"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" md="6">
+        <!-- <v-col cols="12" md="6">
           <v-text-field
             v-model="store.formData.note"
             label="Ghi chú"
             outlined
             dense
           ></v-text-field>
-        </v-col>
+        </v-col> -->
       </v-row>
       <giao_hang_nhanh></giao_hang_nhanh>
     </v-form>

@@ -70,8 +70,8 @@ const searchQuery = ref('');
 
 const specifications = computed(() => [
   { label: "Mã sản phẩm", value: useChiTietStore.chiTietSanPham.ma },
-  { label: "Kích thước", value: useChiTietStore.chiTietSanPham.kichThuoc },
-  { label: "Độ chịu nước", value: useChiTietStore.chiTietSanPham.chongNuoc },
+  { label: "Kích thước", value: useChiTietStore.chiTietSanPham.kichThuoc + 'MM' },
+  { label: "Độ chịu nước", value: useChiTietStore.chiTietSanPham.chongNuoc + 'ATM'},
   { label: "Xuất xứ", value: useChiTietStore.chiTietSanPham.xuatXu },
   { label: "Bảo hành", value: useChiTietStore.chiTietSanPham.baoHanh },
   { label: "Cân nặng", value: `${useChiTietStore.chiTietSanPham.canNang}g` },

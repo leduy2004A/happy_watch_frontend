@@ -97,7 +97,7 @@
                 <td>{{ item.chatLieuDay }}</td>
                 <td class="text-end">
                   <div class="price-column">
-                    <div class="original-price">{{ formatCurrency(item.gia) }}</div>
+                    <div class="original-price" v-if="item.gia === item.giaSauGiam ? false : true">{{ formatCurrency(item.gia) }}</div>
                     <div class="discounted-price">{{ formatCurrency(item.giaSauGiam) }}</div>
                   </div>
                 </td>

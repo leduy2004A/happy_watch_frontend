@@ -97,7 +97,7 @@ export const useExportPdf = () => {
                   border-radius: 5px;
                 ">
                   <p style="margin: 5px 0;">
-                    <strong>Sản phẩm:</strong> ${item.tenSanPham}<br>
+                    <strong>Sản phẩm:</strong> ${item.tenSanPham +'–'+ item.gioiTinh +'–'+  item.loaiKinhSanPham +'–'+  item.chatLieuVoSanPham  +'–'+  item.loaiMaySanPham  +'–'+  item.chatLieuDaySanPham }<br>
                     <strong>Mã:</strong> ${item.maSanPhamChiTiet}<br>
                     <strong>Số lượng:</strong> ${item.soLuong}
                   </p>

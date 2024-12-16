@@ -206,14 +206,14 @@
           <div class="flex justify-content-between mb-2">
             <span>Giá trị hoàn trả</span>
             <span>{{
-              formatPrice(store.giaTriHoanTraMoi) || store.giaTriHoanTraMoi
+              store.giaTriHoanTraMoi === 'Tiền hoàn trả vượt quá số tiền đã mua' ? store.giaTriHoanTraMoi: formatPrice(store.giaTriHoanTraMoi)
             }}</span>
           </div>
           <Button
             label="TRẢ HÀNG"
             severity="warning"
             @click="store.submitReturn"
-            :disabled="!store.selectedProducts.length"
+            :disabled="!store.selectedProducts.length || store.giaTriHoanTraMoi === 'Tiền hoàn trả vượt quá số tiền đã mua' ? true:false"
             class="w-full mt-4"
           />
         </Panel>

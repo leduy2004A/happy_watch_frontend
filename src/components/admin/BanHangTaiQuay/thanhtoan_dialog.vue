@@ -76,6 +76,8 @@ import { thanhtoan } from "@/axios/thanhtoan";
 import { useOrderStore } from "@/store/tienStore";
 import { useAddressStore } from "@/store/diaChiStore";
 import { useToast } from "vue-toastification";
+import { useCartStore } from "@/store/cartStore";
+const cartStore = useCartStore();
 const toast = useToast();
 const tienStore = useOrderStore();
 const diaChiStore = useAddressStore();
@@ -183,7 +185,7 @@ const confirmPayment = async () => {
     ward: selectedWard?.text || diaChiStore.formData.ward,
     diaChiCuThe: diaChiStore.formData.detailAddress,
     dienThoai: diaChiStore.formData.phone,
-    phiShip:tienStore.shippingFee,
+    phiShip: tienStore.shippingFee,
   };
   console.log(dataPayment.gia);
   try {
@@ -191,7 +193,12 @@ const confirmPayment = async () => {
     if (resultPayment.status == 200) {
       toast.success("Thanh toán thành công");
       transactions.value.push(resultPayment.data.thanhToan);
-      tienStore.isDisable = true
+      tienStore.isDisable = true;
+      tienStore.isChonKhach = false;
+      tienStore.isThemSanPham = false;
+      cartStore.isCong = false;
+      cartStore.isTru = false;
+      cartStore.isXoa = false;
     }
   } catch (error) {
     console.log(error);

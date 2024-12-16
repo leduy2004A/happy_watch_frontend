@@ -117,11 +117,7 @@ export const useExportPdf = () => {
                   border: 1px solid #ddd;
                   text-align: right;
                 ">Thành tiền</th>
-                <th style="
-                  padding: 10px;
-                  border: 1px solid #ddd;
-                  text-align: center;
-                ">Trạng thái</th>
+
               </tr>
             </thead>
             <tbody>
@@ -136,7 +132,7 @@ export const useExportPdf = () => {
                     padding: 10px;
                     border: 1px solid #ddd;
                     text-align: left;
-                  ">${item.tenSanPham + ' '+item.maSanPham}</td>
+                  ">${item.tenSanPham +'–'+ item.gioiTinh +'–'+  item.loaiKinhSanPham +'–'+  item.chatLieuVoSanPham  +'–'+  item.loaiMaySanPham  +'–'+  item.chatLieuDaySanPham }</td>
                   <td style="
                     padding: 10px;
                     border: 1px solid #ddd;
@@ -152,12 +148,7 @@ export const useExportPdf = () => {
                     border: 1px solid #ddd;
                     text-align: right;
                   ">${formatCurrency(item.giaTungSanPham * item.soLuong)}</td>
-                  <td style="
-                    padding: 10px;
-                    border: 1px solid #ddd;
-                    text-align: center;
-                  ">${item.status || ''}</td>
-                </tr>
+                  
               `).join('') || ''}
             </tbody>
           </table>

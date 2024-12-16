@@ -93,6 +93,7 @@
                   outlined
                   dense
                   placeholder="Tên người nhận"
+                  :rules="[(v) => !!v || 'Tên người nhận là bắt buộc']"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
@@ -102,6 +103,7 @@
                   outlined
                   dense
                   placeholder="0473029182"
+                  :rules="[(v) => !!v || 'Số điện thoại là bắt buộc']"
                 ></v-text-field>
               </v-col>
 
@@ -114,6 +116,7 @@
                   item-value="value"
                   outlined
                   dense
+                  :rules="[(v) => !!v || 'Tỉnh/thành phố là bắt buộc']"
                   @update:modelValue="store.handleProvinceChange"
                 />
               </v-col>
@@ -126,6 +129,7 @@
                   item-value="value"
                   outlined
                   dense
+                  :rules="[(v) => !!v || 'Quận/huyện là bắt buộc']"
                   @update:modelValue="store.handleDistrictChange"
                 ></v-select>
               </v-col>
@@ -138,6 +142,7 @@
                   item-value="value"
                   outlined
                   dense
+                  :rules="[(v) => !!v || 'Xã/phường/thị trấn là bắt buộc']"
                 ></v-select>
               </v-col>
 
@@ -148,6 +153,7 @@
                   outlined
                   dense
                   placeholder="aaaaa"
+                  :rules="[(v) => !!v || 'Địa chỉ cụ thể là bắt buộc']"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6"> </v-col>

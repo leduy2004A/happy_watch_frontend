@@ -4,7 +4,7 @@
     
     <div class="product-info">
       <h3 class="product-name">{{ product.tenSanPham }}– {{ product.gioiTinh }} – {{ product.loaiKinhSanPham }} – {{ product.chatLieuVoSanPham }} – {{ product.loaiMaySanPham }} – {{ product.chatLieuDaySanPham }}</h3>
-      <p class="old-price">
+      <p class="old-price" v-if="product.giaSanPham ===product.giaTungSanPham ? false : true ">
         <s>{{ cartStore.parseMoney(product.giaSanPham) }}</s>
       </p>
       <p class="new-price">{{ cartStore.parseMoney(product.giaTungSanPham) }}</p>
@@ -21,15 +21,17 @@
       <button 
         class="quantity-btn" 
         @click="cartStore.decreaseQuantity(index, product)"
+        v-if="cartStore.isTru"
       >-</button>
       <span class="quantity">{{ product.soLuong }}</span>
       <button 
         class="quantity-btn" 
         @click="cartStore.increaseQuantity(index, product)"
+        v-if="cartStore.isCong"
       >+</button>
     </div>
 
-    <v-btn class="delete-btn" @click="cartStore.removeProduct(index,product)">
+    <v-btn class="delete-btn" @click="cartStore.removeProduct(index,product)" v-if="cartStore.isXoa">
       <v-icon>mdi-trash-can</v-icon>
     </v-btn>
   </div>

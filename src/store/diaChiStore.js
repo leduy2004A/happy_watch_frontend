@@ -21,7 +21,8 @@ export const useAddressStore = defineStore('address', {
     districts: [],
     wards: [],
     hoaDonId: 0,
-    valid: true
+    valid: false,
+    isNutDiaChi:true
   }),
 
   actions: {
@@ -170,7 +171,7 @@ export const useAddressStore = defineStore('address', {
           } 
         } catch (error) {
           console.error('Error confirming order:', error)
-          toast.error("Không có hoá đơn nào được chọn !")
+          throw error
         }
       },
 

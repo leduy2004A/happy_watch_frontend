@@ -90,7 +90,7 @@
                   <div class="d-flex justify-center align-center">
                     <span
                       class="text-grey-darken-1 text-decoration-line-through me-2"
-                      v-if="watch.oldPrice"
+                      v-if="watch.oldPrice === watch.price ? false : true"
                     >
                       {{ formatPrice(watch.oldPrice) }}
                     </span>
@@ -182,7 +182,7 @@
                 <div class="d-flex justify-center align-center">
                   <span
                     class="text-grey-darken-1 text-decoration-line-through me-2"
-                    v-if="watch.oldPrice"
+                    v-if="watch.oldPrice === watch.price ? false : true"
                   >
                     {{ formatPrice(watch.oldPrice) }}
                   </span>

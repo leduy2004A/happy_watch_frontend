@@ -14,6 +14,9 @@ export const useSanPhamTrongHoaDonStore = defineStore("cart", {
   state: () => ({
     products: [],
     hoaDonId: null,
+    isCong:true,
+    isTru:true,
+    isXoa:true
   }),
 
   getters: {

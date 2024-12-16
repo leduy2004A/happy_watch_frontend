@@ -185,6 +185,8 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/store/cartStore";
 import cartOverLay from "./cartOverLay.vue";
+import { useAddressStore } from "@/store/diaChiStore";
+const addressStore = useAddressStore()
 import useEmitter from "@/useEmitter";
 import { layTatCaCTSP } from "@/axios/sanpham";
 const emitter = useEmitter();
@@ -264,9 +266,11 @@ onMounted(async () => {
   const token = localStorage.getItem("token");
   isAuthenticated.value = !!token;
    avatar.value =JSON.parse(localStorage.getItem("user")).avatar
+
   emitter.on("closeCartModal", (val) => {
     modalCart.value = val;
   });
+
 });
 
 const redirectToLogin = () => {

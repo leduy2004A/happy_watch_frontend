@@ -29,6 +29,7 @@
       <v-tab value="delivered" class="text-body-2 font-weight-medium px-6">ĐÃ GIAO HÀNG</v-tab>
       <v-tab value="paid" class="text-body-2 font-weight-medium px-6">ĐÃ THANH TOÁN</v-tab>
       <v-tab value="completed" class="text-body-2 font-weight-medium px-6">HOÀN THÀNH</v-tab>
+      <v-tab value="returned" class="text-body-2 font-weight-medium px-6">HOÀN TRẢ HÀNG</v-tab>
     </v-tabs>
 
     <!-- Refresh button -->

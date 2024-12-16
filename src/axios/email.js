@@ -1,4 +1,5 @@
 import axios from "axios";
+import api from "./axios";
 export const sendMail = async (data,email) => {
     const dataEmail = {
         service_id: 'service_9r0jf9r',
@@ -7,7 +8,7 @@ export const sendMail = async (data,email) => {
         template_params: {
             'to_email': email,
             'maGiamGia':data.ma,
-            'soGiamGia':data.soTienGiam === null? data.phanTramGiamGia:data.soTienGiam,
+            'soGiamGia':data.soTienGiam === 0 ? data.phanTramGiamGia+'%' : data.soTienGiam,
             'ngayHieuLuc':data.ngayBatDau,
             'ngayHetHieuLuc':data.ngayKetThuc
         }
@@ -18,3 +19,22 @@ export const sendMail = async (data,email) => {
     },
   });
 };
+export const sendMailTrangThai = async (data) => {
+  const dataEmail = {
+      service_id: 'service_9r0jf9r',
+      template_id: 'template_1pdzgz7',
+      user_id: 'W4k5exh6DDd43OumV',
+      template_params: data
+  };
+return await axios.post("https://api.emailjs.com/api/v1.0/email/send", dataEmail, {
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+};
+export const layMailTuHoaDon = async (id) =>{
+  return await api.get(`/api/hoadon/email/${id}`)
+}
+export const addMail = async (email,idHoaDon) =>{
+  return await api.put(`/api/hoadon/add-email?email=${email}&maHoaDon=${idHoaDon}`)
+}

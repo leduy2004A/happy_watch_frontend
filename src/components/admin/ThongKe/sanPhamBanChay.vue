@@ -118,7 +118,7 @@
               />
             </template>
             <template #body="slotProps">
-              {{ slotProps.data.ten }}
+              {{ slotProps.data.ten }} - {{ slotProps.data.gioiTinh }} - {{ slotProps.data.loaiKinh }} - {{ slotProps.data.chatLieuVo }} - {{ slotProps.data.loaiMay }} - {{ slotProps.data.chatLieuDay }}
             </template>
           </Column>
           <Column field="tongSoLuong" header="Số lượng đã bán" sortable />

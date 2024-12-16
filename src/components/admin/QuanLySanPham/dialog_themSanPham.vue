@@ -54,7 +54,7 @@
                     required
                     variant="outlined"
                     density="comfortable"
-                    :rules="[(v) => !!v || 'Danh mục là bắt buộc']"
+                    :rules="[(v) => !!v || 'Giới tính là bắt buộc']"
                     @update:search="(v) => onSearchUpdate(v, 'category')"
                   ></v-combobox>
 

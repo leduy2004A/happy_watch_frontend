@@ -19,7 +19,9 @@ export const useOrderStore = defineStore('order', {
     hoaDonId: 0,
     tienKhachTra:0,
     tienThua:0,
-    tienDaShip:0
+    tienDaShip:0,
+    isChonKhach:true,
+    isThemSanPham:true
   }),
 
   getters: {

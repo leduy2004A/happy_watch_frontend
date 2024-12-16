@@ -12,19 +12,20 @@
           <div class="header-title text-h6 font-weight-bold">Sản phẩm</div>
 
           <div class="header-actions">
-            <v-btn
+            <!-- <v-btn
               color="#8E24AA"
               class="mr-3 white--text"
               elevation="2"
               @click="openQr()"
             >
               Quét QR sản phẩm
-            </v-btn>
+            </v-btn> -->
             <v-btn
               color="#AB47BC"
               class="white--text"
               elevation="2"
               @click="openDialog()"
+              v-if="orderStore.isThemSanPham"
             >
               Thêm sản phẩm
             </v-btn>
@@ -71,6 +72,8 @@ import { getdiachiTheoKhachHang } from "@/axios/diachi";
 import { useAddressStore } from "@/store/diaChiStore";
 import { useOrderStore } from "@/store/tienStore";
 import { useProductStore } from '@/store/sanPhamStore'
+import { useSanPhamTrongHoaDonStore } from "@/store/sanPhamTrongHoaDonStore";
+const cartStore = useSanPhamTrongHoaDonStore()
 const orderStore = useOrderStore();
 const addressStore = useAddressStore();
 const khachHangStore = useKhachHangStore();
@@ -128,8 +131,18 @@ const loadProducts = async (tabId) => {
       }
       if (result.data.trangThai === "Paid") {
         orderStore.isDisable = true;
+        cartStore.isCong = false
+        cartStore.isTru = false
+        cartStore.isXoa = false
+        orderStore.isChonKhach = false
+        orderStore.isThemSanPham = false
       } else {
         orderStore.isDisable = false;
+        cartStore.isCong = true
+        cartStore.isTru = true
+        cartStore.isXoa = true
+        orderStore.isChonKhach = true
+        orderStore.isThemSanPham = true
       }
       const diaChiData = {
         tinhThanhPho: result.data?.tinhThanhPho || "",
