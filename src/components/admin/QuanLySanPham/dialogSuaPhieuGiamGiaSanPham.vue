@@ -196,7 +196,7 @@
                   {{ formatPrice(slotProps.data.gia) }}
                 </template>
               </Column>
-              <Column field="giaSauGiam" header="Giá khuyến mãi">
+              <!-- <Column field="giaSauGiam" header="Giá khuyến mãi">
                 <template #body="slotProps">
                   <Tag
                     :severity="
@@ -211,7 +211,7 @@
                     }}
                   </Tag>
                 </template>
-              </Column>
+              </Column> -->
             </DataTable>
             <Button label="SỬA" class="mt-3" @click="addNew" />
           </template>

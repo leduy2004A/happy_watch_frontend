@@ -116,7 +116,11 @@
                       <v-text-field
                         v-model="address.dienThoai"
                         label="Số điện thoại"
-                        :rules="[(v) => !!v || 'Vui lòng nhập số điện thoại']"
+                        :rules="[(v) => !!v || 'Vui lòng nhập số điện thoại',
+                           (v) =>
+                  /^(0|84)(3|5|7|8|9)[0-9]{8}$/.test(v) ||
+                  'Số điện thoại không hợp lệ',
+                        ]"
                         required
                       ></v-text-field>
 

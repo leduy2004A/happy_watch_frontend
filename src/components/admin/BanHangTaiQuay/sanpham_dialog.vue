@@ -90,7 +90,7 @@
                 <td>{{ item.xuatXu }}</td>
                 <td>{{ item.tenMauSac }}</td>
                 <td>{{ item.hinhDang }}</td>
-                <td class="text-center">{{ item.kichThuoc }}</td>
+                <td class="text-center">{{ item.kichThuoc }} MM</td>
                 <td>{{ item.loaiKinh }}</td>
                 <td>{{ item.loaiMay }}</td>
                 <td>{{ item.chatLieuVo }}</td>

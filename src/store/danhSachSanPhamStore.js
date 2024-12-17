@@ -48,6 +48,7 @@ export const useDanhSachSP = defineStore('DanhSachSP', {
         const result = await laySanPhamKemSoLuong()
         if (result.status === 200) {
           this.products = result.data
+          
         }
       } catch (error) {
         console.error('Error fetching products:', error)

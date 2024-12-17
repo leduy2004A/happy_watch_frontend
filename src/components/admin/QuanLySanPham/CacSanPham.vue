@@ -22,14 +22,14 @@
         />
 
         <!-- Action buttons -->
-        <Button
+        <!-- <Button
           icon="pi pi-file-excel"
           class="p-button-outlined p-button-success"
           @click="exportExcel"
           size="small"
         >
           Export Excel
-        </Button>
+        </Button> -->
 
         <Button
           icon="pi pi-plus"
@@ -59,7 +59,7 @@
         style="width: 80px"
         alignHeader="center"
       />
-
+      <Column field="ma" header="Mã" sortable></Column>
       <!-- Product Name Column -->
       <Column
         field="ten"
@@ -125,7 +125,7 @@
     >
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-        <span>Bạn có chắc muốn thay đổi trạng thái thành "Đã kết thúc"?</span>
+        <span>Bạn có chắc muốn thay đổi trạng thái?</span>
       </div>
       <template #footer>
         <Button 

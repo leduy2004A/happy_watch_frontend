@@ -35,7 +35,7 @@
           {{ address.dienThoai }}
         </v-col>
         <v-col cols="4">
-          {{ address.diaChiCuThe }}
+          {{ address.diaChiCuThe + ", " + address.xaPhuongThiTran + ", " + address.quanHuyen + ", " + address.tinhThanhPho}}
         </v-col>
         <v-col cols="2">
           <v-btn

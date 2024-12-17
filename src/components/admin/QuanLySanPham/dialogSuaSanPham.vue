@@ -5,7 +5,16 @@
         <v-card-text>
           <v-container>
             <h2 class="text-center mb-6">Sửa sản phẩm</h2>
-  
+            <v-text-field
+                v-model="store.maSanPham"
+                label="Mã sản phẩm"
+                required
+                variant="outlined"
+                class="mb-4"
+                density="comfortable"
+                :rules="[(v) => !!v || 'Mã là bắt buộc']"
+                :disabled="true"
+              ></v-text-field>
             <v-form ref="form" v-model="valid">
               <div class="position-relative">
                 <v-text-field
@@ -146,6 +155,7 @@
     store.product.category = newVal.gioiTinh
     store.product.brand = newVal.thuongHieu
     store.product.description = newVal.moTa
+    store.maSanPham = newVal.ma
     idSanPham.value = newVal.id
   })
   

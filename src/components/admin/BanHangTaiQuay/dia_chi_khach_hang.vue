@@ -22,7 +22,11 @@
             outlined
             dense
             placeholder="0473029182"
-            :rules="[(v) => !!v || 'Số điện thoại']"
+            :rules="[(v) => !!v || 'Số điện thoại',
+               (v) =>
+                  /^(0|84)(3|5|7|8|9)[0-9]{8}$/.test(v) ||
+                  'Số điện thoại không hợp lệ',
+            ]"
           ></v-text-field>
         </v-col>
 

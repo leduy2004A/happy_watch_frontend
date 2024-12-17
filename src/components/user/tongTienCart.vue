@@ -21,7 +21,7 @@
       
       <v-row class="mt-4">
         <v-col>
-          <v-btn color="red" class="white--text" block @click="checkOutCart()">
+          <v-btn color="red" class="white--text" block @click="checkOutCart()" :disabled="cart.items.length === 0">
             TIẾN HÀNH THANH TOÁN
           </v-btn>
         </v-col>

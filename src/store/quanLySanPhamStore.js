@@ -144,6 +144,7 @@ export const useQLSPStore = defineStore('QLSPStore', {
     
         const dataSanPham = {
           ten: this.productName,
+          ma:this.maSanPham,
           thuongHieu: {
             id: brandId
           },

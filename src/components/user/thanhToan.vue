@@ -2,9 +2,14 @@
   <v-card>
     <v-card-title>Thông tin giao hàng</v-card-title>
     <v-card-text>
-      <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()" v-if="store.isNutDiaChi">
-          thêm địa chỉ
-        </v-btn>
+      <v-btn
+        variant="outlined"
+        class="mb-5 diachi"
+        @click="openDiaChi()"
+        v-if="store.isNutDiaChi"
+      >
+        thêm địa chỉ
+      </v-btn>
       <v-form v-model="valid">
         <v-row>
           <v-col cols="12" md="6">
@@ -24,10 +29,14 @@
               outlined
               dense
               placeholder="0473029182"
-              :rules="[(v) => !!v || 'Số điện thoại là bắt buộc']"
+              :rules="[
+                (v) => !!v || 'Số điện thoại là bắt buộc',
+                (v) =>
+                  /^(0|84)(3|5|7|8|9)[0-9]{8}$/.test(v) ||
+                  'Số điện thoại không hợp lệ',
+              ]"
             ></v-text-field>
           </v-col>
-
           <v-col cols="12" md="4">
             <v-select
               v-model="store.formData.province"
@@ -78,15 +87,18 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="12" v-if="store.isNutDiaChi === false">
-            <v-text-field
-              v-model="email"
-              label="Email"
-              outlined
-              dense
-              placeholder="aaaaa"
-              :rules="[(v) => !!v || 'email là bắt buộc để nhận thông tin đơn hàng']"
-            ></v-text-field>
-          </v-col>
+  <v-text-field
+    v-model="email"
+    label="Email"
+    outlined
+    dense
+    placeholder="example@gmail.com"
+    :rules="[
+      v => !!v || 'Email là bắt buộc để nhận thông tin đơn hàng',
+      v => /.+@gmail\.com$/.test(v) || 'Vui lòng nhập địa chỉ Gmail hợp lệ'
+    ]"
+  ></v-text-field>
+</v-col>
           <!-- <v-col cols="12" md="6">
             <v-text-field
               v-model="store.formData.note"
@@ -110,7 +122,9 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" @click="submitForm" :disabled="!valid">Đặt hàng</v-btn>
+      <v-btn color="primary" @click="submitForm" :disabled="!valid"
+        >Đặt hàng</v-btn
+      >
     </v-card-actions>
   </v-card>
   <diaLogDiaChiKhachHang :dialog="dialog"></diaLogDiaChiKhachHang>
@@ -130,7 +144,7 @@ import Sweetalert2 from "sweetalert2";
 import { layDiaChiDauTienCuaKhachHangToken } from "@/axios/khachhang";
 import { addMail } from "@/axios/email";
 import { useCartStore } from "@/store/cartStore";
-const cart = useCartStore()
+const cart = useCartStore();
 const toast = useToast();
 const checkOutStore = useCheckOutStore();
 import useEmitter from "@/useEmitter";
@@ -138,7 +152,7 @@ import { useRouter } from "vue-router";
 const emitter = useEmitter();
 const deliveryMethod = ref("cod");
 const store = useAddressStore();
-const email = ref('')
+const email = ref("");
 const router = useRouter();
 async function submitForm() {
   Sweetalert2.fire({
@@ -185,22 +199,20 @@ async function submitForm() {
         };
         try {
           const result = await thanhToanMuaNgay(data);
-          console.log(result)
+          console.log(result);
           if (result.status === 200) {
-            
-            if(store.isNutDiaChi !== true)
-            {
-              await addMail(email.value,result.data.maHoaDon)
+            if (store.isNutDiaChi !== true) {
+              await addMail(email.value, result.data.maHoaDon);
             }
-            
+
             router.push(
               `/product/success/${
                 result.data.maHoaDon
               }?soTien=${checkOutStore.tinhTongTien()}`
             );
             toast.success("Đặt hàng thành công");
-            localStorage.setItem("cart-items",JSON.stringify([]))
-            cart.items = []
+            localStorage.setItem("cart-items", JSON.stringify([]));
+            cart.items = [];
           }
         } catch (e) {
           toast.error("Có lỗi xảy ra");
@@ -265,16 +277,15 @@ async function submitForm() {
     }
   });
 }
-const valid = ref(false)
+const valid = ref(false);
 const dialog = ref(false);
 const openDiaChi = () => {
   dialog.value = true;
 };
 onMounted(async () => {
-  const token = localStorage.getItem("token")
-  if(token === null)
-  {
-    store.isNutDiaChi = false
+  const token = localStorage.getItem("token");
+  if (token === null) {
+    store.isNutDiaChi = false;
   }
   await store.fetchProvinces();
   emitter.on("closeDialogDiaChi", (data) => {

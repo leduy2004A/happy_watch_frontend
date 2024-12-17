@@ -45,6 +45,7 @@ export const useKhachHangStore = defineStore("khachHang", {
         if(result.status === 200)
             {
                 this.data = result.data
+                console.log(this.data)
             }
         
     },

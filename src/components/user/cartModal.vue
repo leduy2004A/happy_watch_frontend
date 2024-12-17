@@ -41,7 +41,7 @@
         />
       </router-link>
       
-      <Button 
+      <Button :disabled="cart.items.length === 0"
         label="Thanh toán" 
         severity="danger"
         @click="checkOutCart()"

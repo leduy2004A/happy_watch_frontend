@@ -76,7 +76,9 @@ const huyHoaDonNe = async () => {
     const result = await huyHoaDonTheoMaHoaDon(route.params.ma);
     if (result.status === 200) {
       await store.fetchTimeline(route.params.ma);
+      openHuy.value = false
       toast.success("Đã huỷ hoá đơn!");
+
     }
     }
 

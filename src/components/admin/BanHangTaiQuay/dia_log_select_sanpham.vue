@@ -24,7 +24,7 @@
           <v-col cols="12">
             <div class="d-flex justify-space-between">
               <span class="text-grey-darken-1">Kích Thước:</span>
-              <span>{{ product.kichThuoc }}</span> 
+              <span>{{ product.kichThuoc }} MM</span> 
             </div>
           </v-col>
           

@@ -193,7 +193,7 @@
                   {{ formatPrice(slotProps.data.gia) }}
                 </template>
               </Column>
-              <Column field="giaSauGiam" header="Giá khuyến mãi">
+              <!-- <Column field="giaSauGiam" header="Giá khuyến mãi">
                 <template #body="slotProps">
                   <Tag
                     :severity="
@@ -208,7 +208,7 @@
                     }}
                   </Tag>
                 </template>
-              </Column>
+              </Column> -->
             </DataTable>
             <Button label="THÊM MỚI" class="mt-3" @click="addNew" />
           </template>
@@ -259,8 +259,8 @@ const voucher = reactive({
   maxValue: 0,
   quantity: 0,
   condition: 0,
-  startDate: "",
-  endDate: "",
+  startDate: new Date(),
+  endDate: new Date(),
   type: "public",
 });
 
