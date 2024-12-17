@@ -127,6 +127,13 @@ export const useCTSPStore = defineStore("CTSPStore ", {
             loaiKinh.ten.toLowerCase() ===
             state.searchTexts.loaiKinh.toLowerCase()
         ),
+        mauSac:
+        state.searchTexts.mauSac &&
+        !state.mauSac.some(
+          (mauSac) =>
+            mauSac.ten.toLowerCase() ===
+            state.searchTexts.mauSac.toLowerCase()
+        ),
     }),
   },
 

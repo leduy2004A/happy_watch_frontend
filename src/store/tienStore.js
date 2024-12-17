@@ -91,7 +91,7 @@ export const useOrderStore = defineStore('order', {
       // if(sanPhamProduct.products.length === 0)
       //   {
             this.shippingFee = 0,
-            this.discountCode = 0,
+            this.discountCode = '',
             this.discountAmount = 0,
             this.orderAmount = 0,
             this.dataTongTien.tongTienSauKhuyenMai = 0,

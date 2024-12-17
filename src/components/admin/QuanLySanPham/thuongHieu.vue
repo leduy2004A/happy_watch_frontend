@@ -80,7 +80,8 @@ const handleCreate = async (newItem) => {
       toast.error("Có lỗi xảy ra");
     }
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.log(error)
+    toast.error(error.response.data.message)
   }
 };
 
@@ -97,7 +98,8 @@ const handleUpdate = async ({ item, index }) => {
       toast.error("Có lỗi xảy ra");
     }
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.log(error)
+    toast.error(error.response.data.message)
   }
 };
 

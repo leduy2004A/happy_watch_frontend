@@ -56,7 +56,7 @@
         <v-col cols="12" sm="3" class="text-right">
           <div class="text-red-500 text-h6 font-weight-bold">
             {{ product.formattedTotalPrice }}
-                  <v-btn flat color="red" @click="huySanPhamKhoiHoaDon(product)" v-if="useQuanLyCacNut.nutHuySanPhamTrongHoaDon">
+                  <v-btn flat color="red" @click="huySanPhamKhoiHoaDon(product)" v-if="useQuanLyCacNut.nutHuySanPhamTrongHoaDon && store.getFormattedPrices.length > 1">
             <v-icon >mdi-delete-circle</v-icon>
           </v-btn>
           </div>

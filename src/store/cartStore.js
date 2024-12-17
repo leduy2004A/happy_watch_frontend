@@ -35,6 +35,7 @@ export const useCartStore = defineStore("cart", {
           canNangGoc: product.canNang, // Lưu cân nặng gốc
           canNang: product.canNang,
           code: product.code,
+  
           quantity: 1,
         });
       }
@@ -67,7 +68,7 @@ export const useCartStore = defineStore("cart", {
               name: response.data.ten,
 
 
-     
+              
        
               gioiTinh:response.data.gioiTinh,
               loaiKinh:response.data.loaiKinh,

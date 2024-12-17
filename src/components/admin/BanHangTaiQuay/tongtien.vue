@@ -129,6 +129,7 @@ import { useAddressStore } from "@/store/diaChiStore";
 import {useLoading} from 'vue-loading-overlay'
 import { useExportPdf } from './exportPdf'
 import { useSanPhamTrongHoaDonStore } from '@/store/sanPhamTrongHoaDonStore'
+import moment from "moment";
 const sanPhamHoaDonStore =useSanPhamTrongHoaDonStore()
 const { exportToPdf } = useExportPdf()
 const $loading = useLoading({
@@ -166,10 +167,10 @@ const handleConfirmOrder = async () => {
                 const dataExportPdf = {
                   tenKhachHang:store.customerInfo,
                   diaChiNhanHang:"Tại cửa hàng",
-                  nhanVien:"",
+                  nhanVien:JSON.parse(localStorage.getItem("user")).ten,
                   hoaDonId:hoaDonStore.hoaDonId,
                   maHoaDon:hoaDonStore.maHoaDon,
-                  ngayTao:hoaDonStore.ngayTao,
+                  ngayTao:moment(hoaDonStore.ngayTao).format("YYYY-MM-DD HH:mm:ss"),
                   products: sanPhamHoaDonStore.products,
                   tienHang:store.orderAmountFormatted,
                   giamGia:store.discountAmountFormatted,
@@ -200,10 +201,10 @@ const handleConfirmOrder = async () => {
                 const dataExportPdf = {
                   tenKhachHang:store.customerInfo,
                   diaChiNhanHang:"Tại cửa hàng",
-                  nhanVien:"",
+                  nhanVien:JSON.parse(localStorage.getItem("user")).ten,
                   hoaDonId:hoaDonStore.hoaDonId,
                   maHoaDon:hoaDonStore.maHoaDon,
-                  ngayTao:hoaDonStore.ngayTao,
+                  ngayTao:moment(hoaDonStore.ngayTao).format("YYYY-MM-DD HH:mm:ss"),
                   products: sanPhamHoaDonStore.products,
                   tienHang:store.orderAmountFormatted,
                   giamGia:store.discountAmountFormatted,

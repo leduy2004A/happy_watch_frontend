@@ -199,6 +199,8 @@ const confirmPayment = async () => {
       cartStore.isCong = false;
       cartStore.isTru = false;
       cartStore.isXoa = false;
+      diaChiStore.isNutForm = true
+      diaChiStore.isNutThemDiaChi = true
     }
   } catch (error) {
     console.log(error);

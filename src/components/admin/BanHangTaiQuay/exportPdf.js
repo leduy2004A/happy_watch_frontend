@@ -67,8 +67,8 @@ export const useExportPdf = () => {
             border-radius: 5px;
           ">
             <p style="margin: 5px 0;">Tên khách hàng: ${data.tenKhachHang || 'Khách lẻ'}</p>
-            <p style="margin: 5px 0;">Địa chỉ nhận hàng: ${data.deliveryAddress || 'Tại cửa hàng'}</p>
-            <p style="margin: 5px 0;">Nhân viên: ${data.staffName || ''}</p>
+            <p style="margin: 5px 0;">Địa chỉ nhận hàng: ${data.diaChiNhanHang}</p>
+            <p style="margin: 5px 0;">Nhân viên: ${data.nhanVien || ''}</p>
             <div class="invoice-details" style="
               margin-top: 10px;
               padding-top: 10px;

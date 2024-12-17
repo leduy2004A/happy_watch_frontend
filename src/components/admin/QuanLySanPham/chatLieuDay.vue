@@ -80,7 +80,7 @@
         toast.error("Có lỗi xảy ra");
       }
     } catch (error) {
-      console.error("Error creating user:", error);
+      toast.error(error.response.data.message)
     }
   };
   
@@ -96,7 +96,7 @@
         toast.error("Có lỗi xảy ra");
       }
     } catch (error) {
-      console.error("Error updating user:", error);
+      toast.error(error.response.data.message)
     }
   };
   

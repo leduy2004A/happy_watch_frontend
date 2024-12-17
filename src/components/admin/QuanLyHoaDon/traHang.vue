@@ -126,7 +126,7 @@
               <template #body="slotProps">
                 {{
                   formatPrice(
-                    slotProps.data.giaTungSanPham * slotProps.data.soLuong
+                    slotProps.data.giaTungSanPham * slotProps.data.quantity
                   )
                 }}
               </template>

@@ -27,6 +27,9 @@
           <div v-if="item.note" class="text-caption mt-1">
             {{ item.note }}
           </div>
+          <div  class="text-caption mt-1">
+           Người thao tác: {{ item.nguoiChinhSua }}
+          </div>
         </v-card>
       </v-timeline-item>
     </v-timeline>

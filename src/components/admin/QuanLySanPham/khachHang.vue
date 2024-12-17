@@ -15,23 +15,16 @@
             <v-card-text>
               <v-form ref="customerForm">
                 <!-- Avatar Upload -->
-                <div class="text-center mb-4">
-                  <v-avatar size="150" color="grey-lighten-2">
+                <!-- <div class="text-center mb-4">
+                  <v-avatar size="150" color="grey-lighten-2" @click="pickAvatar(editedItem)">
                     <v-img
-                      v-if="editedItem.avatar"
-                      :src="editedItem.avatar"
+                      v-if="editedItem.avatar || avatar"
+                      :src="editedItem.avatar || avatar"
                       alt="Avatar"
                     ></v-img>
                     <span v-else>Chọn ảnh</span>
                   </v-avatar>
-                  <v-file-input
-                    v-model="avatarFile"
-                    accept="image/*"
-                    hide-input
-                    class="d-none"
-                    @change="handleAvatarChange"
-                  ></v-file-input>
-                </div>
+                </div> -->
 
                 <!-- Customer Details -->
                 <v-text-field
@@ -213,6 +206,22 @@ import { updateTrangThaiNhanVien } from "@/axios/sanpham";
 // import { addThuongHieu } from "@/axios/sanpham";
 const emitter = useEmitter();
 // Table headers
+const widget = window.cloudinary.createUploadWidget(
+  {
+    cloudName: "donjej4tg",
+    uploadPreset: "upload-datn",
+    showAdvancedOptions: true,
+    sources: ["local", "url"],
+    multiple: false,
+    clientAllowedFormats: ["image"],
+  },
+  (error, result) => {
+    if (!error && result && result.event === "success") {
+      avatar.value = result.info.url;
+      // employee.value.avatar = result.info.url
+    }
+  }
+);
 const optionsSelect = [
   { label: "Hoạt động", value: true },
   { label: "Không hoạt động", value: false },
@@ -243,6 +252,7 @@ const addressForms = ref([]);
 const expandedPanel = ref(0);
 const avatarFile = ref(null);
 const idNguoiDung = ref(0);
+const avatar = ref("")
 // Mock data for dropdowns
 // watch(
 //   () => addressStore.address,
@@ -260,15 +270,7 @@ const idNguoiDung = ref(0);
 //   { deep: true }
 // );
 // Methods
-const handleAvatarChange = (file) => {
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      form.avatar = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-};
+
 const updateTrangThai =async (editedItem)=>{
   const result = await updateTrangThaiNhanVien(editedItem.id)
   if(result.status === 200)
@@ -402,7 +404,9 @@ const handleUpdate = async ({ item, index }) => {
 //     await fetchUserAddresses(item.id);
 //   }
 // });
-
+const pickAvatar = (item)=>{
+  widget.open()
+}
 const handleDelete = async (item) => {
   try {
     console.log("Deleting item:", item);

@@ -104,6 +104,7 @@ const loadProducts = async (tabId) => {
     const result = await getSanPhamTheoHoaDon(tabId);
 
     if (result.status === 200) {
+      hoaDonStore.maHoaDon = result.data.maHoaDon
       if (result.data.nguoiDung !== null) {
         const resultData = await getdiachiTheoKhachHang(
           hoaDonStore.getHoaDonId,
@@ -136,6 +137,8 @@ const loadProducts = async (tabId) => {
         cartStore.isXoa = false
         orderStore.isChonKhach = false
         orderStore.isThemSanPham = false
+        addressStore.isNutForm = true
+        addressStore.isNutThemDiaChi = true
       } else {
         orderStore.isDisable = false;
         cartStore.isCong = true
@@ -143,6 +146,8 @@ const loadProducts = async (tabId) => {
         cartStore.isXoa = true
         orderStore.isChonKhach = true
         orderStore.isThemSanPham = true
+        addressStore.isNutForm = false
+        addressStore.isNutThemDiaChi = false
       }
       const diaChiData = {
         tinhThanhPho: result.data?.tinhThanhPho || "",
@@ -154,6 +159,10 @@ const loadProducts = async (tabId) => {
         },
         diaChiCuThe: result.data?.diaChiCuThe || "",
       };
+        //               addressStore.formData.detailAddress = diaChiData.diaChiCuThe
+        // orderStore.diachi.xaPhuongThiTran = diaChiData.xaPhuongThiTran
+        // orderStore.diachi.tinhThanhPho = diaChiData.tinhThanhPho
+        // orderStore.diachi.quanHuyen = diaChiData.quanHuyen
       if (
         diaChiData.tinhThanhPho === "" &&
         diaChiData.diaChiCuThe === "" &&
@@ -163,7 +172,6 @@ const loadProducts = async (tabId) => {
         orderStore.isDelivery = false;
       } else {
         orderStore.isDelivery = true;
-        console.log(diaChiData);
         await addressStore.updateAddressFromProps(diaChiData);
       }
 
@@ -179,8 +187,11 @@ const loadProducts = async (tabId) => {
       lstSanPham.value = [];
     }
   } catch (error) {
+    orderStore.isThemSanPham = true
     orderStore.isDelivery = false;
     orderStore.isDisable = true;
+    addressStore.isNutForm = true
+    addressStore.isNutThemDiaChi = true
     orderStore.resetSetForm();
     const nguoiDung = {
       ten: "Vui lòng chọn khách hàng",

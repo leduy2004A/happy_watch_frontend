@@ -183,6 +183,7 @@ const routes = [
       {
         path: "checkout",
         component: mainThanhToan,
+        meta:{keepAlive:false}
       },
       {
         path: "cart",

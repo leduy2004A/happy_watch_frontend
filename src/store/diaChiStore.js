@@ -21,8 +21,13 @@ export const useAddressStore = defineStore('address', {
     districts: [],
     wards: [],
     hoaDonId: 0,
+    tinhThanhPho:"",
+    phuongXa:"",
+    quanHuyen:"",
     valid: false,
-    isNutDiaChi:true
+    isNutDiaChi:true,
+    isNutForm:false,
+    isNutThemDiaChi:false
   }),
 
   actions: {
@@ -130,7 +135,9 @@ export const useAddressStore = defineStore('address', {
           phiShip:tienStore.shippingFee,
           maKhuyenMaiHoaDon:tienStore.discountCode
         }
-        console.log(data)
+        this.tinhThanhPho = data.province || ''
+        this.phuongXa = data.ward || ''
+        this.quanHuyen = data.district || ''
         try {
           const result = await xacNhanDonHang(data)
           return{

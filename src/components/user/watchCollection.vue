@@ -98,6 +98,9 @@
                       {{ formatPrice(watch.price) }}
                     </span>
                   </div>
+                  <span class="text-primary font-weight-bold">
+                    Số lượng: {{ watch.soLuong }}
+                  </span>
                 </v-card-text>
               </v-card>
             </v-hover>
@@ -189,7 +192,11 @@
                   <span class="text-primary font-weight-bold">
                     {{ formatPrice(watch.price) }}
                   </span>
+
                 </div>
+                <span class="text-primary font-weight-bold">
+                    Số lượng: {{ watch.soLuong }}
+                  </span>
               </v-card-text>
             </v-card>
           </v-hover>
@@ -239,9 +246,12 @@
 </template>
 
 <script setup>
+import Sweetalert2 from "sweetalert2";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
+import { useToast } from "vue-toastification";
+const toast = useToast()
 import { useCartStore } from "@/store/cartStore";
 import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
@@ -268,45 +278,95 @@ const openQuickView = (product) => {
 };
 
 const addToCart = (product) => {
-  emitter.emit("openModalCart", true);
+  if(product.soLuong === 0)
+  {
+    toast.error("Sản phẩm hết hàng!")
+  }else{
+      emitter.emit("openModalCart", true);
   console.log(product);
   cart.addToCart(product);
+  }
+
 };
-const muaNgay = (product) => {
-  const data = [
-    {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      canNang: product.canNang,
-      code: product.code,
-      quantity: 1,
-    },
-  ];
-  // const dataPick = {
-  //   productGoc: product,
-  //   soLuongChon: 1,
-  //   tongCanNang: 1 * product.canNang  // Thêm tongCanNang vào đây
-  // }
+// const muaNgay = (product) => {
+//   const data = [
+//     {
+//       id: product.id,
+//       name: product.name,
+//       price: product.price,
+//       image: product.image,
+//       canNang: product.canNang,
+//       code: product.code,
+//       quantity: 1,
+//     },
+//   ];
+//   // const dataPick = {
+//   //   productGoc: product,
+//   //   soLuongChon: 1,
+//   //   tongCanNang: 1 * product.canNang  // Thêm tongCanNang vào đây
+//   // }
 
-  // // Thêm sản phẩm mới vào trước
-  // productSelect.value.push(dataPick)
+//   // // Thêm sản phẩm mới vào trước
+//   // productSelect.value.push(dataPick)
 
-  // // Sau đó mới tính tổng cân nặng
-  // const tongCanNangList = productSelect.value.reduce((total, item) => {
-  //   return total + item.tongCanNang
-  // }, 0)
+//   // // Sau đó mới tính tổng cân nặng
+//   // const tongCanNangList = productSelect.value.reduce((total, item) => {
+//   //   return total + item.tongCanNang
+//   // }, 0)
 
-  // console.log(tongCanNangList)
-  // checkOutStore.tongCanNang = tongCanNangList
+//   // console.log(tongCanNangList)
+//   // checkOutStore.tongCanNang = tongCanNangList
 
-  // // Thêm vào store
-  // checkOutStore.addProduct(productSelect.value)
+//   // // Thêm vào store
+//   // checkOutStore.addProduct(productSelect.value)
 
-  // console.log(checkOutStore.products)
-  localStorage.setItem("check-out", JSON.stringify(data));
+//   // console.log(checkOutStore.products)
+//   localStorage.setItem("check-out", JSON.stringify(data));
+//   router.push("/product/checkout");
+// };
+
+const muaNgay =async (product) => {
+  if(product.soLuong === 0)
+  {
+    toast.error("Sản phẩm hết hàng")
+  }
+  else{
+    const { value: number } = await Sweetalert2.fire({
+  input: "number",
+  inputLabel: "Nhập số lượng",
+  inputPlaceholder: "số lượng",
+  inputAttributes: {
+    "aria-label": "Type your message here"
+  },
+  showCancelButton: true
+});
+if (number) {
+  if(number > 0 && number <= product.soLuong)
+  {
+    const data = [{
+    
+    id: product.id,
+    name:  product.name + '–'+  product.gioiTinh+ '–' +  product.loaiKinh + '–'+ product.chatLieuVo + '-'+ product.loaiMay + '–' +  product.chatLieuDay ,
+    price: product.price,
+    image: product.image,
+    canNang: product.canNang,
+    code: product.code,
+    quantity: number,
+  }];
+  localStorage.setItem("check-out",JSON.stringify(data))
   router.push("/product/checkout");
+  }
+  else if(number > product.soLuong)
+  {
+    toast.error("Sản phẩm không đủ số lượng")
+  }else{
+    toast.error("Số lượng phải lớn hơn 0")
+  }
+  }
+  
+}
+      
+
 };
 const formatPrice = (price) => {
   return new Intl.NumberFormat("vi-VN", {

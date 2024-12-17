@@ -61,6 +61,9 @@
                     <span class="text-xl text-red-500">
                       {{ formatPrice(product.price) }}
                     </span>
+                    <span class="text-xl text-red-500">
+                     Số lượng: {{product.soLuong }}
+                    </span>
                   </div>
                   <div class="flex justify-content-center mt-4 mb-2">
                     <Button v-for="icon in ['pi pi-eye', 'pi pi-shopping-cart', 'pi pi-bolt']"
@@ -107,6 +110,7 @@
                     {{ formatPrice(selectedProduct.price) }}
                   </span>
                 </div>
+
               </div>
               <v-btn color="primary" block @click="addToCart(selectedProduct)">
                 Thêm vào giỏ hàng
@@ -129,6 +133,9 @@ import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
 import { sanPhamNam, sanPhamNu } from "@/axios/sanpham";
 import { useRouter } from 'vue-router';
+import Sweetalert2 from "sweetalert2";
+import { useToast } from 'vue-toastification';
+const toast = useToast()
 const checkOutStore = useCheckOutStore();
 // const router = useRouter()
 const emitter = useEmitter();
@@ -163,25 +170,78 @@ const openQuickView = (product) => {
   showQuickView.value = true;
 };
 
+// const addToCart = (product) => {
+//   emitter.emit("openModalCart", true);
+//   console.log(product);
+//   cart.addToCart(product);
+// };
+// const muaNgay = (product) => {
+//   const data = [
+//     {
+//       id: product.id,
+//       name: product.name,
+//       price: product.price,
+//       image: product.image,
+//       canNang: product.canNang,
+//       code: product.code,
+//       quantity: 1,
+//     },
+//   ];
+//   localStorage.setItem("check-out", JSON.stringify(data));
+//   router.push("/product/checkout");
+// };
 const addToCart = (product) => {
-  emitter.emit("openModalCart", true);
-  console.log(product);
+  if(product.soLuong === 0)
+  {
+    toast.error("sản phẩm hết hàng !")
+  }else{
+      emitter.emit("openModalCart", true);
   cart.addToCart(product);
+  }
+
 };
-const muaNgay = (product) => {
-  const data = [
-    {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      canNang: product.canNang,
-      code: product.code,
-      quantity: 1,
-    },
-  ];
-  localStorage.setItem("check-out", JSON.stringify(data));
+const muaNgay =async (product) => {
+  if(product.soLuong === 0)
+  {
+    toast.error("Sản phẩm hết hàng")
+  }
+  else{
+    const { value: number } = await Sweetalert2.fire({
+  input: "number",
+  inputLabel: "Nhập số lượng",
+  inputPlaceholder: "số lượng",
+  inputAttributes: {
+    "aria-label": "Type your message here"
+  },
+  showCancelButton: true
+});
+if (number) {
+  if(number > 0 && number <= product.soLuong)
+  {
+    const data = [{
+    
+    id: product.id,
+    name:  product.name + '–'+  product.gioiTinh+ '–' +  product.loaiKinh + '–'+ product.chatLieuVo + '-'+ product.loaiMay + '–' +  product.chatLieuDay ,
+    price: product.price,
+    image: product.image,
+    canNang: product.canNang,
+    code: product.code,
+    quantity: number,
+  }];
+  localStorage.setItem("check-out",JSON.stringify(data))
   router.push("/product/checkout");
+  }
+  else if(number > product.soLuong)
+  {
+    toast.error("Sản phẩm không đủ số lượng")
+  }else{
+    toast.error("Số lượng phải lớn hơn 0")
+  }
+  }
+  
+}
+      
+
 };
 const useIcon = (icon,product) =>{
   console.log(icon)

@@ -92,7 +92,11 @@
             <span class="text-primary font-weight-bold">
               {{ store.formatPrice(product.price) }}
             </span>
+
           </div>
+          <span class="text-primary font-weight-bold">
+              Số lượng: {{ product.soLuong }}
+            </span>
         </v-card-text>
       </v-card>
     </v-hover>
@@ -153,12 +157,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useToast } from "vue-toastification";
+const toast = useToast()
 import { useRouter } from "vue-router";
 import { sanPhamCuaHangStore } from "@/store/sanPhamCuaHangStore";
 import { useCartStore } from "@/store/cartStore";
 import useEmitter from "@/useEmitter";
 import { useCheckOutStore } from "@/store/checkOutStore";
-
+import Sweetalert2 from "sweetalert2";
 
 const checkOutStore = useCheckOutStore();
 // const router = useRouter()
@@ -185,11 +191,34 @@ const addToWishlist = (product) => {
 };
 
 const addToCart = (product) => {
-  emitter.emit("openModalCart", true);
+  if(product.soLuong === 0)
+  {
+    toast.error("sản phẩm hết hàng !")
+  }else{
+      emitter.emit("openModalCart", true);
   cart.addToCart(product);
+  }
+
 };
-const muaNgay = (product) => {
-  const data = [{
+const muaNgay =async (product) => {
+  if(product.soLuong === 0)
+  {
+    toast.error("Sản phẩm hết hàng")
+  }
+  else{
+    const { value: number } = await Sweetalert2.fire({
+  input: "number",
+  inputLabel: "Nhập số lượng",
+  inputPlaceholder: "số lượng",
+  inputAttributes: {
+    "aria-label": "Type your message here"
+  },
+  showCancelButton: true
+});
+if (number) {
+  if(number > 0 && number <= product.soLuong)
+  {
+    const data = [{
     
     id: product.id,
     name:  product.name + '–'+  product.gioiTinh+ '–' +  product.loaiKinh + '–'+ product.chatLieuVo + '-'+ product.loaiMay + '–' +  product.chatLieuDay ,
@@ -197,10 +226,22 @@ const muaNgay = (product) => {
     image: product.image,
     canNang: product.canNang,
     code: product.code,
-    quantity: 1,
+    quantity: number,
   }];
   localStorage.setItem("check-out",JSON.stringify(data))
   router.push("/product/checkout");
+  }
+  else if(number > product.soLuong)
+  {
+    toast.error("Sản phẩm không đủ số lượng")
+  }else{
+    toast.error("Số lượng phải lớn hơn 0")
+  }
+  }
+  
+}
+      
+
 };
 onMounted(() => {
   store.loadProducts();

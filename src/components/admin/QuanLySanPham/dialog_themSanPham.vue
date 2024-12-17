@@ -166,13 +166,18 @@ const addNewItem = async (field) => {
 }
 
 const saveProduct = async () => {
-  const result = await store.saveProduct()
+  try{
+      const result = await store.saveProduct()
   if (result.status === 200) {
     dialog.value = false
     emitter.emit('closeModalThemSanPham', false)
     await useDanhSachSPStore.fetchProducts()
     toast.success('Thêm sản phẩm thành công')
   }
+  }catch(e){
+    toast.error(e.response.data.message)
+  }
+
 }
 
 const close = () => {

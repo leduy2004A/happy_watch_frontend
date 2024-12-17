@@ -1,9 +1,9 @@
 <template>
   <div class="diachi2">
-    <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()">
+    <v-btn variant="outlined" class="mb-5 diachi" @click="openDiaChi()" :disabled="store.isNutThemDiaChi">
         thêm địa chỉ
       </v-btn>
-    <v-form ref="formRef" v-model="store.valid">
+    <v-form ref="formRef" v-model="store.valid" :disabled="store.isNutForm">
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
@@ -113,6 +113,7 @@ const formRef = ref(null);
 const tienStore = useOrderStore();
 const toast = useToast();
 import { useLoading } from "vue-loading-overlay";
+import moment from "moment";
 const $loading = useLoading({
   loader: "bars",
   lockScroll: false,
@@ -178,21 +179,21 @@ onMounted(async () => {
         // Thêm delay trước khi reload
 
         const dataExportPdf = {
-          tenKhachHang: tienStore.customerInfo,
+          tenKhachHang: tienStore.customerInfo === 'Vui lòng chọn khách hàng' ? tienStore.diachi.ten : tienStore.customerInfo,
           diaChiNhanHang:
             store.formData.detailAddress +
             ", " +
-            tienStore.diachi.xaPhuongThiTran +
+            store.phuongXa +
+            ", "  +
+            store.quanHuyen +
             ", " +
-            tienStore.diachi.quanHuyen +
-            ", " +
-            tienStore.diachi.tinhThanhPho,
-          nhanVien: "",
+            store.tinhThanhPho,
+          nhanVien: JSON.parse(localStorage.getItem("user")).ten,
           hoaDonId: invoiceStore.hoaDonId,
           maHoaDon: invoiceStore.maHoaDon,
-          ngayTao: invoiceStore.ngayTao,
+          ngayTao: moment(invoiceStore.ngayTao).format("YYYY-MM-DD HH:mm:ss"),
           products: sanPhamHoaDonStore.products,
-          tienHang: tienStore.orderAmountFormatted,
+          tienHang: tienStore.orderAmountFormatted, 
           giamGia: tienStore.discountAmountFormatted,
           phiGiaoHang: tienStore.shippingFeeFormatted,
           tongTien: tienStore.formatCurrency(tienStore.totalAmountValue),
