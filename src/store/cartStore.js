@@ -3,6 +3,8 @@ import { layChiTietSanPhamTuIdCTSP } from "@/axios/sanpham";
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: JSON.parse(localStorage.getItem("cart-items")) || [],
+    idCtsp:"",
+    soLuong:0
   }),
 
   getters: {
@@ -66,8 +68,6 @@ export const useCartStore = defineStore("cart", {
             return {
               id: response.data.id,
               name: response.data.ten,
-
-
               
        
               gioiTinh:response.data.gioiTinh,

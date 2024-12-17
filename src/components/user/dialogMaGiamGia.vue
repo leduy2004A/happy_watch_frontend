@@ -19,7 +19,7 @@
           <div class="discount-text">{{ code.ten }}</div>
           <div class="code">{{ code.ma }}</div>
           <div class="expiry">Khuyến mãi từ giá: {{ formatPrice(code.khuyenMaiTuGia)  }}</div>
-          <div class="expiry">Số giảm: {{ code.phanTramGiamGia + '%'||code.soTienGiam   }}</div>
+          <div class="expiry">Số giảm:  {{code.soTienGiam === 0 || code.soTienGiam === null ? code.phanTramGiamGia + '%' : formatPrice(code.soTienGiam)}}</div>
           <div class="expiry">HSD: {{ formatDate(code.ngayBatDau) }} - {{ formatDate(code.ngayKetThuc) }}</div>
         </div>
         <Button 

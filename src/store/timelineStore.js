@@ -195,6 +195,7 @@ export const useTimelineStore = defineStore("timeline", {
               ...STATUS_MAPPING[item.trangThaiDaLuu], // Map style dựa trên trạng thái
               timestamp: item.ngayChinhSua,
               note: item.ghiChu,
+              nguoiChinhSua:item.nguoiChinhSua
             })
           );
         }

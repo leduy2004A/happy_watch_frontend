@@ -59,8 +59,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="invoice in store.paginatedInvoices" :key="invoice.id">
-          <td>{{ store.calculateIndex(invoice) }}</td>
+        <tr v-for="(invoice,index) in store.paginatedInvoices" :key="invoice.id">
+          <td>{{ index + 1 }}</td>
           <td>{{ invoice.maHoaDon }}</td>
           <td>{{ invoice.tongSoSanPham }}</td>
           <td>{{ store.formatCurrency(invoice.tongTien) }}</td>

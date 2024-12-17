@@ -2,6 +2,7 @@
     <div>
         <headerUser></headerUser>
         <router-view :key="route.fullPath"></router-view>
+         
         <footerUser class="mt-10"></footerUser>
     </div>
    

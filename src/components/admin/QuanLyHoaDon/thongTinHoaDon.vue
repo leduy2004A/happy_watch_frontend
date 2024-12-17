@@ -31,14 +31,14 @@
           </v-btn>
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <v-btn
+          <!-- <v-btn
             outlined
             color="orange"
             @click="viewDetails"
             v-if="useQuanLyCacNut.nutChiTiet"
           >
             Chi tiết
-          </v-btn>
+          </v-btn> -->
           <v-btn
             outlined
             color="orange"

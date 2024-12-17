@@ -170,3 +170,6 @@ export const changePassword = async(data) =>{
 export const huyHoaDonTheoMaHoaDon = async(data)=>{
    return await api.put(`api/hoadon/huy-hoa-don-ma/${data}`)
 }
+export const checkSoLuong = async(data)=>{
+   return await api.post(`api/carts/kiem-tra-so-luong`,data)
+}

@@ -193,6 +193,8 @@ const checkOutCart = async () => {
   checkoutStore.addProduct(dataPickList);
 };
 onMounted(()=>{
+  checkoutStore.countCode = '' // Reset mã giảm giá
+  checkoutStore.discount = 0  // Reset giá trị giảm giá
   emitter.on("dataShip", async (data) => {
     await checkoutStore.calculateShippingFee(data.district, data.ward,checkoutStore.tongCanNang)
   })

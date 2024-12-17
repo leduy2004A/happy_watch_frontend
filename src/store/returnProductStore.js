@@ -21,6 +21,8 @@ export const useReturnProductStore = defineStore("returnProduct", {
     tongTienHoaDon:0,
     tongGiaSauTraHang:0,
     tongTienSauKhuyenMai:0,
+    phiShip:0,
+    tongTienSauKhuyenMai2:0,
     searchQuery: "",
     selectAll: false,
     diaChi: {},
@@ -156,6 +158,8 @@ export const useReturnProductStore = defineStore("returnProduct", {
           this.giaTriHoanTra = dataTraHang.data.giaTriHoanTra
           this.giaTriHoanTraMoi = dataTraHang.data.giaTriHoanTraMoi
           this.tongGiaSauTraHang = dataTraHang.data.tongGiaSauTraHang
+          this.tongTienSauKhuyenMai2 = dataTraHang.data.giaTriConLaiSauKhuyenMai
+          this.phiShip = dataTraHang.data.phiShip
         }
     },
     async fetchDataStoreByMa(ma) {
@@ -171,6 +175,7 @@ export const useReturnProductStore = defineStore("returnProduct", {
           }));
           this.tongTienHoaDon = result.data.tongTienHoaDon
           this.tongTienSauKhuyenMai = result.data.tongTienSauKhuyenMai
+          this.tongTienSauKhuyenMai2 = result.data.giaTriConLaiSauKhuyenMai
         }
       } catch (e) {
         toast.error(e);

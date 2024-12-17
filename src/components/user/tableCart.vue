@@ -15,57 +15,74 @@
 
     <v-divider class="mb-4"></v-divider>
 
-    <v-row v-for="(item, index) in store.items" :key="index" class="cart-item align-center py-4">
+    <v-row
+      v-for="(item, index) in store.items"
+      :key="index"
+      class="cart-item align-center py-4"
+    >
       <v-col cols="1">
-        <v-icon @click="removeItem(item.id)" class="remove-icon">mdi-close</v-icon>
+        <v-icon @click="removeItem(item.id)" class="remove-icon"
+          >mdi-close</v-icon
+        >
       </v-col>
       <v-col cols="4" class="d-flex align-center">
         <img :src="item.image" width="80" class="mr-3 product-image" />
-        <div class="product-name">{{ item.name }} – {{ item.gioiTinh }} – {{ item.loaiKinh }} – {{ item.chatLieuVo }} – {{ item.loaiMay }} – {{ item.chatLieuDay }}</div>
+        <div class="product-name">
+          {{ item.name }} – {{ item.gioiTinh }} – {{ item.loaiKinh }} –
+          {{ item.chatLieuVo }} – {{ item.loaiMay }} – {{ item.chatLieuDay }}
+        </div>
       </v-col>
-      <v-col cols="2" class="product-price">{{ formatPrice(item.price) }}</v-col>
+      <v-col cols="2" class="product-price">{{
+        formatPrice(item.price)
+      }}</v-col>
       <v-col cols="3" class="text-center">
         <div class="d-flex justify-center align-center">
-          <v-btn icon small @click="decrementQuantity(item.id,item.quantity)">
+          <v-btn icon small @click="decrementQuantity(item.id, item.quantity)">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
           <input
             v-model="item.quantity"
-            @change="changeQuantity(item.id,item.quantity)"
+            @change="changeQuantity(item.id, item.quantity)"
             type="number"
             min="1"
             class="quantity-input mx-2"
-            style="width: 50px; text-align: center;"
+            style="width: 50px; text-align: center"
           />
-          <v-btn icon small @click="incrementQuantity(item.id,item.quantity)">
+          <v-btn icon small @click="incrementQuantity(item.id, item.quantity)">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
       </v-col>
-      <v-col cols="2" class="product-subtotal text-center">{{ formatPrice(item.price * item.quantity) }}</v-col>
+      <v-col cols="2" class="product-subtotal text-center">{{
+        formatPrice(item.price * item.quantity)
+      }}</v-col>
     </v-row>
 
     <v-divider class="my-4"></v-divider>
-
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useCartStore } from '@/store/cartStore';
-const store = useCartStore()
-const discountCode = ref('');
+import { onMounted, ref } from "vue";
+import { useCartStore } from "@/store/cartStore";
+import { useToast } from "vue-toastification";
+const toast = useToast();
+import { checkSoLuong } from "@/axios/sanpham";
+const store = useCartStore();
+const discountCode = ref("");
 const cartItems = ref([
   {
-    image: 'https://images.pexels.com/photos/1120275/pexels-photo-1120275.jpeg?cs=srgb&dl=pexels-philip-lindvall-300724-1120275.jpg&fm=jpg',
-    name: 'ĐỒNG HỒ CITIZEN AU1080-20A NAM ECO-DRIVE DÂY VẢI',
+    image:
+      "https://images.pexels.com/photos/1120275/pexels-photo-1120275.jpeg?cs=srgb&dl=pexels-philip-lindvall-300724-1120275.jpg&fm=jpg",
+    name: "ĐỒNG HỒ CITIZEN AU1080-20A NAM ECO-DRIVE DÂY VẢI",
     price: 5040000,
     quantity: 1,
     subtotal: 5040000,
   },
   {
-    image: 'https://images.pexels.com/photos/1120275/pexels-photo-1120275.jpeg?cs=srgb&dl=pexels-philip-lindvall-300724-1120275.jpg&fm=jpg',
-    name: 'ĐỒNG HỒ TISSOT T063.907.11.058.00 NAM TỰ ĐỘNG DÂY INOX',
+    image:
+      "https://images.pexels.com/photos/1120275/pexels-photo-1120275.jpeg?cs=srgb&dl=pexels-philip-lindvall-300724-1120275.jpg&fm=jpg",
+    name: "ĐỒNG HỒ TISSOT T063.907.11.058.00 NAM TỰ ĐỘNG DÂY INOX",
     price: 21940000,
     quantity: 2,
     subtotal: 43880000,
@@ -73,29 +90,44 @@ const cartItems = ref([
 ]);
 
 function formatPrice(value) {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value);
 }
 
 function updateSubtotal(index) {
-  cartItems.value[index].subtotal = cartItems.value[index].price * cartItems.value[index].quantity;
+  cartItems.value[index].subtotal =
+    cartItems.value[index].price * cartItems.value[index].quantity;
 }
 
-function incrementQuantity(id,quantity) {
+async function incrementQuantity(id, quantity) {
   quantity++;
-  store.updateQuantity(id,quantity)
-  updateSubtotal(index);
+  const dataCheck = {
+    idChiTietSanPham: id,
+    soLuongMua: quantity,
+  };
+  try {
+    const resultUpdate = await checkSoLuong(dataCheck);
+    if (resultUpdate.status === 200) {
+      store.updateQuantity(id, quantity);
+      updateSubtotal(index);
+    }
+  } catch (e) {
+    toast.error(e.response.data.message);
+  }
 }
 
-function decrementQuantity(id,quantity) {
+function decrementQuantity(id, quantity) {
   if (quantity > 1) {
     quantity--;
-    store.updateQuantity(id,quantity)
+    store.updateQuantity(id, quantity);
     updateSubtotal(index);
   }
 }
 
 function removeItem(id) {
-  store.removeFromCart(id)
+  store.removeFromCart(id);
 }
 
 function applyDiscount() {
@@ -103,17 +135,28 @@ function applyDiscount() {
 }
 
 function updateCart() {
-  alert('Giỏ hàng đã được cập nhật!');
+  alert("Giỏ hàng đã được cập nhật!");
 }
-const changeQuantity = (id,item)=>{
-  console.log(id)
-  store.updateQuantity(id,item)
-}
-onMounted(async ()=>{
-  await store.loadFromLocalStorage()
-})
+const changeQuantity = async (id, item) => {
+  const dataCheck = {
+    idChiTietSanPham: id,
+    soLuongMua: item,
+  };
+  try {
+    const resultUpdate = await checkSoLuong(dataCheck);
+    if (resultUpdate.status === 200) {
+      console.log(resultUpdate);
+      store.updateQuantity(id, item);
+    }
+  } catch (e) {
+    store.updateQuantity(id, 1);
+    toast.error(e.response.data.message);
+  }
+};
+onMounted(async () => {
+  await store.loadFromLocalStorage();
+});
 </script>
-
 
 <style scoped>
 .cart-container {

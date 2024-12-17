@@ -70,7 +70,7 @@
                     :options="optionsSelect"
                     optionLabel="label"
                     optionValue="value"
-                     @update:modelValue="updateTrangThai(editedItem)"
+                    @update:modelValue="updateTrangThai(editedItem)"
                   />
                 </div>
               </v-form>
@@ -194,6 +194,8 @@ const toast = useToast();
 import useEmitter from "@/useEmitter";
 import { useCustomerStore } from "@/store/customerStore";
 const addressStore = useCustomerStore();
+import { xoaDiaChi } from "@/axios/sanpham";
+import Sweetalert2 from "sweetalert2";
 import {
   layTatCaKhachHang,
   addChatLieuDay,
@@ -252,7 +254,7 @@ const addressForms = ref([]);
 const expandedPanel = ref(0);
 const avatarFile = ref(null);
 const idNguoiDung = ref(0);
-const avatar = ref("")
+const avatar = ref("");
 // Mock data for dropdowns
 // watch(
 //   () => addressStore.address,
@@ -271,13 +273,12 @@ const avatar = ref("")
 // );
 // Methods
 
-const updateTrangThai =async (editedItem)=>{
-  const result = await updateTrangThaiNhanVien(editedItem.id)
-  if(result.status === 200)
-  {
-    toast.success("Sửa trạng thái thành công")
+const updateTrangThai = async (editedItem) => {
+  const result = await updateTrangThaiNhanVien(editedItem.id);
+  if (result.status === 200) {
+    toast.success("Sửa trạng thái thành công");
   }
-}
+};
 const addNewAddress = () => {
   addressStore.address.push({
     name: "",
@@ -291,13 +292,17 @@ const addNewAddress = () => {
   expandedPanel.value = form.addresses.length - 1;
 };
 
-const removeAddress = (index, item) => {
-  console.log(item);
-  addressStore.address.splice(index, 1);
-  if (addressStore.address.length === 0) {
-    addNewAddress();
-  }
-};
+const removeAddress = async (index, item) => {
+      const result = await xoaDiaChi(item.id);
+      if (result.status === 200) {
+        toast.success("Đã xoá thành công")
+        addressStore.address.splice(index, 1);
+        if (addressStore.address.length === 0) {
+          addNewAddress();
+        }
+      }
+    }
+
 const themDiaChiVao = async (item) => {
   console.log(item);
   let provinceName = addressStore.provinces.find(
@@ -404,9 +409,9 @@ const handleUpdate = async ({ item, index }) => {
 //     await fetchUserAddresses(item.id);
 //   }
 // });
-const pickAvatar = (item)=>{
-  widget.open()
-}
+const pickAvatar = (item) => {
+  widget.open();
+};
 const handleDelete = async (item) => {
   try {
     console.log("Deleting item:", item);
@@ -476,3 +481,12 @@ onUnmounted(() => {
   emitter.off("crud:error", handleError);
 });
 </script>
+<style scoped>
+.swal2-container {
+    z-index: 9999 !important;
+}
+
+.my-swal-popup {
+    z-index: 10000 !important;
+}
+</style>

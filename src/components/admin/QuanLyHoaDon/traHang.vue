@@ -202,6 +202,14 @@
             <span>Khuyến mãi</span>
             <span>{{ store.khuyenMai }}</span>
           </div>
+          <div class="flex justify-content-between mb-2">
+            <span>Tổng giá sau khuyến mãi</span>
+            <span>{{ formatPrice(store.tongTienSauKhuyenMai2) }}</span>
+          </div>
+          <div class="flex justify-content-between mb-2">
+            <span>Phí ship</span>
+            <span>{{ formatPrice(store.phiShip) }}</span>
+          </div>
 
           <div class="flex justify-content-between mb-2">
             <span>Giá trị hoàn trả</span>
