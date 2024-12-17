@@ -101,6 +101,7 @@
   import { updateKhachHang } from "@/axios/sanpham";
   import { useToast } from "vue-toastification";
   import Sweetalert2 from "sweetalert2";
+
   const toast = useToast();
   import { update } from "lodash-es";
   const genderOptions = ["Nam", "Nữ"];

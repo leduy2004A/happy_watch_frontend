@@ -78,6 +78,7 @@ onMounted(async () => {
     try {
       const resultPayment = await thanhToanMuaNgayV2(dataPayment);
       if (resultPayment.status == 200) {
+        localStorage.setItem("cart-items", JSON.stringify([]));
         toast.success("Thanh toán thành công");
       }
     } catch (error) {
